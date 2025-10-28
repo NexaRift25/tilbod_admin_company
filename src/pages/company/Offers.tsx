@@ -12,7 +12,6 @@ import {
   Clock,
   DollarSign,
   CheckCircle,
-  AlertCircle,
   XCircle,
   Users
 } from "lucide-react";
@@ -159,23 +158,6 @@ export default function OffersPage() {
         return <XCircle className="text-red-500" size={20} />;
       default:
         return <Clock className="text-gray-400" size={20} />;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return "bg-green-500/10 text-green-500";
-      case "approved":
-        return "bg-blue-500/10 text-blue-500";
-      case "pending":
-        return "bg-yellow-500/10 text-yellow-500";
-      case "expired":
-        return "bg-gray-500/10 text-gray-500";
-      case "rejected":
-        return "bg-red-500/10 text-red-500";
-      default:
-        return "bg-gray-500/10 text-gray-400";
     }
   };
 
@@ -354,7 +336,7 @@ export default function OffersPage() {
                 placeholder="Search offers..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-background border border-primary/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary"
+                className="w-full pl-10 pr-4 py-2 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary"
               />
             </div>
           </div>
@@ -364,7 +346,7 @@ export default function OffersPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+              className="px-3 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
             >
               <option value="all">All Status</option>
               <option value="active">Active</option>
@@ -380,7 +362,7 @@ export default function OffersPage() {
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              className="px-3 py-2 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+              className="px-3 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
             >
               <option value="all">All Types</option>
               <option value="active">Active Offer</option>
@@ -418,7 +400,7 @@ export default function OffersPage() {
           <div className="overflow-x-auto">
             <table className="w-full min-w-[900px]">
               <thead>
-                <tr className="text-left text-gray-400 text-sm border-b border-primary/30">
+                <tr className="text-left text-gray-400 text-sm border-b border-primary/50">
                   <th className="pb-3 px-2">Offer</th>
                   <th className="pb-3 px-2">Type</th>
                   <th className="pb-3 px-2">Status</th>
@@ -534,14 +516,14 @@ export default function OffersPage() {
                   <input
                     type="text"
                     defaultValue={selectedOffer.title}
-                    className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+                    className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
                   />
                 </div>
                 <div>
                   <label className="text-gray-400 text-sm mb-2 block">Category</label>
                   <select
                     defaultValue={selectedOffer.category}
-                    className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+                    className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
                   >
                     <option value={selectedOffer.category}>{selectedOffer.category}</option>
                     <option value="Food & Dining">Food & Dining</option>
@@ -557,7 +539,7 @@ export default function OffersPage() {
                   <input
                     type="number"
                     defaultValue={selectedOffer.originalPrice}
-                    className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+                    className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
                   />
                 </div>
                 <div>
@@ -565,7 +547,7 @@ export default function OffersPage() {
                   <input
                     type="number"
                     defaultValue={selectedOffer.discountPrice}
-                    className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+                    className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
                   />
                 </div>
                 <div>
@@ -573,7 +555,7 @@ export default function OffersPage() {
                   <input
                     type="number"
                     defaultValue={selectedOffer.discountPercentage}
-                    className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+                    className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
                   />
                 </div>
               </div>
@@ -584,7 +566,7 @@ export default function OffersPage() {
                   <input
                     type="date"
                     defaultValue={selectedOffer.startDate}
-                    className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+                    className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
                   />
                 </div>
                 <div>
@@ -592,16 +574,16 @@ export default function OffersPage() {
                   <input
                     type="date"
                     defaultValue={selectedOffer.endDate}
-                    className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+                    className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 mt-6 pt-6 border-t border-primary/30">
+            <div className="flex items-center gap-3 mt-6 pt-6 border-t border-primary/50">
               <button
                 onClick={() => setShowEditModal(false)}
-                className="flex-1 px-4 py-2 bg-background border border-primary/30 text-white font-semibold rounded-lg hover:bg-primary/10 transition-all"
+                className="flex-1 px-4 py-2 bg-background border border-primary/50 text-white font-semibold rounded-lg hover:bg-primary/10 transition-all"
               >
                 Cancel
               </button>

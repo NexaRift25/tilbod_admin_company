@@ -158,7 +158,7 @@ export default function ProfilePage() {
 
       {/* Tabs */}
       <div className="bg-card-background border border-primary rounded-2xl p-6">
-        <div className="flex items-center gap-6 mb-6 border-b border-primary/30">
+        <div className="flex items-center gap-6 mb-6 border-b border-primary/50">
           <button
             onClick={() => setActiveTab("personal")}
             className={`pb-3 px-2 font-medium transition-all ${
@@ -213,7 +213,7 @@ export default function ProfilePage() {
                     value={formData.firstName}
                     onChange={handleInputChange}
                     className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                      errors.firstName ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                      errors.firstName ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                     }`}
                     placeholder="Enter first name"
                   />
@@ -233,7 +233,7 @@ export default function ProfilePage() {
                     value={formData.lastName}
                     onChange={handleInputChange}
                     className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                      errors.lastName ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                      errors.lastName ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                     }`}
                     placeholder="Enter last name"
                   />
@@ -253,7 +253,7 @@ export default function ProfilePage() {
                     value={formData.email}
                     onChange={handleInputChange}
                     className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                      errors.email ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                      errors.email ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                     }`}
                     placeholder="Enter email address"
                   />
@@ -272,14 +272,14 @@ export default function ProfilePage() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className="w-full pl-10 pr-4 py-3 bg-background border border-primary/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all"
+                    className="w-full pl-10 pr-4 py-3 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all"
                     placeholder="+354 XXX XXXX"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center justify-end pt-6 border-t border-primary/30">
+            <div className="flex items-center justify-end pt-6 border-t border-primary/50">
               <button
                 type="submit"
                 disabled={isLoading}
@@ -320,7 +320,7 @@ export default function ProfilePage() {
                     value={formData.currentPassword}
                     onChange={handleInputChange}
                     className={`w-full pl-10 pr-12 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                      errors.currentPassword ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                      errors.currentPassword ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                     }`}
                     placeholder="Enter current password"
                   />
@@ -347,7 +347,7 @@ export default function ProfilePage() {
                     value={formData.newPassword}
                     onChange={handleInputChange}
                     className={`w-full pl-10 pr-12 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                      errors.newPassword ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                      errors.newPassword ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                     }`}
                     placeholder="Enter new password (min 8 characters)"
                   />
@@ -374,7 +374,7 @@ export default function ProfilePage() {
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
                     className={`w-full pl-10 pr-12 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                      errors.confirmPassword ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                      errors.confirmPassword ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                     }`}
                     placeholder="Confirm new password"
                   />
@@ -390,7 +390,7 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-end pt-6 border-t border-primary/30">
+            <div className="flex items-center justify-end pt-6 border-t border-primary/50">
               <button
                 type="submit"
                 disabled={isLoading}
@@ -413,7 +413,7 @@ export default function ProfilePage() {
         {activeTab === "companies" && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-background border border-primary/30 rounded-lg p-4">
+              <div className="bg-background border border-primary/50 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
                   <Building2 className="text-primary" size={20} />
                   <span className="text-xs text-gray-400">Registered</span>
@@ -449,7 +449,7 @@ export default function ProfilePage() {
               <h3 className="text-lg font-bold text-white">Registered Companies</h3>
 
               {companies.length === 0 ? (
-                <div className="bg-background border border-primary/30 rounded-lg p-8 text-center">
+                <div className="bg-background border border-primary/50 rounded-lg p-8 text-center">
                   <Building2 className="mx-auto text-gray-400 mb-4" size={48} />
                   <h4 className="text-xl font-bold text-white mb-2">No companies registered</h4>
                   <p className="text-gray-400 mb-4">
@@ -468,7 +468,7 @@ export default function ProfilePage() {
                   {companies.map((company) => (
                     <div
                       key={company.id}
-                      className="bg-background border border-primary/30 rounded-lg p-6 hover:border-primary transition-all"
+                      className="bg-background border border-primary/50 rounded-lg p-6 hover:border-primary transition-all"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">

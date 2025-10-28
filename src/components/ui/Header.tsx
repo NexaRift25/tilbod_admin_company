@@ -1,5 +1,3 @@
-import React from "react";
-
 // Desktop Logo (Arrow-shaped like in the original design)
 export const Logo = ({ className = "" }) => {
   return (

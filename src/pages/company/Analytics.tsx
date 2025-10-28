@@ -76,7 +76,7 @@ export default function AnalyticsPage() {
           <select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
-            className="px-3 py-2 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+            className="px-3 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
           >
             <option value="7">Last 7 days</option>
             <option value="30">Last 30 days</option>
@@ -281,7 +281,7 @@ export default function AnalyticsPage() {
           </svg>
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 mt-6 pt-4 border-t border-primary/30">
+        <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 mt-6 pt-4 border-t border-primary/50">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
             <span className="text-xs sm:text-sm text-gray-400">Revenue (kr)</span>
@@ -644,7 +644,7 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        <div className="flex items-center justify-center gap-3 sm:gap-4 mt-4 sm:mt-6 pt-4 border-t border-primary/30">
+        <div className="flex items-center justify-center gap-3 sm:gap-4 mt-4 sm:mt-6 pt-4 border-t border-primary/50">
           <span className="text-xs text-gray-400">Less Active</span>
           <div className="flex gap-1">
             <div className="w-3 h-3 sm:w-4 sm:h-4 bg-gray-600 opacity-10 rounded"></div>
@@ -666,7 +666,7 @@ export default function AnalyticsPage() {
             { label: 'Sales Target', current: 76, target: 100, color: 'stroke-green-500', bgColor: 'text-green-500' },
             { label: 'New Customers', current: 145, target: 200, color: 'stroke-purple-500', bgColor: 'text-purple-500' },
             { label: 'Avg Conversion', current: 5.5, target: 8, color: 'stroke-orange-500', bgColor: 'text-orange-500' }
-          ].map((goal, index) => {
+          ].map((goal) => {
             const percentage = (goal.current / goal.target) * 100;
             const radius = 45;
             const circumference = 2 * Math.PI * radius;

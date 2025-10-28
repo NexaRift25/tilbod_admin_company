@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  CreditCard,
   TrendingUp,
   DollarSign,
   Calendar,
@@ -254,7 +253,7 @@ export default function SalesPage() {
                 placeholder="Search sales..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-background border border-primary/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary"
+                className="w-full pl-10 pr-4 py-2 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary"
               />
             </div>
           </div>
@@ -264,7 +263,7 @@ export default function SalesPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+              className="px-3 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
             >
               <option value="all">All Status</option>
               <option value="completed">Completed</option>
@@ -278,7 +277,7 @@ export default function SalesPage() {
             <select
               value={dateRange}
               onChange={(e) => setDateRange(e.target.value)}
-              className="px-3 py-2 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+              className="px-3 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
             >
               <option value="7">Last 7 days</option>
               <option value="30">Last 30 days</option>
@@ -296,7 +295,7 @@ export default function SalesPage() {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="text-left text-gray-400 text-sm border-b border-primary/30">
+              <tr className="text-left text-gray-400 text-sm border-b border-primary/50">
                 <th className="pb-3">Offer</th>
                 <th className="pb-3">Customer</th>
                 <th className="pb-3">Date</th>
@@ -359,7 +358,7 @@ export default function SalesPage() {
           {payments.map((payment) => (
             <div
               key={payment.id}
-              className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-background rounded-lg border border-primary/30 hover:border-primary transition-all gap-4"
+              className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-background rounded-lg border border-primary/50 hover:border-primary transition-all gap-4"
             >
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">

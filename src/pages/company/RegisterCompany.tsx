@@ -217,7 +217,7 @@ export default function RegisterCompanyPage() {
                   value={formData.name}
                   onChange={handleInputChange}
                   className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                    errors.name ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                    errors.name ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                   }`}
                   placeholder="Enter company name"
                 />
@@ -237,7 +237,7 @@ export default function RegisterCompanyPage() {
                   value={formData.registrationNumber}
                   onChange={handleInputChange}
                   className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                    errors.registrationNumber ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                    errors.registrationNumber ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                   }`}
                   placeholder="e.g., 550289-2349"
                 />
@@ -257,7 +257,7 @@ export default function RegisterCompanyPage() {
                   value={formData.taxId}
                   onChange={handleInputChange}
                   className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                    errors.taxId ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                    errors.taxId ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                   }`}
                   placeholder="Enter tax ID"
                 />
@@ -274,7 +274,7 @@ export default function RegisterCompanyPage() {
                 value={formData.category}
                 onChange={handleInputChange}
                 className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
-                  errors.category ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                  errors.category ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                 }`}
               >
                 <option value="">Select category</option>
@@ -295,7 +295,7 @@ export default function RegisterCompanyPage() {
                 onChange={handleInputChange}
                 rows={4}
                 className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all resize-none ${
-                  errors.description ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                  errors.description ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                 }`}
                 placeholder="Describe your business, services, and what makes you unique..."
               />
@@ -321,7 +321,7 @@ export default function RegisterCompanyPage() {
                   value={formData.email}
                   onChange={handleInputChange}
                   className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                    errors.email ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                    errors.email ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                   }`}
                   placeholder="company@example.com"
                 />
@@ -341,7 +341,7 @@ export default function RegisterCompanyPage() {
                   value={formData.phone}
                   onChange={handleInputChange}
                   className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                    errors.phone ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                    errors.phone ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                   }`}
                   placeholder="+354 XXX XXXX"
                 />
@@ -361,7 +361,7 @@ export default function RegisterCompanyPage() {
                   value={formData.address}
                   onChange={handleInputChange}
                   className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                    errors.address ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                    errors.address ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                   }`}
                   placeholder="Street address"
                 />
@@ -379,7 +379,7 @@ export default function RegisterCompanyPage() {
                 value={formData.city}
                 onChange={handleInputChange}
                 className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                  errors.city ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                  errors.city ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                 }`}
                 placeholder="City"
               />
@@ -396,7 +396,7 @@ export default function RegisterCompanyPage() {
                 value={formData.postalCode}
                 onChange={handleInputChange}
                 className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                  errors.postalCode ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                  errors.postalCode ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                 }`}
                 placeholder="Postal code"
               />
@@ -412,7 +412,7 @@ export default function RegisterCompanyPage() {
                 name="website"
                 value={formData.website}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all"
+                className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all"
                 placeholder="https://www.yourcompany.com"
               />
             </div>
@@ -423,7 +423,7 @@ export default function RegisterCompanyPage() {
         <div className="bg-card-background border border-primary rounded-2xl p-6">
           <h3 className="text-lg font-bold text-white mb-4">Company Logo (Optional)</h3>
           
-          <div className="border-2 border-dashed border-primary/30 rounded-lg p-8 text-center hover:border-primary/60 transition-all cursor-pointer">
+          <div className="border-2 border-dashed border-primary/50 rounded-lg p-8 text-center hover:border-primary/60 transition-all cursor-pointer">
             <Upload className="mx-auto text-gray-400 mb-4" size={48} />
             <p className="text-white font-medium mb-2">Click to upload or drag and drop</p>
             <p className="text-gray-400 text-sm">PNG, JPG or SVG (max. 2MB)</p>
@@ -435,7 +435,7 @@ export default function RegisterCompanyPage() {
         <div className="flex items-center justify-end gap-4 pt-6">
           <Link
             to="/company/companies"
-            className="px-6 py-3 bg-background border border-primary/30 text-white font-semibold rounded-full hover:bg-primary/10 transition-all"
+            className="px-6 py-3 bg-background border border-primary/50 text-white font-semibold rounded-full hover:bg-primary/10 transition-all"
           >
             Cancel
           </Link>

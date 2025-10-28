@@ -93,13 +93,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      // Mock user data based on role
+      // Mock valid credentials for demo
+      const validCredentials = {
+        admin: {
+          email: "admin@tilbod.is",
+          password: "password123"
+        },
+        company: {
+          email: "company@example.com", 
+          password: "password123"
+        }
+      };
+
+      // Check if credentials are valid
+      const isValidAdmin = email === validCredentials.admin.email && password === validCredentials.admin.password;
+      const isValidCompany = email === validCredentials.company.email && password === validCredentials.company.password;
+
+      if (!isValidAdmin && !isValidCompany) {
+        throw new Error("Invalid email or password. Please check your credentials and try again.");
+      }
+
+      // Determine user role based on valid credentials
+      let userRole: UserRole;
+      if (isValidAdmin) {
+        userRole = "admin";
+      } else if (isValidCompany) {
+        userRole = "company";
+      } else {
+        throw new Error("Invalid credentials");
+      }
+
+      // Check if selected role matches valid credentials
+      if (role && role !== userRole) {
+        throw new Error(`Please select the correct account type. This email belongs to a ${userRole} account.`);
+      }
+
+      // Mock user data based on validated role
       const mockUser: User = {
         id: Math.random().toString(36).substr(2, 9),
         email,
-        firstName: "John",
-        lastName: "Doe",
-        role: role || "user",
+        firstName: userRole === "admin" ? "Admin" : "John",
+        lastName: userRole === "admin" ? "User" : "Doe",
+        role: userRole,
         isVerified: true,
         createdAt: new Date().toISOString(),
       };
@@ -163,8 +198,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const mockUser: User = {
         id: Math.random().toString(36).substr(2, 9),
         email: "user@gmail.com",
-        firstName: "Google",
-        lastName: "User",
+        firstName: role === "admin" ? "Admin" : "Google",
+        lastName: role === "admin" ? "User" : "User",
         role: role || "user",
         isVerified: true,
         createdAt: new Date().toISOString(),

@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 export interface NavItem {
   name: string;
   href: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
+  icon: React.ComponentType<any>;
 }
 
 interface NavigationProps {
@@ -29,9 +29,9 @@ export default function Navigation({ navItems }: NavigationProps) {
         initial={{ x: -256, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
-        className="hidden lg:block fixed left-0 top-0 h-full w-64 bg-card-background border-r border-primary/20 z-30"
+            className="hidden lg:block fixed left-0 top-0 h-full w-64 bg-card-background border-r border-primary/50 z-30"
       >
-        <div className="px-6 py-10">
+        <div className="px-6 py-24">
           <nav className="space-y-2">
             {navItems.map((item, index) => {
               const Icon = item.icon;
@@ -51,22 +51,22 @@ export default function Navigation({ navItems }: NavigationProps) {
                   <Link
                     to={item.href}
                     className={cn(
-                      "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-300 text-smoky-white font-medium group relative overflow-hidden",
-                      isActive
-                        ? "text-primary bg-primary/10 border-l-2 border-primary shadow-lg shadow-primary/20"
-                        : "hover:bg-primary/5 hover:shadow-md hover:shadow-primary/10 hover:scale-[1.02] hover:text-primary/90"
+                          "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-300 text-smoky-white font-medium group relative overflow-hidden",
+                          isActive
+                            ? "text-primary bg-primary/10 border-l-2 border-primary shadow-lg shadow-primary/50"
+                            : "hover:bg-primary/5 hover:shadow-md hover:shadow-primary/50 hover:scale-[1.02] hover:text-primary/90"
                     )}
                   >
                     {/* Smooth background hover effect */}
                     <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg opacity-0"
+                      className="absolute inset-0 bg-gradient-to-r from-primary/50 to-primary/25 rounded-lg opacity-0"
                       whileHover={{ opacity: 1 }}
                       transition={{ duration: 0.3, ease: "easeOut" }}
                     />
                     
                     {/* Ripple effect background */}
                     <motion.div
-                      className="absolute inset-0 bg-primary/20 rounded-lg"
+                      className="absolute inset-0 bg-primary/50 rounded-lg"
                       initial={{ scale: 0, opacity: 0 }}
                       whileTap={{ scale: 1, opacity: 1 }}
                       transition={{ duration: 0.15 }}
@@ -95,13 +95,13 @@ export default function Navigation({ navItems }: NavigationProps) {
                     <motion.span
                       initial={{ x: -10 }}
                       animate={{ x: 0 }}
-                      transition={{ duration: 0.2, delay: index * 0.05 }}
                       whileHover={{ 
                         x: 2,
                         color: "var(--primary)"
                       }}
                       transition={{ 
                         duration: 0.2, 
+                        delay: index * 0.05,
                         ease: "easeOut"
                       }}
                       className="relative z-10"
@@ -121,7 +121,7 @@ export default function Navigation({ navItems }: NavigationProps) {
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
-        className="lg:hidden fixed bottom-0 left-0 right-0 bg-card-background border-t border-primary/20 z-40"
+            className="lg:hidden fixed bottom-0 left-0 right-0 bg-card-background border-t border-primary/50 z-40"
       >
         <div className="px-4 py-2">
           {/* Visible Navigation Items */}
@@ -144,22 +144,22 @@ export default function Navigation({ navItems }: NavigationProps) {
                   <Link
                     to={item.href}
                     className={cn(
-                      "flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all duration-300 min-w-0 flex-1 relative overflow-hidden",
-                      isActive
-                        ? "text-primary bg-primary/10 shadow-lg shadow-primary/20"
-                        : "text-gray-400 hover:text-smoky-white hover:bg-primary/5 hover:shadow-md hover:shadow-primary/10 hover:scale-105"
+                          "flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all duration-300 min-w-0 flex-1 relative overflow-hidden",
+                          isActive
+                            ? "text-primary bg-primary/10 shadow-lg shadow-primary/50"
+                            : "text-gray-400 hover:text-smoky-white hover:bg-primary/5 hover:shadow-md hover:shadow-primary/50 hover:scale-105"
                     )}
                   >
                     {/* Smooth background hover effect */}
                     <motion.div
-                      className="absolute inset-0 bg-gradient-to-b from-primary/15 to-primary/5 rounded-lg opacity-0"
+                      className="absolute inset-0 bg-gradient-to-b from-primary/50 to-primary/25 rounded-lg opacity-0"
                       whileHover={{ opacity: 1 }}
                       transition={{ duration: 0.3, ease: "easeOut" }}
                     />
                     
                     {/* Ripple effect */}
                     <motion.div
-                      className="absolute inset-0 bg-primary/20 rounded-lg"
+                      className="absolute inset-0 bg-primary/50 rounded-lg"
                       initial={{ scale: 0, opacity: 0 }}
                       whileTap={{ scale: 1, opacity: 1 }}
                       transition={{ duration: 0.15 }}
@@ -218,7 +218,7 @@ export default function Navigation({ navItems }: NavigationProps) {
               >
                 <motion.button
                   onClick={() => setShowMore(!showMore)}
-                  className="flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all duration-300 text-gray-400 hover:text-smoky-white hover:bg-primary/5 hover:shadow-md hover:shadow-primary/10 hover:scale-105 relative overflow-hidden"
+                      className="flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all duration-300 text-gray-400 hover:text-smoky-white hover:bg-primary/5 hover:shadow-md hover:shadow-primary/50 hover:scale-105 relative overflow-hidden"
                   whileHover={{ 
                     scale: 1.05,
                     color: "var(--primary)"
@@ -234,7 +234,7 @@ export default function Navigation({ navItems }: NavigationProps) {
                   
                   {/* Ripple effect */}
                   <motion.div
-                    className="absolute inset-0 bg-primary/20 rounded-lg"
+                              className="absolute inset-0 bg-primary/50 rounded-lg"
                     initial={{ scale: 0, opacity: 0 }}
                     whileTap={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.15 }}
@@ -277,7 +277,7 @@ export default function Navigation({ navItems }: NavigationProps) {
                 transition={{ duration: 0.3, ease: "easeInOut" }}
                 className="overflow-hidden"
               >
-                <div className="mt-2 pt-2 border-t border-primary/20">
+                    <div className="mt-2 pt-2 border-t border-primary/50">
                   <motion.div 
                     className="grid grid-cols-2 gap-2"
                     initial={{ y: -10, opacity: 0 }}
@@ -304,22 +304,22 @@ export default function Navigation({ navItems }: NavigationProps) {
                             to={item.href}
                             onClick={() => setShowMore(false)}
                             className={cn(
-                              "flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 text-sm relative overflow-hidden",
-                              isActive
-                                ? "text-primary bg-primary/10 shadow-lg shadow-primary/20"
-                                : "text-gray-400 hover:text-smoky-white hover:bg-primary/5 hover:shadow-md hover:shadow-primary/10 hover:scale-[1.02]"
+                                "flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 text-sm relative overflow-hidden",
+                                isActive
+                                  ? "text-primary bg-primary/10 shadow-lg shadow-primary/50"
+                                  : "text-gray-400 hover:text-smoky-white hover:bg-primary/5 hover:shadow-md hover:shadow-primary/50 hover:scale-[1.02]"
                             )}
                           >
                             {/* Smooth background hover effect */}
                             <motion.div
-                              className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg opacity-0"
+                              className="absolute inset-0 bg-gradient-to-r from-primary/50 to-primary/25 rounded-lg opacity-0"
                               whileHover={{ opacity: 1 }}
                               transition={{ duration: 0.3, ease: "easeOut" }}
                             />
                             
                             {/* Ripple effect */}
                             <motion.div
-                              className="absolute inset-0 bg-primary/20 rounded-lg"
+                              className="absolute inset-0 bg-primary/50 rounded-lg"
                               initial={{ scale: 0, opacity: 0 }}
                               whileTap={{ scale: 1, opacity: 1 }}
                               transition={{ duration: 0.15 }}
@@ -361,7 +361,7 @@ export default function Navigation({ navItems }: NavigationProps) {
                   
                   <motion.button
                     onClick={() => setShowMore(false)}
-                    className="w-full flex items-center justify-center gap-1 mt-2 py-1 text-xs text-gray-500 hover:text-gray-400 transition-all duration-300 hover:bg-primary/5 hover:shadow-md hover:shadow-primary/10 hover:scale-[1.02] rounded-lg relative overflow-hidden"
+                        className="w-full flex items-center justify-center gap-1 mt-2 py-1 text-xs text-gray-500 hover:text-gray-400 transition-all duration-300 hover:bg-primary/5 hover:shadow-md hover:shadow-primary/50 hover:scale-[1.02] rounded-lg relative overflow-hidden"
                     whileHover={{ 
                       scale: 1.02,
                       color: "var(--primary)"
@@ -373,7 +373,7 @@ export default function Navigation({ navItems }: NavigationProps) {
                   >
                     {/* Smooth background hover effect */}
                     <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg opacity-0"
+                      className="absolute inset-0 bg-gradient-to-r from-primary/50 to-primary/25 rounded-lg opacity-0"
                       whileHover={{ opacity: 1 }}
                       transition={{ duration: 0.3, ease: "easeOut" }}
                     />

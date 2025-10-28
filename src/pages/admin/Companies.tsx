@@ -2,30 +2,113 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Building2,
-  Plus,
   Eye,
-  Edit,
-  AlertCircle,
   CheckCircle,
-  Clock,
   XCircle,
+  AlertCircle,
+  Clock,
   ArrowLeft,
   Filter,
-  Search
+  Search,
+  MoreVertical,
+  Edit,
 } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import Pagination from "@/components/ui/Pagination";
 
-export default function CompaniesPage() {
-  const { companies } = useAuth();
+export default function AdminCompaniesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+
+  // Mock data for admin companies management
+  const companies = [
+    {
+      id: "1",
+      name: "Blue Lagoon Spa",
+      registrationNumber: "550289-2349",
+      taxId: "TAX-001",
+      category: "Wellness & Spa",
+      status: "approved",
+      revisionCount: 0,
+      createdAt: "2024-11-15T10:00:00Z",
+      email: "info@bluelagoon.is",
+      phone: "+354 420 8800",
+      address: "240 Grindavík",
+      owner: "John Doe",
+      offersCount: 5,
+    },
+    {
+      id: "2",
+      name: "Hotel Aurora",
+      registrationNumber: "560123-4567",
+      taxId: "TAX-002",
+      category: "Hotels & Accommodation",
+      status: "pending",
+      revisionCount: 0,
+      createdAt: "2025-01-10T14:30:00Z",
+      email: "reservations@hotelaurora.is",
+      phone: "+354 555 1234",
+      address: "Reykjavík",
+      owner: "Jane Smith",
+      offersCount: 0,
+    },
+    {
+      id: "3",
+      name: "Restaurant Nordic",
+      registrationNumber: "570456-7890",
+      taxId: "TAX-003",
+      category: "Food & Dining",
+      status: "revision",
+      revisionCount: 1,
+      createdAt: "2025-01-08T09:15:00Z",
+      email: "info@restaurantnordic.is",
+      phone: "+354 555 5678",
+      address: "Akureyri",
+      owner: "Mike Johnson",
+      offersCount: 2,
+    },
+    {
+      id: "4",
+      name: "Adventure Tours Iceland",
+      registrationNumber: "580789-0123",
+      taxId: "TAX-004",
+      category: "Activities & Entertainment",
+      status: "rejected",
+      revisionCount: 2,
+      createdAt: "2025-01-05T16:45:00Z",
+      email: "bookings@adventuretours.is",
+      phone: "+354 555 9012",
+      address: "Selfoss",
+      owner: "Sarah Wilson",
+      offersCount: 0,
+    },
+  ];
 
   const filteredCompanies = companies.filter(company => {
     const matchesSearch = company.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         company.category.toLowerCase().includes(searchTerm.toLowerCase());
+                         company.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         company.owner.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "all" || company.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredCompanies.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedCompanies = filteredCompanies.slice(startIndex, endIndex);
+
+  // Reset to first page when filters change
+  const handleFilterChange = (newFilter: string) => {
+    setStatusFilter(newFilter);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (newSearch: string) => {
+    setSearchTerm(newSearch);
+    setCurrentPage(1);
+  };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -49,7 +132,7 @@ export default function CompaniesPage() {
       case "revision":
         return "bg-yellow-500/10 text-yellow-500";
       default:
-        return "bg-red-500/10 text-red-600 animate-pulse";
+        return "bg-gray-500/10 text-gray-400";
     }
   };
 
@@ -80,30 +163,20 @@ export default function CompaniesPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <Link
-            to="/company/dashboard"
+            to="/admin/dashboard"
             className="p-2 hover:bg-primary/10 rounded-lg transition-all"
           >
             <ArrowLeft className="text-primary" size={20} />
           </Link>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white">
-              My Companies
+              Company Management
             </h1>
             <p className="text-gray-400 text-sm">
-              Manage your registered businesses ({companies.length}/10 companies)
+              Manage and review all company registrations
             </p>
           </div>
         </div>
-
-        {companies.length < 10 && (
-          <Link
-            to="/company/companies/new"
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-dark font-semibold rounded-full hover:bg-primary/90 transition-all"
-          >
-            <Plus size={20} />
-            Register Company
-          </Link>
-        )}
       </div>
 
       {/* Stats Cards */}
@@ -169,7 +242,7 @@ export default function CompaniesPage() {
                 type="text"
                 placeholder="Search companies..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary"
               />
             </div>
@@ -177,11 +250,11 @@ export default function CompaniesPage() {
 
           <div className="flex items-center gap-2">
             <Filter size={20} className="text-gray-400" />
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-            >
+                <select
+                  value={statusFilter}
+                  onChange={(e) => handleFilterChange(e.target.value)}
+                  className="px-3 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+                >
               <option value="all">All Status</option>
               <option value="pending">Pending</option>
               <option value="approved">Approved</option>
@@ -194,28 +267,16 @@ export default function CompaniesPage() {
 
       {/* Companies List */}
       <div className="space-y-4">
-        {filteredCompanies?.length === 0 ? (
+        {paginatedCompanies.length === 0 ? (
           <div className="bg-card-background border border-primary rounded-2xl p-8 text-center">
             <Building2 className="mx-auto text-gray-400 mb-4" size={48} />
             <h3 className="text-xl font-bold text-white mb-2">No companies found</h3>
-            <p className="text-gray-400 mb-4">
-              {searchTerm || statusFilter !== "all"
-                ? "Try adjusting your search or filter criteria"
-                : "You haven't registered any companies yet"
-              }
+            <p className="text-gray-400">
+              Try adjusting your search or filter criteria
             </p>
-            {!searchTerm && statusFilter === "all" && companies.length < 10 && (
-              <Link
-                to="/company/companies/new"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-dark font-semibold rounded-full hover:bg-primary/90 transition-all"
-              >
-                <Plus size={20} />
-                Register Your First Company
-              </Link>
-            )}
           </div>
         ) : (
-          filteredCompanies?.map((company) => (
+          paginatedCompanies.map((company) => (
             <div
               key={company.id}
               className="bg-card-background border border-primary rounded-2xl p-6 hover:border-primary/80 transition-all"
@@ -231,28 +292,43 @@ export default function CompaniesPage() {
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm mb-4">
                     <div>
                       <p className="text-gray-400">Category</p>
                       <p className="text-white font-medium">{company.category}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-400">Owner</p>
+                      <p className="text-white font-medium">{company.owner}</p>
                     </div>
                     <div>
                       <p className="text-gray-400">Registration #</p>
                       <p className="text-white font-medium">{company.registrationNumber}</p>
                     </div>
                     <div>
-                      <p className="text-gray-400">Tax ID</p>
-                      <p className="text-white font-medium">{company.taxId}</p>
+                      <p className="text-gray-400">Offers</p>
+                      <p className="text-white font-medium">{company.offersCount} active</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+                    <div>
+                      <p className="text-gray-400">Email</p>
+                      <p className="text-white font-medium">{company.email}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-400">Phone</p>
+                      <p className="text-white font-medium">{company.phone}</p>
                     </div>
                     <div>
                       <p className="text-gray-400">Registered</p>
                       <p className="text-white font-medium">
-                        {new Date(company?.createdAt).toLocaleDateString()}
+                        {new Date(company.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
 
-                  {company?.status === "revision" && (
+                  {company.status === "revision" && (
                     <div className="mt-3 bg-yellow-500/10 border border-yellow-500 rounded-lg p-3">
                       <div className="flex items-center gap-2">
                         <AlertCircle className="text-yellow-500" size={16} />
@@ -271,31 +347,30 @@ export default function CompaniesPage() {
                   <button className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all">
                     <Edit size={20} />
                   </button>
+                  <div className="relative">
+                    <button className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all">
+                      <MoreVertical size={20} />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          ))
-        )}
-      </div>
-
-      {/* Limit Warning */}
-      {companies?.length >= 8 && (
-        <div className="bg-yellow-500/10 border border-yellow-500 rounded-2xl p-4">
-          <div className="flex items-start gap-3">
-            <AlertCircle className="text-yellow-500 flex-shrink-0 mt-0.5" size={20} />
-            <div>
-              <h3 className="text-yellow-500 font-bold mb-1">
-                Company Registration Limit Warning
-              </h3>
-              <p className="text-sm text-gray-300">
-                You have registered {companies.length}/10 companies. You have {10 - companies.length} company registrations remaining.
-              </p>
-            </div>
+              ))
+            )}
           </div>
-        </div>
-      )}
-      
-    </div>
-  );
-}
 
+          {/* Pagination */}
+          {filteredCompanies.length > itemsPerPage && (
+            <div className="mt-6">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                totalItems={filteredCompanies.length}
+                itemsPerPage={itemsPerPage}
+              />
+            </div>
+          )}
+        </div>
+      );
+    }

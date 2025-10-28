@@ -210,7 +210,7 @@ export default function CreateOfferPage() {
                 className={`p-4 rounded-xl border-2 transition-all text-left ${
                   selectedType === type.id
                     ? `${type.color} border-opacity-100`
-                    : "border-primary/30 hover:border-primary/60 bg-background"
+                    : "border-primary/50 hover:border-primary/60 bg-background"
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -254,7 +254,7 @@ export default function CreateOfferPage() {
                 value={formData.title}
                 onChange={handleInputChange}
                 className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                  errors.title ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                  errors.title ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                 }`}
                 placeholder="Enter offer title"
               />
@@ -270,7 +270,7 @@ export default function CreateOfferPage() {
                 value={formData.category}
                 onChange={handleInputChange}
                 className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
-                  errors.category ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                  errors.category ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                 }`}
               >
                 <option value="">Select category</option>
@@ -291,7 +291,7 @@ export default function CreateOfferPage() {
                 onChange={handleInputChange}
                 rows={4}
                 className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all resize-none ${
-                  errors.description ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                  errors.description ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                 }`}
                 placeholder="Describe your offer in detail..."
               />
@@ -313,7 +313,7 @@ export default function CreateOfferPage() {
                   value={formData.originalPrice}
                   onChange={handleInputChange}
                   className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                    errors.originalPrice ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                    errors.originalPrice ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                   }`}
                   placeholder="1000"
                 />
@@ -330,7 +330,7 @@ export default function CreateOfferPage() {
                   value={formData.discountPrice}
                   onChange={handleInputChange}
                   className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                    errors.discountPrice ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                    errors.discountPrice ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                   }`}
                   placeholder="800"
                 />
@@ -346,7 +346,7 @@ export default function CreateOfferPage() {
                   name="discountPercentage"
                   value={formData.discountPercentage}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all"
+                  className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all"
                   placeholder="20"
                   readOnly
                 />
@@ -369,7 +369,7 @@ export default function CreateOfferPage() {
                     value={formData.startDate}
                     onChange={handleInputChange}
                     className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
-                      errors.startDate ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                      errors.startDate ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                     }`}
                   />
                   {errors.startDate && <p className="text-red-500 text-xs mt-1">{errors.startDate}</p>}
@@ -385,7 +385,7 @@ export default function CreateOfferPage() {
                     value={formData.endDate}
                     onChange={handleInputChange}
                     className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
-                      errors.endDate ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                      errors.endDate ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                     }`}
                   />
                   {errors.endDate && <p className="text-red-500 text-xs mt-1">{errors.endDate}</p>}
@@ -407,7 +407,7 @@ export default function CreateOfferPage() {
                     className={`p-3 rounded-lg border transition-all ${
                       formData.weekdays.includes(day.id)
                         ? "bg-primary/10 border-primary text-primary"
-                        : "bg-background border-primary/30 text-gray-400 hover:bg-primary/5"
+                        : "bg-background border-primary/50 text-gray-400 hover:bg-primary/5"
                     }`}
                   >
                     {day.name}
@@ -433,7 +433,7 @@ export default function CreateOfferPage() {
                     value={formData.startTime}
                     onChange={handleInputChange}
                     className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
-                      errors.startTime ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                      errors.startTime ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                     }`}
                   />
                   {errors.startTime && <p className="text-red-500 text-xs mt-1">{errors.startTime}</p>}
@@ -449,7 +449,7 @@ export default function CreateOfferPage() {
                     value={formData.endTime}
                     onChange={handleInputChange}
                     className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
-                      errors.endTime ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                      errors.endTime ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                     }`}
                   />
                   {errors.endTime && <p className="text-red-500 text-xs mt-1">{errors.endTime}</p>}
@@ -465,7 +465,7 @@ export default function CreateOfferPage() {
                     value={formData.location}
                     onChange={handleInputChange}
                     className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                      errors.location ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                      errors.location ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                     }`}
                     placeholder="Bar/Restaurant name"
                   />
@@ -485,13 +485,13 @@ export default function CreateOfferPage() {
               value={formData.terms}
               onChange={handleInputChange}
               rows={3}
-              className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all resize-none"
+              className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all resize-none"
               placeholder="Any specific terms or conditions for this offer..."
             />
           </div>
 
           {/* Submit Button */}
-          <div className="flex items-center justify-end pt-6 border-t border-primary/30">
+          <div className="flex items-center justify-end pt-6 border-t border-primary/50">
             <button
               type="submit"
               disabled={isLoading}

@@ -4,11 +4,11 @@ import {
   LogOut,
   Home,
   LayoutDashboard,
-  Store,
-  Tag,
-  CreditCard,
+  Users,
+  Shield,
   BarChart3,
-  User,
+  Settings,
+  FileText,
 } from "lucide-react";
 import Container from "@/components/ui/Container";
 import { Logo, MobileLogo } from "@/components/ui/Header";
@@ -16,57 +16,51 @@ import Navigation, { NavItem } from "@/components/ui/Navigation";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/contexts/AuthContext";
 
-export default function CompanyLayout() {
+export default function AdminLayout() {
   const { logout } = useAuth();
 
-  const navItems = [
+  const navItems: NavItem[] = [
     {
       name: "Dashboard",
-      href: "/company/dashboard",
+      href: "/admin/dashboard",
       icon: LayoutDashboard,
     },
     {
-      name: "My Companies",
-      href: "/company/companies",
-      icon: Store,
+      name: "Company Management",
+      href: "/admin/companies",
+      icon: Building2,
     },
     {
-      name: "Create Offer",
-      href: "/company/create-offer",
-      icon: Tag,
+      name: "Offer Management",
+      href: "/admin/offers",
+      icon: FileText,
     },
     {
-      name: "My Offers",
-      href: "/company/offers",
-      icon: Tag,
-    },
-    {
-      name: "Sales & Payments",
-      href: "/company/sales",
-      icon: CreditCard,
+      name: "User Management",
+      href: "/admin/users",
+      icon: Users,
     },
     {
       name: "Analytics",
-      href: "/company/analytics",
+      href: "/admin/analytics",
       icon: BarChart3,
     },
     {
-      name: "Profile",
-      href: "/company/profile",
-      icon: User,
+      name: "Settings",
+      href: "/admin/settings",
+      icon: Settings,
     },
   ];
 
-
   return (
-    <ProtectedRoute allowedRoles={["company"]} requireVerification={true}>
+    <ProtectedRoute allowedRoles={["admin"]} requireVerification={true}>
       <div className="min-h-screen bg-background">
         {/* Header */}
         <header className="bg-banner-background border-b border-primary sticky top-0 z-40">
           {/* Mobile/Tablet Header */}
           <div className="flex lg:hidden items-center justify-between px-3 sm:px-4 py-3 sm:py-4">
             {/* Mobile Logo */}
-            <Link to="/company/dashboard" className="flex-shrink-0">
+            <Link to="/admin/dashboard" className="flex-shrink-0">
               <MobileLogo />
             </Link>
 
@@ -81,13 +75,13 @@ export default function CompanyLayout() {
                 <Home className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               </Link>
 
-              {/* Company Icon */}
+              {/* Admin Icon */}
               <Link
-                to="/company/profile"
+                to="/admin/settings"
                 className="w-8 h-8 sm:w-10 sm:h-10 bg-primary rounded-lg flex items-center justify-center hover:bg-primary/90 transition-colors"
-                title="Company Profile"
+                title="Admin Settings"
               >
-                <Building2 className="w-4 h-4 sm:w-5 sm:h-5 text-dark" />
+                <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-dark" />
               </Link>
 
               {/* Logout Button */}
@@ -118,12 +112,12 @@ export default function CompanyLayout() {
                     <Home size={20} />
                   </Link>
                   <Link
-                    to="/company/profile"
+                    to="/admin/settings"
                     className="whitespace-nowrap flex items-center gap-3 font-semibold bg-primary text-dark px-4 py-1.5 rounded-3xl hover:bg-primary/90 transition-all"
                   >
-                    Company Account
+                    Admin Panel
                     <span className="text-dark border border-dark rounded-full text-base">
-                      <Building2 size={16} />
+                      <Shield size={16} />
                     </span>
                   </Link>
                   <button
@@ -139,7 +133,7 @@ export default function CompanyLayout() {
         </header>
 
         {/* Navigation Component */}
-        <Navigation navItems={navItems as NavItem[]} />
+        <Navigation navItems={navItems} />
 
         {/* Main Content */}
         <div className="lg:ml-64 pb-20 lg:pb-0">
@@ -155,4 +149,3 @@ export default function CompanyLayout() {
     </ProtectedRoute>
   );
 }
-

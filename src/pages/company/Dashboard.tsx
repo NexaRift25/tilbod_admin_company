@@ -1,4 +1,10 @@
-import { Building2, Tag, ShoppingCart, Clock, AlertCircle } from "lucide-react";
+import { 
+  Building2, 
+  Tag, 
+  ShoppingCart, 
+  Clock, 
+  AlertCircle
+} from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
 
@@ -144,7 +150,7 @@ export default function CompanyDashboardPage() {
           {pendingItems.map((item) => (
             <div
               key={item.id}
-              className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 bg-background rounded-lg border border-primary/30 hover:border-primary transition-all gap-3 sm:gap-0"
+              className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 bg-background rounded-lg border border-primary/50 hover:border-primary transition-all gap-3 sm:gap-0"
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">

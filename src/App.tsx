@@ -1,6 +1,9 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { Toaster } from './components/ui/toaster';
+import ProtectedRoute from './components/ProtectedRoute';
 import CompanyLayout from './layouts/CompanyLayout';
+import AdminLayout from './layouts/AdminLayout';
 import LoginPage from './pages/Login';
 import CompanyDashboardPage from './pages/company/Dashboard';
 import CompaniesPage from './pages/company/Companies';
@@ -10,6 +13,14 @@ import AnalyticsPage from './pages/company/Analytics';
 import SalesPage from './pages/company/Sales';
 import OffersPage from './pages/company/Offers';
 import CreateOfferPage from './pages/company/CreateOffer';
+import AdminDashboardPage from './pages/admin/Dashboard';
+import AdminCompaniesPage from './pages/admin/Companies';
+import AdminOffersPage from './pages/admin/Offers';
+import AdminUsersPage from './pages/admin/Users';
+import AdminAnalyticsPage from './pages/admin/Analytics';
+import AdminSettingsPage from './pages/admin/Settings';
+import UnauthorizedPage from './pages/Unauthorized';
+import VerifyEmailPage from './pages/VerifyEmail';
 
 function App() {
   return (
@@ -18,10 +29,19 @@ function App() {
         <Routes>
           {/* Public Routes */}
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/" element={<Navigate to="/company/dashboard" replace />} />
+          <Route path="/unauthorized" element={<UnauthorizedPage />} />
+          <Route path="/verify-email" element={<VerifyEmailPage />} />
+          <Route path="/" element={<Navigate to="/login" replace />} />
           
           {/* Company Routes */}
-          <Route path="/company" element={<CompanyLayout />}>
+          <Route 
+            path="/company" 
+            element={
+              <ProtectedRoute allowedRoles={["company"]}>
+                <CompanyLayout />
+              </ProtectedRoute>
+            }
+          >
             <Route path="dashboard" element={<CompanyDashboardPage />} />
             <Route path="companies" element={<CompaniesPage />} />
             <Route path="companies/new" element={<RegisterCompanyPage />} />
@@ -31,7 +51,25 @@ function App() {
             <Route path="analytics" element={<AnalyticsPage />} />
             <Route path="profile" element={<ProfilePage />} />
           </Route>
+
+          {/* Admin Routes */}
+          <Route 
+            path="/admin" 
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="dashboard" element={<AdminDashboardPage />} />
+            <Route path="companies" element={<AdminCompaniesPage />} />
+            <Route path="offers" element={<AdminOffersPage />} />
+            <Route path="users" element={<AdminUsersPage />} />
+            <Route path="analytics" element={<AdminAnalyticsPage />} />
+            <Route path="settings" element={<AdminSettingsPage />} />
+          </Route>
         </Routes>
+        <Toaster />
       </AuthProvider>
     </Router>
   );
