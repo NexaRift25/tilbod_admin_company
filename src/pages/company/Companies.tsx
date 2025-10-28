@@ -49,7 +49,7 @@ export default function CompaniesPage() {
       case "revision":
         return "bg-yellow-500/10 text-yellow-500";
       default:
-        return "bg-gray-500/10 text-gray-400";
+        return "bg-red-500/10 text-red-600 animate-pulse";
     }
   };
 
@@ -194,7 +194,7 @@ export default function CompaniesPage() {
 
       {/* Companies List */}
       <div className="space-y-4">
-        {filteredCompanies.length === 0 ? (
+        {filteredCompanies?.length === 0 ? (
           <div className="bg-card-background border border-primary rounded-2xl p-8 text-center">
             <Building2 className="mx-auto text-gray-400 mb-4" size={48} />
             <h3 className="text-xl font-bold text-white mb-2">No companies found</h3>
@@ -215,7 +215,7 @@ export default function CompaniesPage() {
             )}
           </div>
         ) : (
-          filteredCompanies.map((company) => (
+          filteredCompanies?.map((company) => (
             <div
               key={company.id}
               className="bg-card-background border border-primary rounded-2xl p-6 hover:border-primary/80 transition-all"
@@ -225,7 +225,7 @@ export default function CompaniesPage() {
                   <div className="flex items-center gap-3 mb-2">
                     <Building2 className="text-primary" size={24} />
                     <h3 className="text-xl font-bold text-white">{company.name}</h3>
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(company.status)}`}>
+                    <span className={`px-3 py-1 flex items-center gap-1 rounded-full text-xs font-semibold ${getStatusColor(company.status)}`}>
                       {getStatusIcon(company.status)}
                       <span className="ml-1">{getStatusText(company.status)}</span>
                     </span>
@@ -247,12 +247,12 @@ export default function CompaniesPage() {
                     <div>
                       <p className="text-gray-400">Registered</p>
                       <p className="text-white font-medium">
-                        {new Date(company.createdAt).toLocaleDateString()}
+                        {new Date(company?.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
 
-                  {company.status === "revision" && (
+                  {company?.status === "revision" && (
                     <div className="mt-3 bg-yellow-500/10 border border-yellow-500 rounded-lg p-3">
                       <div className="flex items-center gap-2">
                         <AlertCircle className="text-yellow-500" size={16} />
@@ -279,7 +279,7 @@ export default function CompaniesPage() {
       </div>
 
       {/* Limit Warning */}
-      {companies.length >= 8 && (
+      {companies?.length >= 8 && (
         <div className="bg-yellow-500/10 border border-yellow-500 rounded-2xl p-4">
           <div className="flex items-start gap-3">
             <AlertCircle className="text-yellow-500 flex-shrink-0 mt-0.5" size={20} />
@@ -294,6 +294,7 @@ export default function CompaniesPage() {
           </div>
         </div>
       )}
+      
     </div>
   );
 }
