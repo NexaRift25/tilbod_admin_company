@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #1F2233;
+  --foreground: #ffffff;
+  --primary: #FFEE00;
+  --primary-foreground: #1F2233;
+  --card-background: #1F2233;
+  --banner-background: #1F2233;
+  --general-background: #232740;
+  --radius: 0.5rem;
+  --border: rgba(255, 238, 0, 0.3);
+  --ring: #FFEE00;
+  --input: rgba(255, 238, 0, 0.3);
+  --text-dark: #1F2233;
+  --text-yellow: #FFEE00;
+  --text-pink: #ED9AEA;
+  --text-smoky-white: #ffffff;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Animated Button Css */
+.animated_button:hover .button_icon {
+  left: 0.625rem;
+}
+
+.animated_button_content {
+  transition: 0.5s;
+}
+
+.animated_button:hover .animated_button_content {
+  margin-left: 1.25rem;
+}
+
+.button_icon {
+  position: absolute;
+  left: -1.4375rem;
+  transition: left 0.5s ease;
+}
+
+.bottom_line {
+  transition: 0.5s;
+}
+
+.line_button_content {
+  transition: 0.5s;
+}
+
+.line_button:hover .line_button_content {
+  transform: translateX(0.3125rem);
+}
+
+.line_button:hover .bottom_line {
+  width: 68%;
+}
+
