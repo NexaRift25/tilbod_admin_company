@@ -34,7 +34,7 @@ export default function CompaniesPage() {
       case "rejected":
         return <XCircle className="text-red-500" size={20} />;
       case "revision":
-        return <AlertCircle className="text-yellow-500" size={20} />;
+        return <AlertCircle className="text-yellow" size={20} />;
       default:
         return <Clock className="text-gray-400" size={20} />;
     }
@@ -47,7 +47,7 @@ export default function CompaniesPage() {
       case "rejected":
         return "bg-red-500/10 text-red-500";
       case "revision":
-        return "bg-yellow-500/10 text-yellow-500";
+        return "bg-yellow/10 text-yellow";
       default:
         return "bg-red-500/10 text-red-600 animate-pulse";
     }
@@ -144,7 +144,7 @@ export default function CompaniesPage() {
               <p className="text-gray-400 text-sm">Revision</p>
               <p className="text-white text-2xl font-bold">{companyStats.revision}</p>
             </div>
-            <AlertCircle className="text-yellow-500" size={24} />
+            <AlertCircle className="text-yellow" size={24} />
           </div>
         </div>
 
@@ -253,10 +253,10 @@ export default function CompaniesPage() {
                   </div>
 
                   {company?.status === "revision" && (
-                    <div className="mt-3 bg-yellow-500/10 border border-yellow-500 rounded-lg p-3">
+                    <div className="mt-3 bg-yellow/10 border border-yellow-500 rounded-lg p-3">
                       <div className="flex items-center gap-2">
-                        <AlertCircle className="text-yellow-500" size={16} />
-                        <span className="text-yellow-500 text-sm">
+                        <AlertCircle className="text-yellow" size={16} />
+                        <span className="text-yellow text-sm">
                           Revision required (Attempt {company.revisionCount}/3)
                         </span>
                       </div>
@@ -280,11 +280,11 @@ export default function CompaniesPage() {
 
       {/* Limit Warning */}
       {companies?.length >= 8 && (
-        <div className="bg-yellow-500/10 border border-yellow-500 rounded-2xl p-4">
+        <div className="bg-yellow/10 border border-yellow rounded-2xl p-4">
           <div className="flex items-start gap-3">
-            <AlertCircle className="text-yellow-500 flex-shrink-0 mt-0.5" size={20} />
+            <AlertCircle className="text-yellow flex-shrink-0 mt-0.5" size={20} />
             <div>
-              <h3 className="text-yellow-500 font-bold mb-1">
+              <h3 className="text-yellow font-bold mb-1">
                 Company Registration Limit Warning
               </h3>
               <p className="text-sm text-gray-300">

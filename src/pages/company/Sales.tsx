@@ -119,7 +119,7 @@ export default function SalesPage() {
       case "completed":
         return <CheckCircle className="text-green-500" size={16} />;
       case "pending":
-        return <AlertCircle className="text-yellow-500" size={16} />;
+        return <AlertCircle className="text-yellow" size={16} />;
       case "refunded":
         return <AlertCircle className="text-red-500" size={16} />;
       default:
@@ -132,7 +132,7 @@ export default function SalesPage() {
       case "completed":
         return "bg-green-500/10 text-green-500";
       case "pending":
-        return "bg-yellow-500/10 text-yellow-500";
+        return "bg-yellow/10 text-yellow";
       case "refunded":
         return "bg-red-500/10 text-red-500";
       default:
@@ -145,7 +145,7 @@ export default function SalesPage() {
       case "paid":
         return "bg-green-500/10 text-green-500";
       case "pending":
-        return "bg-yellow-500/10 text-yellow-500";
+        return "bg-yellow/10 text-yellow";
       case "overdue":
         return "bg-red-500/10 text-red-500";
       default:
@@ -217,7 +217,7 @@ export default function SalesPage() {
               <p className="text-gray-400 text-sm">Pending</p>
               <p className="text-white text-2xl font-bold">{stats.pendingPayments}</p>
             </div>
-            <AlertCircle className="text-yellow-500" size={24} />
+            <AlertCircle className="text-yellow" size={24} />
           </div>
         </div>
 

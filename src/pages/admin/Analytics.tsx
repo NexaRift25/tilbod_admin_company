@@ -194,7 +194,7 @@ export default function AdminAnalyticsPage() {
       case "approval":
         return <FileText className="text-green-500" size={16} />;
       case "revenue":
-        return <DollarSign className="text-yellow-500" size={16} />;
+        return <DollarSign className="text-yellow" size={16} />;
       case "moderation":
         return <Users className="text-red-500" size={16} />;
       default:
@@ -209,7 +209,7 @@ export default function AdminAnalyticsPage() {
       case "approval":
         return "bg-green-500/10";
       case "revenue":
-        return "bg-yellow-500/10";
+        return "bg-yellow/10";
       case "moderation":
         return "bg-red-500/10";
       default:
@@ -606,7 +606,7 @@ export default function AdminAnalyticsPage() {
                   {activity.amount && (
                     <>
                       <span>•</span>
-                      <span className="text-yellow-500 font-semibold">{activity.amount}</span>
+                      <span className="text-yellow font-semibold">{activity.amount}</span>
                     </>
                   )}
                   {activity.reason && (

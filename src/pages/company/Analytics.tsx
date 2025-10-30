@@ -608,7 +608,7 @@ export default function AnalyticsPage() {
                 'bg-gray-600',
                 'bg-blue-600',
                 'bg-green-600',
-                'bg-yellow-500',
+                'bg-yellow',
                 'bg-orange-500',
                 'bg-red-500',
                 'bg-pink-500'
@@ -795,10 +795,10 @@ export default function AnalyticsPage() {
           </div>
 
           <div className="space-y-3 sm:space-y-4">
-            <div className="flex items-start gap-3 p-3 sm:p-4 bg-yellow-500/10 rounded-lg border border-yellow-500/30 hover:bg-yellow-500/20 transition-all">
-              <Calendar className="text-yellow-500 flex-shrink-0 mt-0.5" size={18} />
+            <div className="flex items-start gap-3 p-3 sm:p-4 bg-yellow/10 rounded-lg border border-yellow/30 hover:bg-yellow/20 transition-all">
+              <Calendar className="text-yellow flex-shrink-0 mt-0.5" size={18} />
               <div>
-                <h4 className="text-yellow-500 font-bold mb-1 text-sm sm:text-base">Peak Days</h4>
+                <h4 className="text-yellow font-bold mb-1 text-sm sm:text-base">Peak Days</h4>
                 <p className="text-xs sm:text-sm text-gray-300">
                   Highest engagement occurs on Tuesdays and Wednesdays. Consider scheduling more offers during these days.
                 </p>

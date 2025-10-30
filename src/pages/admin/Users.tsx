@@ -137,7 +137,7 @@ export default function AdminUsersPage() {
       case "suspended":
         return <XCircle className="text-red-500" size={20} />;
       case "pending":
-        return <Clock className="text-yellow-500" size={20} />;
+        return <Clock className="text-yellow" size={20} />;
       default:
         return <AlertCircle className="text-gray-400" size={20} />;
     }
@@ -150,7 +150,7 @@ export default function AdminUsersPage() {
       case "suspended":
         return "bg-red-500/10 text-red-500";
       case "pending":
-        return "bg-yellow-500/10 text-yellow-500";
+        return "bg-yellow/10 text-yellow";
       default:
         return "bg-gray-500/10 text-gray-400";
     }
@@ -249,7 +249,7 @@ export default function AdminUsersPage() {
               <p className="text-gray-400 text-sm">Pending</p>
               <p className="text-white text-2xl font-bold">{userStats.pending}</p>
             </div>
-            <Clock className="text-yellow-500" size={24} />
+            <Clock className="text-yellow" size={24} />
           </div>
         </div>
 

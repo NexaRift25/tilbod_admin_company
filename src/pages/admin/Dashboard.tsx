@@ -127,7 +127,7 @@ export default function AdminDashboardPage() {
       case "rejected":
         return <XCircle className="text-red-500" size={20} />;
       case "revision":
-        return <AlertCircle className="text-yellow-500" size={20} />;
+        return <AlertCircle className="text-yellow" size={20} />;
       default:
         return <Clock className="text-gray-400" size={20} />;
     }
@@ -140,7 +140,7 @@ export default function AdminDashboardPage() {
       case "rejected":
         return "bg-red-500/10 text-red-500";
       case "revision":
-        return "bg-yellow-500/10 text-yellow-500";
+        return "bg-yellow/10 text-yellow";
       default:
         return "bg-gray-500/10 text-gray-400";
     }
@@ -200,7 +200,7 @@ export default function AdminDashboardPage() {
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <div className="flex items-center gap-3">
             <h2 className="text-lg sm:text-xl font-bold text-white">Pending Approvals</h2>
-            <span className="bg-yellow-500/10 text-yellow-500 px-2 py-1 rounded-full text-xs font-semibold">
+            <span className="bg-yellow/10 text-yellow px-2 py-1 rounded-full text-xs font-semibold">
               {pendingItems.length}
             </span>
           </div>
@@ -219,7 +219,7 @@ export default function AdminDashboardPage() {
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-primary text-xs font-semibold">{item.type}</span>
                   {item.revisionCount && (
-                    <span className="bg-yellow-500/10 text-yellow-500 px-2 py-0.5 rounded text-xs">
+                    <span className="bg-yellow/10 text-yellow px-2 py-0.5 rounded text-xs">
                       Revision {item.revisionCount}/3
                     </span>
                   )}

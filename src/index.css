@@ -19,6 +19,11 @@
   --text-pink: #ED9AEA;
   --text-smoky-white: #ffffff;
   --text-green: #10C278;
+
+  /* RGB components for Tailwind opacity support */
+  --primary-rgb: 255 238 0;
+  --text-yellow-rgb: 255 238 0;
+  --text-green-rgb: 16 194 120;
 }
 
 @layer base {

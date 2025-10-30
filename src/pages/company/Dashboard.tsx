@@ -110,7 +110,7 @@ export default function CompanyDashboardPage() {
               className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6 hover:border-primary/80 transition-all"
             >
               <div className="flex items-center justify-between mb-3 sm:mb-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                <div className="w-10  h-10 sm:w-12 sm:h-12 bg-yellow/10 rounded-lg flex items-center justify-center">
                   <Icon className="text-primary" size={20} />
                 </div>
                 <span
@@ -137,48 +137,54 @@ export default function CompanyDashboardPage() {
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <div className="flex items-center gap-3">
             <h2 className="text-lg sm:text-xl font-bold text-white">Pending Approvals</h2>
-            <span className="bg-yellow-500/10 text-yellow-500 px-2 py-1 rounded-full text-xs font-semibold">
+            <span className="bg-yellow/10 text-yellow px-2 py-1 rounded-full text-xs font-semibold">
               {pendingItems.length}
             </span>
           </div>
-          <button className="text-primary hover:text-primary/80 font-medium text-xs sm:text-sm">
+          <button className="text-primary hover:text-primary font-medium text-xs sm:text-xl">
             View All
           </button>
         </div>
 
         <div className="space-y-3 sm:space-y-4">
-          {pendingItems.map((item) => (
-            <div
-              key={item.id}
-              className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 bg-background rounded-lg border border-primary/50 hover:border-primary transition-all gap-3 sm:gap-0"
-            >
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-primary text-xs font-semibold">{item.type}</span>
-                  {item.revisionCount && (
-                    <span className="bg-yellow-500/10 text-yellow-500 px-2 py-0.5 rounded text-xs">
-                      Revision {item.revisionCount}/3
-                    </span>
-                  )}
+          {pendingItems && pendingItems.length > 0 ? (
+            pendingItems.map((item) => (
+              <div
+                key={item.id}
+                className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 bg-background rounded-lg border border-primary/50 hover:border-primary transition-all gap-3 sm:gap-0"
+              >
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-primary text-xs font-semibold">{item.type}</span>
+                    {item.revisionCount && (
+                      <span className="bg-yellow/10 text-yellow px-2 py-0.5 rounded text-xs">
+                        Revision {item.revisionCount}/3
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="text-white font-semibold mb-1 text-sm sm:text-base truncate">
+                    {item.name}
+                  </h3>
+                  <p className="text-gray-400 text-xs sm:text-sm">Submitted {item.submittedAt}</p>
                 </div>
-                <h3 className="text-white font-semibold mb-1 text-sm sm:text-base truncate">
-                  {item.name}
-                </h3>
-                <p className="text-gray-400 text-xs sm:text-sm">Submitted {item.submittedAt}</p>
+                <div className="flex items-center justify-between sm:justify-end gap-4">
+                  <span
+                    className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
+                      item.status === "pending"
+                        ? "bg-yellow/10 text-yellow"
+                        : "bg-orange-500/10 text-orange-500"
+                    }`}
+                  >
+                    {item.status === "pending" ? "Under Review" : "Needs Revision"}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center justify-between sm:justify-end gap-4">
-                <span
-                  className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
-                    item.status === "pending"
-                      ? "bg-yellow-500/10 text-yellow-500"
-                      : "bg-orange-500/10 text-orange-500"
-                  }`}
-                >
-                  {item.status === "pending" ? "Under Review" : "Needs Revision"}
-                </span>
-              </div>
+            ))
+          ) : (
+            <div className="p-4 sm:p-6 bg-background rounded-lg border border-primary/30 text-center">
+              <p className="text-sm sm:text-base text-gray-400">No pending approvals available.</p>
             </div>
-          ))}
+          )}
         </div>
       </div>
 

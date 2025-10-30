@@ -478,11 +478,11 @@ export default function AdminSettingsPage() {
       </div>
 
       {/* Warning Notice */}
-      <div className="bg-yellow-500/10 border border-yellow-500 rounded-2xl p-4">
+      <div className="bg-yellow/10 border border-yellow rounded-2xl p-4">
         <div className="flex items-start gap-3">
-          <AlertTriangle className="text-yellow-500 flex-shrink-0 mt-0.5" size={20} />
+          <AlertTriangle className="text-yellow flex-shrink-0 mt-0.5" size={20} />
           <div>
-            <h3 className="text-yellow-500 font-bold mb-1">Settings Notice</h3>
+            <h3 className="text-yellow font-bold mb-1">Settings Notice</h3>
             <p className="text-sm text-gray-300">
               Changes to platform settings will affect all users. Please review changes carefully before saving.
             </p>

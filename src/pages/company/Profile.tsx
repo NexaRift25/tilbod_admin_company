@@ -435,7 +435,7 @@ export default function ProfilePage() {
 
               <div className="bg-background border border-yellow-500/30 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <AlertTriangle className="text-yellow-500" size={20} />
+                  <AlertTriangle className="text-yellow" size={20} />
                   <span className="text-xs text-gray-400">Pending</span>
                 </div>
                 <p className="text-2xl font-bold text-white">
@@ -484,7 +484,7 @@ export default function ProfilePage() {
                         <div className="flex items-center gap-3">
                           <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                             company.status === "approved" ? "bg-green-500/10 text-green-500" :
-                            company.status === "pending" ? "bg-yellow-500/10 text-yellow-500" :
+                            company.status === "pending" ? "bg-yellow/10 text-yellow" :
                             company.status === "revision" ? "bg-orange-500/10 text-orange-500" :
                             "bg-red-500/10 text-red-500"
                           }`}>
