@@ -30,6 +30,7 @@ module.exports = {
         dark: "var(--text-dark)",
         yellow: "var(--text-yellow)",
         pink: "var(--text-pink)",
+        green: "var(--text-green)",
         "smoky-white": "var(--text-smoky-white)",
         "card-background": "var(--card-background)",
         "banner-background": "var(--banner-background)",

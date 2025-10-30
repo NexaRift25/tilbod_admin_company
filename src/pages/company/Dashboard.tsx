@@ -116,10 +116,10 @@ export default function CompanyDashboardPage() {
                 <span
                   className={`text-xs sm:text-sm font-semibold ${
                     stat.changeType === "positive"
-                      ? "text-green-500"
+                      ? "text-green"
                       : stat.changeType === "warning"
-                      ? "text-yellow-500"
-                      : "text-gray-400"
+                      ? "text-yellow"
+                      : "text-smoky-white"
                   }`}
                 >
                   {stat.change}
