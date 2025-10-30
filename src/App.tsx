@@ -14,10 +14,13 @@ import SalesPage from './pages/company/Sales';
 import OffersPage from './pages/company/Offers';
 import CreateOfferPage from './pages/company/CreateOffer';
 import AdminDashboardPage from './pages/admin/Dashboard';
+import AdminApprovalQueuePage from './pages/admin/ApprovalQueue';
 import AdminCompaniesPage from './pages/admin/Companies';
 import AdminOffersPage from './pages/admin/Offers';
 import AdminUsersPage from './pages/admin/Users';
+import AdminCommissionPricingPage from './pages/admin/CommissionPricing';
 import AdminAnalyticsPage from './pages/admin/Analytics';
+import AdminEventsSeasonsPage from './pages/admin/EventsSeasons';
 import AdminSettingsPage from './pages/admin/Settings';
 import UnauthorizedPage from './pages/Unauthorized';
 import VerifyEmailPage from './pages/VerifyEmail';
@@ -62,10 +65,13 @@ function App() {
             }
           >
             <Route path="dashboard" element={<AdminDashboardPage />} />
+            <Route path="approval-queue" element={<AdminApprovalQueuePage />} />
             <Route path="companies" element={<AdminCompaniesPage />} />
             <Route path="offers" element={<AdminOffersPage />} />
             <Route path="users" element={<AdminUsersPage />} />
+            <Route path="commission-pricing" element={<AdminCommissionPricingPage />} />
             <Route path="analytics" element={<AdminAnalyticsPage />} />
+            <Route path="events-seasons" element={<AdminEventsSeasonsPage />} />
             <Route path="settings" element={<AdminSettingsPage />} />
           </Route>
         </Routes>

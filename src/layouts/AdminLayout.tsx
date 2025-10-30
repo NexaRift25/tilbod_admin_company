@@ -8,7 +8,9 @@ import {
   Shield,
   BarChart3,
   Settings,
-  FileText,
+  DollarSign,
+  Calendar,
+  Tag,
 } from "lucide-react";
 import Container from "@/components/ui/Container";
 import { Logo, MobileLogo } from "@/components/ui/Header";
@@ -26,24 +28,40 @@ export default function AdminLayout() {
       icon: LayoutDashboard,
     },
     {
-      name: "Company Management",
+      name: "Approval Queue",
+      href: "/admin/approval-queue",
+      icon: Shield,
+      badge: "30min",
+    },
+    {
+      name: "Companies",
       href: "/admin/companies",
       icon: Building2,
     },
     {
-      name: "Offer Management",
+      name: "Offers",
       href: "/admin/offers",
-      icon: FileText,
+      icon: Tag,
     },
     {
-      name: "User Management",
+      name: "Users",
       href: "/admin/users",
       icon: Users,
+    },
+    {
+      name: "Commission & Pricing",
+      href: "/admin/commission-pricing",
+      icon: DollarSign,
     },
     {
       name: "Analytics",
       href: "/admin/analytics",
       icon: BarChart3,
+    },
+    {
+      name: "Events & Seasons",
+      href: "/admin/events-seasons",
+      icon: Calendar,
     },
     {
       name: "Settings",

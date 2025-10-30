@@ -8,6 +8,7 @@ export interface NavItem {
   name: string;
   href: string;
   icon: React.ComponentType<any>;
+  badge?: string;
 }
 
 interface NavigationProps {
@@ -104,10 +105,26 @@ export default function Navigation({ navItems }: NavigationProps) {
                         delay: index * 0.05,
                         ease: "easeOut"
                       }}
-                      className="relative z-10"
+                      className="relative z-10 flex-1"
                     >
                       {item.name}
                     </motion.span>
+                    {/* Badge */}
+                    {item.badge && (
+                      <motion.span
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ 
+                          duration: 0.2, 
+                          delay: index * 0.05 + 0.1,
+                          type: "spring",
+                          stiffness: 300
+                        }}
+                        className="relative z-10 bg-red-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full"
+                      >
+                        {item.badge}
+                      </motion.span>
+                    )}
                   </Link>
                 </motion.div>
               );
@@ -198,8 +215,16 @@ export default function Navigation({ navItems }: NavigationProps) {
                     >
                       {item.name.split(' ')[0]}
                     </motion.span>
-                    
-                 
+                    {/* Badge for mobile */}
+                    {item.badge && (
+                      <motion.span
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded-full min-w-[18px] h-[18px] flex items-center justify-center"
+                      >
+                        {item.badge}
+                      </motion.span>
+                    )}
                   </Link>
                 </motion.div>
               );
@@ -344,7 +369,7 @@ export default function Navigation({ navItems }: NavigationProps) {
                             </motion.div>
                             
                             <motion.span 
-                              className="truncate relative z-10"
+                              className="truncate relative z-10 flex-1"
                               whileHover={{ 
                                 x: 2,
                                 color: "var(--primary)"
@@ -353,6 +378,16 @@ export default function Navigation({ navItems }: NavigationProps) {
                             >
                               {item.name}
                             </motion.span>
+                            {/* Badge in expanded menu */}
+                            {item.badge && (
+                              <motion.span
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                className="bg-red-500 text-white text-xs font-semibold px-1.5 py-0.5 rounded-full"
+                              >
+                                {item.badge}
+                              </motion.span>
+                            )}
                           </Link>
                         </motion.div>
                       );
