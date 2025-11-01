@@ -191,7 +191,7 @@ export default function AdminCompaniesPage() {
           </div>
         </div>
 
-        <div className="bg-card-background border border-green rounded-2xl p-4">
+        <div className="bg-card-background border border-green-500 rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Approved</p>

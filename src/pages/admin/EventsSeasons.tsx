@@ -2,109 +2,166 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Calendar,
-  ArrowLeft,
   Plus,
   Edit,
   Trash2,
-  Search,
-  Filter,
+  Eye,
+  ArrowLeft,
   Clock,
+  Users,
   Tag,
-  Building2,
-  CheckCircle,
-  XCircle,
+  Settings,
+  Snowflake,
+  Sun,
+  Leaf,
+  Gift,
+  Star,
+  Heart,
+  Sparkles
 } from "lucide-react";
 
-export default function EventsSeasonsPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [typeFilter, setTypeFilter] = useState<string>("all");
-  const [showModal, setShowModal] = useState(false);
+interface Event {
+  id: string;
+  name: string;
+  type: "seasonal" | "holiday" | "custom";
+  icon: string;
+  startDate: string;
+  endDate: string;
+  status: "active" | "upcoming" | "ended";
+  description: string;
+  discountRange: string;
+  affectedOffers: number;
+  expectedRevenue: number;
+  createdAt: string;
+  isAutoManaged: boolean;
+}
 
-  const [events, setEvents] = useState([
+export default function AdminEventsPage() {
+  const [events] = useState<Event[]>([
     {
       id: "1",
-      name: "Summer Festival 2025",
-      type: "Event",
-      startDate: "2025-06-15",
-      endDate: "2025-06-30",
-      description: "Annual summer festival with special offers from all partners",
+      name: "Christmas Season",
+      type: "holiday",
+      icon: "gift",
+      startDate: "2024-12-01",
+      endDate: "2024-12-31",
       status: "active",
-      participatingCompanies: 45,
-      specialOffers: 12,
+      description: "Holiday season with special Christmas offers and promotions",
+      discountRange: "15-30%",
+      affectedOffers: 45,
+      expectedRevenue: 750000,
+      createdAt: "2024-11-01",
+      isAutoManaged: true,
     },
     {
       id: "2",
-      name: "Christmas Season",
-      type: "Season",
-      startDate: "2025-12-01",
-      endDate: "2025-12-31",
-      description: "Holiday season promotions and gift card campaigns",
-      status: "scheduled",
-      participatingCompanies: 0,
-      specialOffers: 0,
+      name: "Black Friday",
+      type: "holiday",
+      icon: "star",
+      startDate: "2024-11-24",
+      endDate: "2024-11-27",
+      status: "ended",
+      description: "Major shopping event with significant discounts",
+      discountRange: "20-50%",
+      affectedOffers: 67,
+      expectedRevenue: 1200000,
+      createdAt: "2024-10-15",
+      isAutoManaged: true,
     },
     {
       id: "3",
-      name: "New Year Sale",
-      type: "Event",
-      startDate: "2025-12-28",
-      endDate: "2026-01-05",
-      description: "New Year promotion with discounted offers",
-      status: "scheduled",
-      participatingCompanies: 8,
-      specialOffers: 3,
+      name: "Summer Season",
+      type: "seasonal",
+      icon: "sun",
+      startDate: "2024-06-01",
+      endDate: "2024-08-31",
+      status: "ended",
+      description: "Summer vacation and travel season promotions",
+      discountRange: "10-25%",
+      affectedOffers: 38,
+      expectedRevenue: 580000,
+      createdAt: "2024-05-01",
+      isAutoManaged: true,
     },
     {
       id: "4",
-      name: "Spring Break",
-      type: "Season",
-      startDate: "2025-04-01",
-      endDate: "2025-04-30",
-      description: "Spring break special offers for travelers",
-      status: "ended",
-      participatingCompanies: 32,
-      specialOffers: 28,
+      name: "Valentine's Day",
+      type: "holiday",
+      icon: "heart",
+      startDate: "2025-02-10",
+      endDate: "2025-02-14",
+      status: "upcoming",
+      description: "Romantic offers for couples and special occasions",
+      discountRange: "15-25%",
+      affectedOffers: 23,
+      expectedRevenue: 320000,
+      createdAt: "2024-12-15",
+      isAutoManaged: true,
     },
+    {
+      id: "5",
+      name: "Restaurant Week",
+      type: "custom",
+      icon: "leaf",
+      startDate: "2025-03-15",
+      endDate: "2025-03-21",
+      status: "upcoming",
+      description: "Custom event promoting local restaurants and dining",
+      discountRange: "20-30%",
+      affectedOffers: 18,
+      expectedRevenue: 245000,
+      createdAt: "2024-12-20",
+      isAutoManaged: false,
+    }
   ]);
 
-  const filteredEvents = events.filter(event => {
-    const matchesSearch = event.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         event.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = typeFilter === "all" || event.type === typeFilter;
-    return matchesSearch && matchesType;
-  });
+  const getEventIcon = (iconName: string) => {
+    const icons: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+      gift: Gift,
+      star: Star,
+      sun: Sun,
+      snowflake: Snowflake,
+      heart: Heart,
+      leaf: Leaf,
+      sparkles: Sparkles,
+    };
+    const Icon = icons[iconName] || Calendar;
+    return <Icon size={20} />;
+  };
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case "holiday":
+        return "bg-red-500/10 text-red-500";
+      case "seasonal":
+        return "bg-blue-500/10 text-blue-500";
+      case "custom":
+        return "bg-purple-500/10 text-purple-500";
+      default:
+        return "bg-gray-500/10 text-gray-500";
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active":
-        return "bg-green/10 text-green border-green";
-      case "scheduled":
-        return "bg-blue-500/10 text-blue-500 border-blue-500";
+        return "bg-green/10 text-green";
+      case "upcoming":
+        return "bg-yellow-500/10 text-yellow-500";
       case "ended":
-        return "bg-gray-500/10 text-gray-400 border-gray-500";
+        return "bg-gray-500/10 text-gray-500";
       default:
-        return "bg-gray-500/10 text-gray-400 border-gray-500";
+        return "bg-gray-500/10 text-gray-500";
     }
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "active":
-        return <CheckCircle className="text-green" size={16} />;
-      case "scheduled":
-        return <Clock className="text-blue-500" size={16} />;
-      case "ended":
-        return <XCircle className="text-gray-400" size={16} />;
-      default:
-        return null;
-    }
-  };
-
-  const eventStats = {
+  const stats = {
     total: events.length,
     active: events.filter(e => e.status === "active").length,
-    scheduled: events.filter(e => e.status === "scheduled").length,
-    ended: events.filter(e => e.status === "ended").length,
+    upcoming: events.filter(e => e.status === "upcoming").length,
+    totalOffers: events.reduce((sum, e) => sum + e.affectedOffers, 0),
+    expectedRevenue: events.reduce((sum, e) => sum + e.expectedRevenue, 0),
+    autoManaged: events.filter(e => e.isAutoManaged).length,
   };
 
   return (
@@ -113,10 +170,10 @@ export default function EventsSeasonsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <Link
-            to="/admin/dashboard"
-            className="p-2 hover:bg-primary/10 rounded-lg transition-all"
+            href="/admin/dashboard"
+            className="p-2 hover:bg-red-500/10 rounded-lg transition-all"
           >
-            <ArrowLeft className="text-primary" size={20} />
+            <ArrowLeft className="text-red-500" size={20} />
           </Link>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white">
@@ -128,167 +185,228 @@ export default function EventsSeasonsPage() {
           </div>
         </div>
 
-        <button
-          onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-6 py-3 bg-primary text-dark font-semibold rounded-full hover:bg-primary/90 transition-all"
-        >
+        <button className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white font-semibold rounded-full hover:bg-red-600 transition-all">
           <Plus size={20} />
           Create Event
         </button>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         <div className="bg-card-background border border-primary rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Total Events</p>
-              <p className="text-white text-2xl font-bold">{eventStats.total}</p>
+              <p className="text-white text-2xl font-bold">{stats.total}</p>
             </div>
             <Calendar className="text-primary" size={24} />
           </div>
         </div>
 
-        <div className="bg-card-background border border-green rounded-2xl p-4">
+        <div className="bg-card-background border border-green-500 rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Active</p>
-              <p className="text-white text-2xl font-bold">{eventStats.active}</p>
+              <p className="text-white text-2xl font-bold">{stats.active}</p>
             </div>
-            <CheckCircle className="text-green" size={24} />
+            <Clock className="text-green" size={24} />
+          </div>
+        </div>
+
+        <div className="bg-card-background border border-yellow-500 rounded-2xl p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">Upcoming</p>
+              <p className="text-white text-2xl font-bold">{stats.upcoming}</p>
+            </div>
+            <Calendar className="text-yellow-500" size={24} />
           </div>
         </div>
 
         <div className="bg-card-background border border-blue-500 rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Scheduled</p>
-              <p className="text-white text-2xl font-bold">{eventStats.scheduled}</p>
+              <p className="text-gray-400 text-sm">Total Offers</p>
+              <p className="text-white text-2xl font-bold">{stats.totalOffers}</p>
             </div>
-            <Clock className="text-blue-500" size={24} />
+            <Tag className="text-blue-500" size={24} />
           </div>
         </div>
 
-        <div className="bg-card-background border border-gray-500 rounded-2xl p-4">
+        <div className="bg-card-background border border-purple-500 rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Ended</p>
-              <p className="text-white text-2xl font-bold">{eventStats.ended}</p>
+              <p className="text-gray-400 text-sm">Expected Revenue</p>
+              <p className="text-white text-2xl font-bold">{stats.expectedRevenue.toLocaleString()} kr.</p>
             </div>
-            <XCircle className="text-gray-400" size={24} />
+            <Users className="text-purple-500" size={24} />
           </div>
         </div>
-      </div>
 
-      {/* Filters */}
-      <div className="bg-card-background border border-primary rounded-2xl p-4">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-              <input
-                type="text"
-                placeholder="Search events..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary"
-              />
+        <div className="bg-card-background border border-orange-500 rounded-2xl p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">Auto Managed</p>
+              <p className="text-white text-2xl font-bold">{stats.autoManaged}</p>
             </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Filter size={20} className="text-gray-400" />
-            <select
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
-              className="px-3 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-            >
-              <option value="all">All Types</option>
-              <option value="Event">Events</option>
-              <option value="Season">Seasons</option>
-            </select>
+            <Settings className="text-orange-500" size={24} />
           </div>
         </div>
       </div>
 
       {/* Events List */}
       <div className="space-y-4">
-        {filteredEvents.length === 0 ? (
-          <div className="bg-card-background border border-primary rounded-2xl p-8 text-center">
-            <Calendar className="mx-auto text-gray-400 mb-4" size={48} />
-            <h3 className="text-xl font-bold text-white mb-2">No events found</h3>
-            <p className="text-gray-400">
-              Create your first event or season to get started
-            </p>
-          </div>
-        ) : (
-          filteredEvents.map((event) => (
-            <div
-              key={event.id}
-              className="bg-card-background border border-primary rounded-2xl p-6 hover:border-primary/80 transition-all"
-            >
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2 flex-wrap">
-                    <Calendar className="text-primary" size={24} />
-                    <h3 className="text-xl font-bold text-white">{event.name}</h3>
-                    <span className={`px-3 py-1 flex items-center gap-1 rounded-full text-xs font-semibold border ${getStatusColor(event.status)}`}>
-                      {getStatusIcon(event.status)}
-                      <span className="ml-1 capitalize">{event.status}</span>
-                    </span>
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      event.type === "Event" 
-                        ? "bg-blue-500/10 text-blue-500"
-                        : "bg-purple-500/10 text-purple-500"
+        {events.map((event) => (
+          <div
+            key={event.id}
+            className="bg-card-background border border-primary rounded-2xl p-6 hover:border-primary/80 transition-all"
+          >
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+                    event.type === "holiday" ? "bg-red-500/10" :
+                    event.type === "seasonal" ? "bg-blue-500/10" :
+                    "bg-purple-500/10"
+                  }`}>
+                    <span className={`${
+                      event.type === "holiday" ? "text-red-500" :
+                      event.type === "seasonal" ? "text-blue-500" :
+                      "text-purple-500"
                     }`}>
+                      {getEventIcon(event.icon)}
+                    </span>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white">{event.name}</h3>
+                    <p className="text-gray-400 text-sm">{event.description}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+                  <div>
+                    <p className="text-gray-400">Type</p>
+                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getTypeColor(event.type)}`}>
                       {event.type}
                     </span>
                   </div>
-
-                  <p className="text-gray-300 text-sm mb-4">{event.description}</p>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-                    <div>
-                      <p className="text-gray-400">Start Date</p>
-                      <p className="text-white font-medium">
-                        {new Date(event.startDate).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-gray-400">End Date</p>
-                      <p className="text-white font-medium">
-                        {new Date(event.endDate).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-gray-400">Companies</p>
-                      <p className="text-white font-medium flex items-center gap-1">
-                        <Building2 size={16} />
-                        {event.participatingCompanies}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-gray-400">Special Offers</p>
-                      <p className="text-white font-medium flex items-center gap-1">
-                        <Tag size={16} />
-                        {event.specialOffers}
-                      </p>
-                    </div>
+                  <div>
+                    <p className="text-gray-400">Status</p>
+                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(event.status)}`}>
+                      {event.status}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-gray-400">Duration</p>
+                    <p className="text-white font-medium">
+                      {event.startDate} - {event.endDate}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-gray-400">Discount Range</p>
+                    <p className="text-white font-medium">{event.discountRange}</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <button className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all">
-                    <Edit size={20} />
-                  </button>
-                  <button className="p-2 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all">
-                    <Trash2 size={20} />
-                  </button>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3 text-sm">
+                  <div>
+                    <p className="text-gray-400">Affected Offers</p>
+                    <p className="text-white font-medium">{event.affectedOffers}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-400">Expected Revenue</p>
+                    <p className="text-white font-medium">{event.expectedRevenue.toLocaleString()} kr.</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-400">Auto Managed</p>
+                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${event.isAutoManaged ? "bg-green/10 text-green" : "bg-gray-500/10 text-gray-500"}`}>
+                      {event.isAutoManaged ? "Yes" : "No"}
+                    </span>
+                  </div>
                 </div>
               </div>
+
+              <div className="flex items-center gap-3">
+                <button className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-500/10 rounded-lg transition-all">
+                  <Eye size={20} />
+                </button>
+                <button className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all">
+                  <Edit size={20} />
+                </button>
+                <button className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all">
+                  <Trash2 size={20} />
+                </button>
+              </div>
             </div>
-          ))
-        )}
+          </div>
+        ))}
+      </div>
+
+      {/* Event Management */}
+      <div className="bg-card-background border border-primary rounded-2xl p-6">
+        <h3 className="text-lg font-bold text-white mb-4">Event Management</h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div className="flex items-start gap-3">
+              <Settings className="text-blue-500 flex-shrink-0 mt-0.5" size={20} />
+              <div>
+                <h4 className="text-blue-500 font-bold mb-1">Automatic Management</h4>
+                <p className="text-sm text-gray-300">
+                  Holiday events (Christmas, Black Friday, New Year) are automatically managed by the system with predefined discount ranges and durations.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <Tag className="text-green flex-shrink-0 mt-0.5" size={20} />
+              <div>
+                <h4 className="text-green font-bold mb-1">Custom Events</h4>
+                <p className="text-sm text-gray-300">
+                  Create custom promotional events like &quot;Restaurant Week&quot; or &quot;Summer Festival&quot; with specific discount ranges and target categories.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-start gap-3">
+              <Calendar className="text-purple-500 flex-shrink-0 mt-0.5" size={20} />
+              <div>
+                <h4 className="text-purple-500 font-bold mb-1">Seasonal Events</h4>
+                <p className="text-sm text-gray-300">
+                  Summer, Winter, Spring, and Fall seasons with appropriate promotional strategies for each time period.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <Users className="text-orange-500 flex-shrink-0 mt-0.5" size={20} />
+              <div>
+                <h4 className="text-orange-500 font-bold mb-1">Impact Tracking</h4>
+                <p className="text-sm text-gray-300">
+                  Monitor event performance, affected offers, and revenue impact to optimize future promotional strategies.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Upcoming Events Alert */}
+      <div className="bg-yellow-500/10 border border-yellow-500 rounded-2xl p-4">
+        <div className="flex items-start gap-3">
+          <Calendar className="text-yellow-500 flex-shrink-0 mt-0.5" size={20} />
+          <div>
+            <h3 className="text-yellow-500 font-bold mb-1">
+              Upcoming Events
+            </h3>
+            <p className="text-sm text-gray-300">
+              Valentine&apos;s Day event starts in 11 days. Restaurant Week begins in 44 days.
+              Prepare promotional materials and notify companies about upcoming opportunities.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

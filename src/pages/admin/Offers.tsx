@@ -357,7 +357,7 @@ export default function AdminOffersPage() {
                   <button className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all">
                     <Eye size={20} />
                   </button>
-                  <button className="p-2 text-green hover:text-green-400 hover:bg-green/10 rounded-lg transition-all">
+                  <button className="p-2 text-green hover:text-green hover:bg-green/10 rounded-lg transition-all">
                     <CheckCircle size={20} />
                   </button>
                   <button className="p-2 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all">

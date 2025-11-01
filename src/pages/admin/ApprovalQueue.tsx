@@ -408,7 +408,7 @@ export default function ApprovalsPage() {
       <div className="space-y-4">
         {filteredApprovals.length === 0 ? (
           <div className="bg-card-background border border-primary rounded-2xl p-8 text-center">
-            <CheckCircle className="mx-auto text-green-500 mb-4" size={48} />
+            <CheckCircle className="mx-auto text-green mb-4" size={48} />
             <h3 className="text-xl font-bold text-white mb-2">No pending approvals</h3>
             <p className="text-gray-400">
               All items have been reviewed or no items match your current filters
