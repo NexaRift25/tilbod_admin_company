@@ -117,7 +117,7 @@ export default function SalesPage() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "completed":
-        return <CheckCircle className="text-green-500" size={16} />;
+        return <CheckCircle className="text-green" size={16} />;
       case "pending":
         return <AlertCircle className="text-yellow" size={16} />;
       case "refunded":
@@ -130,7 +130,7 @@ export default function SalesPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "completed":
-        return "bg-green-500/10 text-green-500";
+        return "bg-green/10 text-green";
       case "pending":
         return "bg-yellow/10 text-yellow";
       case "refunded":
@@ -143,7 +143,7 @@ export default function SalesPage() {
   const getPaymentStatusColor = (status: string) => {
     switch (status) {
       case "paid":
-        return "bg-green-500/10 text-green-500";
+        return "bg-green/10 text-green";
       case "pending":
         return "bg-yellow/10 text-yellow";
       case "overdue":
@@ -201,13 +201,13 @@ export default function SalesPage() {
           </div>
         </div>
 
-        <div className="bg-card-background border border-green-500 rounded-2xl p-4">
+        <div className="bg-card-background border border-green rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Revenue</p>
               <p className="text-white text-2xl font-bold">{stats.totalRevenue.toLocaleString()} kr.</p>
             </div>
-            <DollarSign className="text-green-500" size={24} />
+            <DollarSign className="text-green" size={24} />
           </div>
         </div>
 
@@ -389,7 +389,7 @@ export default function SalesPage() {
                 <div className="text-right text-sm">
                   <p className="text-gray-400">Due: {payment.dueDate}</p>
                   {payment.paidDate && (
-                    <p className="text-green-500">Paid: {payment.paidDate}</p>
+                    <p className="text-green">Paid: {payment.paidDate}</p>
                   )}
                 </div>
                 <button className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all">

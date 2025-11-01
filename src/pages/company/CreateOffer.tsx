@@ -42,7 +42,7 @@ const offerTypes = [
     name: "Weekdays Offer",
     description: "Special deals for restaurants and activities",
     icon: Calendar,
-    color: "bg-green-500/10 text-green-500 border-green-500"
+    color: "bg-green/10 text-green border-green"
   },
   {
     id: "happy_hour",

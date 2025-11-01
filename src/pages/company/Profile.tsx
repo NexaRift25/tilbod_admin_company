@@ -422,9 +422,9 @@ export default function ProfilePage() {
                 <p className="text-gray-400 text-sm">of 10 max</p>
               </div>
 
-              <div className="bg-background border border-green-500/30 rounded-lg p-4">
+              <div className="bg-background border border-green/30 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <CheckCircle className="text-green-500" size={20} />
+                  <CheckCircle className="text-green" size={20} />
                   <span className="text-xs text-gray-400">Approved</span>
                 </div>
                 <p className="text-2xl font-bold text-white">
@@ -483,7 +483,7 @@ export default function ProfilePage() {
 
                         <div className="flex items-center gap-3">
                           <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                            company.status === "approved" ? "bg-green-500/10 text-green-500" :
+                            company.status === "approved" ? "bg-green/10 text-green" :
                             company.status === "pending" ? "bg-yellow/10 text-yellow" :
                             company.status === "revision" ? "bg-orange-500/10 text-orange-500" :
                             "bg-red-500/10 text-red-500"

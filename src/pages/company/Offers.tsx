@@ -147,7 +147,7 @@ export default function OffersPage() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "active":
-        return <CheckCircle className="text-green-500" size={20} />;
+        return <CheckCircle className="text-green" size={20} />;
       case "approved":
         return <CheckCircle className="text-blue-500" size={20} />;
       case "pending":
@@ -164,7 +164,7 @@ export default function OffersPage() {
   const getStatusTextClass = (status: string) => {
     switch (status) {
       case "active":
-        return "text-green-500";
+        return "text-green";
       case "approved":
         return "text-blue-500";
       case "pending":
@@ -183,7 +183,7 @@ export default function OffersPage() {
       case "active":
         return <Tag className="text-blue-500" size={16} />;
       case "weekdays":
-        return <Calendar className="text-green-500" size={16} />;
+        return <Calendar className="text-green" size={16} />;
       case "happy_hour":
         return <Clock className="text-purple-500" size={16} />;
       case "gift_card":
@@ -198,7 +198,7 @@ export default function OffersPage() {
       case "active":
         return "bg-blue-500/10 text-blue-500";
       case "weekdays":
-        return "bg-green-500/10 text-green-500";
+        return "bg-green/10 text-green";
       case "happy_hour":
         return "bg-purple-500/10 text-purple-500";
       case "gift_card":
@@ -274,13 +274,13 @@ export default function OffersPage() {
           </div>
         </div>
 
-        <div className="bg-card-background border border-green-500 rounded-2xl p-4">
+        <div className="bg-card-background border border-green rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Active</p>
               <p className="text-white text-2xl font-bold">{stats.active}</p>
             </div>
-            <CheckCircle className="text-green-500" size={24} />
+            <CheckCircle className="text-green" size={24} />
           </div>
         </div>
 
@@ -466,7 +466,7 @@ export default function OffersPage() {
                         {offer.status === "active" && offer.extensionCount < offer.maxExtensions && (
                           <button
                             onClick={() => handleExtendOffer(offer)}
-                            className="px-2 py-1 bg-green-500 text-white font-semibold rounded text-xs hover:bg-green-600 transition-all"
+                            className="px-2 py-1 bg-green text-white font-semibold rounded text-xs hover:bg-green transition-all"
                           >
                             Extend
                           </button>

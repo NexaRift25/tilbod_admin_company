@@ -192,7 +192,7 @@ export default function AdminAnalyticsPage() {
       case "registration":
         return <Building2 className="text-blue-500" size={16} />;
       case "approval":
-        return <FileText className="text-green-500" size={16} />;
+        return <FileText className="text-green" size={16} />;
       case "revenue":
         return <DollarSign className="text-yellow" size={16} />;
       case "moderation":
@@ -207,7 +207,7 @@ export default function AdminAnalyticsPage() {
       case "registration":
         return "bg-blue-500/10";
       case "approval":
-        return "bg-green-500/10";
+        return "bg-green/10";
       case "revenue":
         return "bg-yellow/10";
       case "moderation":
@@ -226,7 +226,7 @@ export default function AdminAnalyticsPage() {
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-bold text-white">Revenue Trend</h3>
           <div className="flex items-center gap-2">
-            <DollarSign className="text-green-500" size={20} />
+            <DollarSign className="text-green" size={20} />
             <span className="text-sm text-gray-400">Last 12 months</span>
           </div>
         </div>
@@ -255,7 +255,7 @@ export default function AdminAnalyticsPage() {
         
         <div className="mt-4 flex items-center justify-between text-sm">
           <span className="text-gray-400">Total Revenue: 2,456,789 kr.</span>
-          <span className="text-green-500 font-semibold">+18.5% vs last year</span>
+          <span className="text-green font-semibold">+18.5% vs last year</span>
         </div>
       </div>
     );
@@ -351,7 +351,7 @@ export default function AdminAnalyticsPage() {
               <div className="mt-2 text-xs text-gray-400 font-medium">
                 {data.month}
               </div>
-              <div className="text-xs text-green-500 font-semibold">
+              <div className="text-xs text-green font-semibold">
                 +{data.newUsers}
               </div>
             </div>
@@ -360,7 +360,7 @@ export default function AdminAnalyticsPage() {
         
         <div className="mt-4 flex items-center justify-between text-sm">
           <span className="text-gray-400">Total Users: 1,234</span>
-          <span className="text-green-500 font-semibold">+8.2% growth</span>
+          <span className="text-green font-semibold">+8.2% growth</span>
         </div>
       </div>
     );
@@ -471,7 +471,7 @@ export default function AdminAnalyticsPage() {
                   <Icon className="text-primary" size={20} />
                 </div>
                 <span className={`text-xs sm:text-sm font-semibold ${
-                  stat.changeType === "positive" ? "text-green-500" : "text-red-500"
+                  stat.changeType === "positive" ? "text-green" : "text-red-500"
                 }`}>
                   {stat.change}
                 </span>
@@ -511,7 +511,7 @@ export default function AdminAnalyticsPage() {
             <div key={metric.name} className="text-center">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <span className={`text-sm font-semibold ${
-                  metric.changeType === "positive" ? "text-green-500" : "text-red-500"
+                  metric.changeType === "positive" ? "text-green" : "text-red-500"
                 }`}>
                   {metric.changeType === "positive" ? (
                     <TrendingUp size={16} />
@@ -520,7 +520,7 @@ export default function AdminAnalyticsPage() {
                   )}
                 </span>
                 <span className={`text-xs font-semibold ${
-                  metric.changeType === "positive" ? "text-green-500" : "text-red-500"
+                  metric.changeType === "positive" ? "text-green" : "text-red-500"
                 }`}>
                   {metric.change}
                 </span>
@@ -565,7 +565,7 @@ export default function AdminAnalyticsPage() {
               </div>
               <div className="text-right">
                 <p className="text-white font-bold">{company.revenue}</p>
-                <p className="text-green-500 text-sm font-semibold">{company.growth}</p>
+                <p className="text-green text-sm font-semibold">{company.growth}</p>
               </div>
             </div>
           ))}
@@ -640,16 +640,16 @@ export default function AdminAnalyticsPage() {
 
         <Link
           to="/admin/offers"
-          className="bg-gradient-to-br from-green-500/20 to-green-500/5 border border-green-500 rounded-2xl p-6 hover:border-green-500/80 transition-all"
+          className="bg-gradient-to-br from-green-500/20 to-green-500/5 border border-green rounded-2xl p-6 hover:border-green/80 transition-all"
         >
           <div className="flex items-center gap-3 mb-3">
-            <FileText className="text-green-500" size={24} />
+            <FileText className="text-green" size={24} />
             <h3 className="text-lg font-bold text-white">Offer Management</h3>
           </div>
           <p className="text-sm text-gray-300 mb-4">
             Monitor and approve platform offers
           </p>
-          <div className="text-green-500 text-sm font-semibold">View Offers →</div>
+          <div className="text-green text-sm font-semibold">View Offers →</div>
         </Link>
 
         <Link

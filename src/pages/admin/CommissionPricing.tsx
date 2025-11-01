@@ -166,19 +166,19 @@ export default function CommissionPricingPage() {
             </div>
             <DollarSign className="text-primary" size={24} />
           </div>
-          <div className="flex items-center gap-2 text-green-500 text-sm">
+          <div className="flex items-center gap-2 text-green text-sm">
             <TrendingUp size={16} />
             <span>+18.5% from last month</span>
           </div>
         </div>
 
-        <div className="bg-card-background border border-green-500 rounded-2xl p-6">
+        <div className="bg-card-background border border-green rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
             <div>
               <p className="text-gray-400 text-sm">Total Commission</p>
               <p className="text-white text-2xl font-bold">{totalCommission.toLocaleString()} kr.</p>
             </div>
-            <Percent className="text-green-500" size={24} />
+            <Percent className="text-green" size={24} />
           </div>
           <div className="text-gray-400 text-sm">
             {commissionSettings.defaultCommissionRate}% average rate
@@ -310,7 +310,7 @@ export default function CommissionPricingPage() {
                       <span className="text-primary font-semibold">%</span>
                       <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
                         company.status === "active"
-                          ? "bg-green-500/10 text-green-500"
+                          ? "bg-green/10 text-green"
                           : "bg-gray-500/10 text-gray-400"
                       }`}>
                         {company.status}
@@ -391,7 +391,7 @@ export default function CommissionPricingPage() {
                     <ul className="space-y-2 mb-6">
                       {plan.features.map((feature, index) => (
                         <li key={index} className="flex items-center gap-2 text-gray-300 text-sm">
-                          <CheckCircle className="text-green-500" size={16} />
+                          <CheckCircle className="text-green" size={16} />
                           {feature}
                         </li>
                       ))}

@@ -97,25 +97,25 @@ export default function AnalyticsPage() {
               <p className="text-gray-400 text-sm">Total Views</p>
               <p className="text-white text-2xl font-bold">{currentMonthStats.totalViews.toLocaleString()}</p>
               <div className="flex items-center gap-1 mt-1">
-                <TrendingUp className="text-green-500" size={14} />
-                <span className="text-green-500 text-xs">+12%</span>
+                <TrendingUp className="text-green" size={14} />
+                <span className="text-green text-xs">+12%</span>
               </div>
             </div>
             <Eye className="text-primary" size={24} />
           </div>
         </div>
 
-        <div className="bg-card-background border border-green-500 rounded-2xl p-4">
+        <div className="bg-card-background border border-green rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Total Purchases</p>
               <p className="text-white text-2xl font-bold">{currentMonthStats.totalPurchases}</p>
               <div className="flex items-center gap-1 mt-1">
-                <TrendingUp className="text-green-500" size={14} />
-                <span className="text-green-500 text-xs">+18%</span>
+                <TrendingUp className="text-green" size={14} />
+                <span className="text-green text-xs">+18%</span>
               </div>
             </div>
-            <ShoppingBag className="text-green-500" size={24} />
+            <ShoppingBag className="text-green" size={24} />
           </div>
         </div>
 
@@ -125,8 +125,8 @@ export default function AnalyticsPage() {
               <p className="text-gray-400 text-sm">Total Revenue</p>
               <p className="text-white text-2xl font-bold">{currentMonthStats.totalRevenue.toLocaleString()} kr.</p>
               <div className="flex items-center gap-1 mt-1">
-                <TrendingUp className="text-green-500" size={14} />
-                <span className="text-green-500 text-xs">+24%</span>
+                <TrendingUp className="text-green" size={14} />
+                <span className="text-green text-xs">+24%</span>
               </div>
             </div>
             <DollarSign className="text-blue-500" size={24} />
@@ -287,7 +287,7 @@ export default function AnalyticsPage() {
             <span className="text-xs sm:text-sm text-gray-400">Revenue (kr)</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+            <div className="w-3 h-3 bg-green rounded-full"></div>
             <span className="text-xs sm:text-sm text-gray-400">Purchases</span>
           </div>
         </div>
@@ -326,7 +326,7 @@ export default function AnalyticsPage() {
 
                     <div className="text-left sm:text-right pl-13 sm:pl-0">
                       <p className="text-white font-bold text-base sm:text-lg">{offer.revenue.toLocaleString()} kr.</p>
-                      <p className="text-green-500 text-xs sm:text-sm font-semibold">{offer.conversionRate}% conversion</p>
+                      <p className="text-green text-xs sm:text-sm font-semibold">{offer.conversionRate}% conversion</p>
                     </div>
                   </div>
                 </div>
@@ -341,8 +341,8 @@ export default function AnalyticsPage() {
 
           <div className="grid grid-cols-2 gap-4 sm:gap-6">
             {offerPerformance.map((offer, index) => {
-              const colors = ['text-blue-500', 'text-green-500', 'text-purple-500', 'text-orange-500'];
-              const bgColors = ['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-orange-500'];
+              const colors = ['text-blue-500', 'text-green', 'text-purple-500', 'text-orange-500'];
+              const bgColors = ['bg-blue-500', 'bg-green', 'bg-purple-500', 'bg-orange-500'];
               const strokeColors = ['stroke-blue-500', 'stroke-green-500', 'stroke-purple-500', 'stroke-orange-500'];
               const glowColors = ['shadow-blue-500/50', 'shadow-green-500/50', 'shadow-purple-500/50', 'shadow-orange-500/50'];
               
@@ -400,7 +400,7 @@ export default function AnalyticsPage() {
         <div className="space-y-3 sm:space-y-4">
           {[
             { stage: 'Total Views', count: currentMonthStats.totalViews, percentage: 100, color: 'bg-blue-500' },
-            { stage: 'Clicked Offers', count: Math.round(currentMonthStats.totalViews * 0.4), percentage: 40, color: 'bg-green-500' },
+            { stage: 'Clicked Offers', count: Math.round(currentMonthStats.totalViews * 0.4), percentage: 40, color: 'bg-green' },
             { stage: 'Added to Cart', count: Math.round(currentMonthStats.totalViews * 0.15), percentage: 15, color: 'bg-purple-500' },
             { stage: 'Completed Purchase', count: currentMonthStats.totalPurchases, percentage: Math.round((currentMonthStats.totalPurchases / currentMonthStats.totalViews) * 100), color: 'bg-orange-500' }
           ].map((stage, index) => (
@@ -499,7 +499,7 @@ export default function AnalyticsPage() {
                 { name: 'Active Offers', amount: 420000, color: 'bg-blue-500', percentage: 72 },
                 { name: 'Gift Cards', amount: 127500, color: 'bg-orange-500', percentage: 22 },
                 { name: 'Happy Hour', amount: 18000, color: 'bg-purple-500', percentage: 3 },
-                { name: 'Weekdays', amount: 16000, color: 'bg-green-500', percentage: 3 }
+                { name: 'Weekdays', amount: 16000, color: 'bg-green', percentage: 3 }
               ].map((item) => (
                 <div key={item.name} className="flex items-center gap-2">
                   <div className={`w-3 h-3 ${item.color} rounded-full flex-shrink-0`}></div>
@@ -578,7 +578,7 @@ export default function AnalyticsPage() {
             <div className="grid grid-cols-2 gap-2 sm:gap-3 mt-4 sm:mt-6 w-full">
               {[
                 { name: 'Hotels', purchases: 12, color: 'bg-blue-500', percentage: 16 },
-                { name: 'Dining', purchases: 26, color: 'bg-green-500', percentage: 34 },
+                { name: 'Dining', purchases: 26, color: 'bg-green', percentage: 34 },
                 { name: 'Wellness', purchases: 15, color: 'bg-purple-500', percentage: 20 },
                 { name: 'Activities', purchases: 23, color: 'bg-orange-500', percentage: 30 }
               ].map((item) => (
@@ -607,7 +607,7 @@ export default function AnalyticsPage() {
               const colors = [
                 'bg-gray-600',
                 'bg-blue-600',
-                'bg-green-600',
+                'bg-green',
                 'bg-yellow',
                 'bg-orange-500',
                 'bg-red-500',
@@ -649,7 +649,7 @@ export default function AnalyticsPage() {
           <div className="flex gap-1">
             <div className="w-3 h-3 sm:w-4 sm:h-4 bg-gray-600 opacity-10 rounded"></div>
             <div className="w-3 h-3 sm:w-4 sm:h-4 bg-blue-600 opacity-30 rounded"></div>
-            <div className="w-3 h-3 sm:w-4 sm:h-4 bg-green-600 opacity-60 rounded"></div>
+            <div className="w-3 h-3 sm:w-4 sm:h-4 bg-green opacity-60 rounded"></div>
             <div className="w-3 h-3 sm:w-4 sm:h-4 bg-orange-600 opacity-100 rounded"></div>
           </div>
           <span className="text-xs text-gray-400">More Active</span>
@@ -663,7 +663,7 @@ export default function AnalyticsPage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {[
             { label: 'Revenue Goal', current: 581500, target: 800000, color: 'stroke-blue-500', bgColor: 'text-blue-500' },
-            { label: 'Sales Target', current: 76, target: 100, color: 'stroke-green-500', bgColor: 'text-green-500' },
+            { label: 'Sales Target', current: 76, target: 100, color: 'stroke-green-500', bgColor: 'text-green' },
             { label: 'New Customers', current: 145, target: 200, color: 'stroke-purple-500', bgColor: 'text-purple-500' },
             { label: 'Avg Conversion', current: 5.5, target: 8, color: 'stroke-orange-500', bgColor: 'text-orange-500' }
           ].map((goal) => {
@@ -723,7 +723,7 @@ export default function AnalyticsPage() {
         <div className="space-y-4 sm:space-y-6">
           {[
             { name: 'Active Offers', views: 245, purchases: 12, revenue: 420000, color: 'bg-blue-500', borderColor: 'border-blue-500', shadowColor: 'shadow-blue-500/20' },
-            { name: 'Weekday Specials', views: 156, purchases: 8, revenue: 16000, color: 'bg-green-500', borderColor: 'border-green-500', shadowColor: 'shadow-green-500/20' },
+            { name: 'Weekday Specials', views: 156, purchases: 8, revenue: 16000, color: 'bg-green', borderColor: 'border-green', shadowColor: 'shadow-green-500/20' },
             { name: 'Happy Hour', views: 312, purchases: 18, revenue: 18000, color: 'bg-purple-500', borderColor: 'border-purple-500', shadowColor: 'shadow-purple-500/20' },
             { name: 'Gift Cards', views: 89, purchases: 15, revenue: 127500, color: 'bg-orange-500', borderColor: 'border-orange-500', shadowColor: 'shadow-orange-500/20' }
           ].map((type) => {
@@ -773,10 +773,10 @@ export default function AnalyticsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6">
           <div className="space-y-3 sm:space-y-4">
-            <div className="flex items-start gap-3 p-3 sm:p-4 bg-green-500/10 rounded-lg border border-green-500/30 hover:bg-green-500/20 transition-all">
-              <TrendingUp className="text-green-500 flex-shrink-0 mt-0.5" size={18} />
+            <div className="flex items-start gap-3 p-3 sm:p-4 bg-green/10 rounded-lg border border-green/30 hover:bg-green/20 transition-all">
+              <TrendingUp className="text-green flex-shrink-0 mt-0.5" size={18} />
               <div>
-                <h4 className="text-green-500 font-bold mb-1 text-sm sm:text-base">Strong Performance</h4>
+                <h4 className="text-green font-bold mb-1 text-sm sm:text-base">Strong Performance</h4>
                 <p className="text-xs sm:text-sm text-gray-300">
                   Your offers are performing well with a {currentMonthStats.avgConversionRate}% conversion rate, above the industry average.
                 </p>

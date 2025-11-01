@@ -198,7 +198,7 @@ export default function CategoriesPage() {
 
   const getStatusIcon = (status: string) => {
     return status === "active" ? (
-      <CheckCircle className="text-green-500" size={20} />
+      <CheckCircle className="text-green" size={20} />
     ) : (
       <XCircle className="text-gray-400" size={20} />
     );
@@ -206,7 +206,7 @@ export default function CategoriesPage() {
 
   const getStatusColor = (status: string) => {
     return status === "active"
-      ? "bg-green-500/10 text-green-500 border-green-500"
+      ? "bg-green/10 text-green border-green"
       : "bg-gray-500/10 text-gray-400 border-gray-500";
   };
 
@@ -260,13 +260,13 @@ export default function CategoriesPage() {
           </div>
         </div>
 
-        <div className="bg-card-background border border-green-500 rounded-2xl p-4">
+        <div className="bg-card-background border border-green rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Active</p>
               <p className="text-white text-2xl font-bold">{categoryStats.active}</p>
             </div>
-            <CheckCircle className="text-green-500" size={24} />
+            <CheckCircle className="text-green" size={24} />
           </div>
         </div>
 
@@ -387,7 +387,7 @@ export default function CategoriesPage() {
                     className={`p-2 rounded-lg transition-all ${
                       category.status === "active"
                         ? "text-gray-400 hover:text-yellow hover:bg-yellow/10"
-                        : "text-gray-400 hover:text-green-500 hover:bg-green-500/10"
+                        : "text-gray-400 hover:text-green hover:bg-green/10"
                     }`}
                     title={category.status === "active" ? "Deactivate" : "Activate"}
                   >
@@ -486,7 +486,7 @@ export default function CategoriesPage() {
             <div className="flex items-center gap-4">
               <label className={`flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg transition-all ${
                 formData.status === "active"
-                  ? "bg-green-500/10"
+                  ? "bg-green/10"
                   : "bg-background"
               }`}>
                 <input

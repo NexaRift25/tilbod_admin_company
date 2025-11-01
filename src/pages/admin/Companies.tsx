@@ -113,7 +113,7 @@ export default function AdminCompaniesPage() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "approved":
-        return <CheckCircle className="text-green-500" size={20} />;
+        return <CheckCircle className="text-green" size={20} />;
       case "rejected":
         return <XCircle className="text-red-500" size={20} />;
       case "revision":
@@ -126,7 +126,7 @@ export default function AdminCompaniesPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "approved":
-        return "bg-green-500/10 text-green-500";
+        return "bg-green/10 text-green";
       case "rejected":
         return "bg-red-500/10 text-red-500";
       case "revision":
@@ -191,13 +191,13 @@ export default function AdminCompaniesPage() {
           </div>
         </div>
 
-        <div className="bg-card-background border border-green-500 rounded-2xl p-4">
+        <div className="bg-card-background border border-green rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Approved</p>
               <p className="text-white text-2xl font-bold">{companyStats.approved}</p>
             </div>
-            <CheckCircle className="text-green-500" size={24} />
+            <CheckCircle className="text-green" size={24} />
           </div>
         </div>
 

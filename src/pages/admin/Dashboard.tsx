@@ -1,13 +1,12 @@
 import { 
   Building2, 
-  Users, 
-  FileText, 
   CheckCircle, 
   XCircle, 
   Clock, 
   AlertCircle,
   DollarSign,
-  Activity
+  Activity,
+  Tag
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -17,32 +16,44 @@ export default function AdminDashboardPage() {
   // Mock data for admin dashboard
   const stats = [
     {
+      name: "Pending Approvals",
+      value: "8",
+      icon: Clock,
+      change: "Review in 30 min",
+      changeType: "warning",
+      borderColor: "border-red-500",
+      iconBg: "bg-red-500/10",
+      iconColor: "text-red-500",
+    },
+    {
       name: "Total Companies",
       value: "156",
       icon: Building2,
       change: "+12 this month",
       changeType: "positive",
+      borderColor: "border-primary",
+      iconBg: "bg-primary/10",
+      iconColor: "text-primary",
     },
     {
-      name: "Active Users",
-      value: "1,234",
-      icon: Users,
-      change: "+8%",
+      name: "Active Offers",
+      value: "342",
+      icon: Tag,
+      change: "+28 this week",
       changeType: "positive",
-    },
-    {
-      name: "Total Offers",
-      value: "2,847",
-      icon: FileText,
-      change: "+23 this week",
-      changeType: "positive",
+      borderColor: "border-primary",
+      iconBg: "bg-primary/10",
+      iconColor: "text-primary",
     },
     {
       name: "Platform Revenue",
-      value: "1,245,600 kr.",
+      value: "1.2M kr.",
       icon: DollarSign,
       change: "+15%",
       changeType: "positive",
+      borderColor: "border-primary",
+      iconBg: "bg-primary/10",
+      iconColor: "text-primary",
     },
   ];
 
@@ -50,36 +61,32 @@ export default function AdminDashboardPage() {
     {
       id: 1,
       type: "Company",
-      name: "Hotel Aurora",
+      name: "Nordic Spa & Wellness",
       status: "pending",
-      submittedAt: "2 hours ago",
-      category: "Hotels & Accommodation",
+      submittedAt: "5 minutes ago",
+      company: "Nordic Group",
+      timeRemaining: 25,
+      urgent: false,
     },
     {
       id: 2,
-      type: "Company",
-      name: "Blue Lagoon Spa",
-      status: "revision",
-      submittedAt: "1 day ago",
-      revisionCount: 1,
-      category: "Wellness & Spa",
+      type: "Offer",
+      name: "Christmas Special - 50% Off",
+      status: "pending",
+      submittedAt: "12 minutes ago",
+      company: "Hotel Aurora",
+      timeRemaining: 18,
+      urgent: false,
     },
     {
       id: 3,
-      type: "Offer",
-      name: "Weekend Getaway Package",
+      type: "Company",
+      name: "Reykjavik Bar & Lounge",
       status: "pending",
-      submittedAt: "30 minutes ago",
-      company: "Hotel Aurora",
-    },
-    {
-      id: 4,
-      type: "Offer",
-      name: "Spa Day Special",
-      status: "revision",
-      submittedAt: "3 hours ago",
-      company: "Blue Lagoon Spa",
-      revisionCount: 1,
+      submittedAt: "20 minutes ago",
+      company: "Nightlife Co.",
+      timeRemaining: 10,
+      urgent: true,
     },
   ];
 
@@ -90,7 +97,7 @@ export default function AdminDashboardPage() {
       company: "Restaurant Nordic",
       timestamp: "5 minutes ago",
       icon: CheckCircle,
-      color: "text-green-500",
+      color: "text-green",
     },
     {
       id: 2,
@@ -116,48 +123,10 @@ export default function AdminDashboardPage() {
       company: "Hotel Aurora",
       timestamp: "3 hours ago",
       icon: CheckCircle,
-      color: "text-green-500",
+      color: "text-green",
     },
   ];
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "approved":
-        return <CheckCircle className="text-green-500" size={20} />;
-      case "rejected":
-        return <XCircle className="text-red-500" size={20} />;
-      case "revision":
-        return <AlertCircle className="text-yellow" size={20} />;
-      default:
-        return <Clock className="text-gray-400" size={20} />;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "approved":
-        return "bg-green-500/10 text-green-500";
-      case "rejected":
-        return "bg-red-500/10 text-red-500";
-      case "revision":
-        return "bg-yellow/10 text-yellow";
-      default:
-        return "bg-gray-500/10 text-gray-400";
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case "approved":
-        return "Approved";
-      case "rejected":
-        return "Rejected";
-      case "revision":
-        return "Needs Revision";
-      default:
-        return "Pending Review";
-    }
-  };
 
   return (
     <div className="space-y-6 sm:space-y-8">
@@ -175,82 +144,86 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {stats.map((stat) => {
           const Icon = stat.icon;
+          const changeColor = stat.changeType === "warning" 
+            ? "text-yellow" 
+            : stat.changeType === "positive" 
+            ? "text-green" 
+            : "text-red-500";
+          
           return (
             <div
               key={stat.name}
-              className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6 hover:border-primary/80 transition-all"
+              className={`bg-card-background border ${stat.borderColor} rounded-2xl p-4 sm:p-6 hover:${stat.borderColor}/80 transition-all`}
             >
-              <div className="flex items-center justify-between mb-3 sm:mb-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <Icon className="text-primary" size={20} />
+              <div className="flex items-center justify-between mb-3">
+                <div className={`${stat.iconBg} rounded-lg flex items-center justify-center p-2 sm:p-2.5`}>
+                  <Icon className={stat.iconColor} size={20} />
                 </div>
-                <span className="text-xs sm:text-sm font-semibold text-green-500">
+                <span className={`text-xs sm:text-sm font-semibold ${changeColor}`}>
                   {stat.change}
                 </span>
               </div>
-              <h3 className="text-gray-400 text-xs sm:text-sm mb-1">{stat.name}</h3>
-              <p className="text-white text-xl sm:text-2xl font-bold">{stat.value}</p>
+              <h3 className="text-white text-sm sm:text-base mb-3">{stat.name}</h3>
+              <p className="text-white text-2xl sm:text-3xl font-bold">{stat.value}</p>
             </div>
           );
         })}
       </div>
 
-      {/* Pending Approvals */}
-      <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
-        <div className="flex items-center justify-between mb-4 sm:mb-6">
+      {/* Approval Queue */}
+      <div className="bg-card-background border border-red-500 rounded-2xl p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-3">
           <div className="flex items-center gap-3">
-            <h2 className="text-lg sm:text-xl font-bold text-white">Pending Approvals</h2>
-            <span className="bg-yellow/10 text-yellow px-2 py-1 rounded-full text-xs font-semibold">
-              {pendingItems.length}
+            <AlertCircle className="text-red-500" size={20} />
+            <h2 className="text-lg sm:text-xl font-bold text-white">Approval Queue</h2>
+            <span className="bg-red-500 text-white px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">
+              30 min SLA
             </span>
           </div>
-          <button className="text-primary hover:text-primary/80 font-medium text-xs sm:text-sm">
-            View All
+          <button className="text-red-500 hover:text-red-400 font-medium text-xs sm:text-sm">
+            Review All
           </button>
         </div>
 
         <div className="space-y-3 sm:space-y-4">
-          {pendingItems.map((item) => (
-            <div
-              key={item.id}
-              className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 bg-background rounded-lg border border-primary/50 hover:border-primary transition-all gap-3 sm:gap-0"
-            >
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-primary text-xs font-semibold">{item.type}</span>
-                  {item.revisionCount && (
-                    <span className="bg-yellow/10 text-yellow px-2 py-0.5 rounded text-xs">
-                      Revision {item.revisionCount}/3
-                    </span>
-                  )}
+          {pendingItems.map((item) => {
+            const isUrgent = item.urgent || item.timeRemaining <= 10;
+            const borderColor = isUrgent ? "border-red-500 hover:border-red-500/80" : "border-primary hover:border-primary/80";
+            const timeColor = isUrgent ? "text-red-500" : "text-white";
+            
+            return (
+              <div
+                key={item.id}
+                className={`flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-background rounded-lg border ${borderColor} transition-all gap-3 sm:gap-4`}
+              >
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
+                    <span className="text-primary text-xs font-semibold">{item.type}</span>
+                    {isUrgent && (
+                      <>
+                        <AlertCircle className="text-red-500" size={14} />
+                        <span className="text-red-500 text-xs font-semibold">Urgent</span>
+                      </>
+                    )}
+                    <span className="text-white font-bold text-sm sm:text-base">{item.name}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-400">
+                    <span>{item.company}</span>
+                    <span>•</span>
+                    <span>Submitted {item.submittedAt}</span>
+                  </div>
                 </div>
-                <h3 className="text-white font-semibold mb-1 text-sm sm:text-base truncate">
-                  {item.name}
-                </h3>
-                <div className="flex items-center gap-4 text-xs sm:text-sm text-gray-400">
-                  <span>Submitted {item.submittedAt}</span>
-                  {item.category && <span>• {item.category}</span>}
-                  {item.company && <span>• {item.company}</span>}
-                </div>
-              </div>
-              <div className="flex items-center justify-between sm:justify-end gap-4">
-                <span
-                  className={`px-2 sm:px-3 flex items-center gap-1 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${getStatusColor(item.status)}`}
-                >
-                  {getStatusIcon(item.status)}
-                  <span className="ml-1">{getStatusText(item.status)}</span>
-                </span>
-                <div className="flex items-center gap-2">
-                  <button className="p-1 text-green-500 hover:text-green-400 hover:bg-green-500/10 rounded transition-all">
-                    <CheckCircle size={16} />
-                  </button>
-                  <button className="p-1 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded transition-all">
-                    <XCircle size={16} />
+                <div className="flex items-center gap-3">
+                  <span className={`bg-gray-500/20 ${timeColor} px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap`}>
+                    {item.timeRemaining} min left
+                  </span>
+                  <button className="bg-primary text-dark px-4 py-2 rounded-lg font-semibold text-sm hover:bg-primary/90 transition-all">
+                    Review
                   </button>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
