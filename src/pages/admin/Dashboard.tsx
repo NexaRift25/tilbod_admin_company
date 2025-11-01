@@ -235,7 +235,7 @@ export default function AdminDashboardPage() {
               </div>
               <div className="flex items-center justify-between sm:justify-end gap-4">
                 <span
-                  className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${getStatusColor(item.status)}`}
+                  className={`px-2 sm:px-3 flex items-center gap-1 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${getStatusColor(item.status)}`}
                 >
                   {getStatusIcon(item.status)}
                   <span className="ml-1">{getStatusText(item.status)}</span>
@@ -261,7 +261,7 @@ export default function AdminDashboardPage() {
             <h2 className="text-lg sm:text-xl font-bold text-white">Recent Activity</h2>
             <Activity className="text-primary" size={20} />
           </div>
-          <button className="text-primary hover:text-primary/80 font-medium text-xs sm:text-sm">
+          <button className="text-primary hover:text-primary/80 font-medium text-xs sm:text-lg">
             View All
           </button>
         </div>

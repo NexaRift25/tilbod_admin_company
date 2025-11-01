@@ -21,6 +21,7 @@ import AdminUsersPage from './pages/admin/Users';
 import AdminCommissionPricingPage from './pages/admin/CommissionPricing';
 import AdminAnalyticsPage from './pages/admin/Analytics';
 import AdminEventsSeasonsPage from './pages/admin/EventsSeasons';
+import AdminCategoriesPage from './pages/admin/Categories';
 import AdminSettingsPage from './pages/admin/Settings';
 import UnauthorizedPage from './pages/Unauthorized';
 import VerifyEmailPage from './pages/VerifyEmail';
@@ -72,6 +73,7 @@ function App() {
             <Route path="commission-pricing" element={<AdminCommissionPricingPage />} />
             <Route path="analytics" element={<AdminAnalyticsPage />} />
             <Route path="events-seasons" element={<AdminEventsSeasonsPage />} />
+            <Route path="categories" element={<AdminCategoriesPage />} />
             <Route path="settings" element={<AdminSettingsPage />} />
           </Route>
         </Routes>

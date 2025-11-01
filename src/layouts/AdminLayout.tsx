@@ -11,6 +11,7 @@ import {
   DollarSign,
   Calendar,
   Tag,
+  FolderOpen,
 } from "lucide-react";
 import Container from "@/components/ui/Container";
 import { Logo, MobileLogo } from "@/components/ui/Header";
@@ -28,7 +29,7 @@ export default function AdminLayout() {
       icon: LayoutDashboard,
     },
     {
-      name: "Approval Queue",
+      name: "Approval",
       href: "/admin/approval-queue",
       icon: Shield,
       badge: "30min",
@@ -49,7 +50,7 @@ export default function AdminLayout() {
       icon: Users,
     },
     {
-      name: "Commission & Pricing",
+      name: "Commission & Price",
       href: "/admin/commission-pricing",
       icon: DollarSign,
     },
@@ -62,6 +63,11 @@ export default function AdminLayout() {
       name: "Events & Seasons",
       href: "/admin/events-seasons",
       icon: Calendar,
+    },
+    {
+      name: "Categories",
+      href: "/admin/categories",
+      icon: FolderOpen,
     },
     {
       name: "Settings",
