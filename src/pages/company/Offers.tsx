@@ -8,7 +8,6 @@ import {
   ArrowLeft,
   Filter,
   Search,
-  Calendar,
   Clock,
   DollarSign,
   CheckCircle,
@@ -16,6 +15,10 @@ import {
   Users
 } from "lucide-react";
 import Pagination from "@/components/ui/Pagination";
+import ActiveOfferCard from "@/components/offerCards/active-offer-card";
+import WeeklyOfferCard from "@/components/offerCards/weeklyOfferCard";
+import HappyHourOfferCard from "@/components/offerCards/happyHour";
+import GiftOfferCard from "@/components/offerCards/giftOfferCard";
 
 interface Offer {
   id: string;
@@ -39,6 +42,7 @@ interface Offer {
 
 export default function OffersPage() {
   const [offers, setOffers] = useState<Offer[]>([
+    // Active offers (3)
     {
       id: "1",
       title: "Weekend Getaway Package",
@@ -60,6 +64,45 @@ export default function OffersPage() {
     },
     {
       id: "2",
+      title: "Mountain Adventure Tour",
+      type: "active",
+      category: "Adventure & Tours",
+      originalPrice: 85000,
+      discountPrice: 60000,
+      discountPercentage: 29,
+      status: "approved",
+      startDate: "2025-02-01",
+      endDate: "2025-02-28",
+      createdAt: "2024-12-20",
+      views: 189,
+      purchases: 15,
+      revenue: 900000,
+      extensionCount: 0,
+      maxExtensions: 4,
+      companyId: "company1"
+    },
+    {
+      id: "3",
+      title: "Luxury Spa Experience",
+      type: "gift_card",
+      category: "Wellness & Spa",
+      originalPrice: 25000,
+      discountPrice: 20000,
+      discountPercentage: 20,
+      status: "active",
+      startDate: "2025-01-15",
+      endDate: "2025-03-15",
+      createdAt: "2024-12-18",
+      views: 312,
+      purchases: 28,
+      revenue: 560000,
+      extensionCount: 0,
+      maxExtensions: 4,
+      companyId: "company1"
+    },
+    // Pending offers (3)
+    {
+      id: "4",
       title: "Happy Hour Special",
       type: "happy_hour",
       category: "Food & Dining",
@@ -78,26 +121,46 @@ export default function OffersPage() {
       companyId: "company1"
     },
     {
-      id: "3",
-      title: "Tuesday Restaurant Special",
+      id: "5",
+      title: "Midweek Restaurant Deal",
       type: "weekdays",
       category: "Food & Dining",
-      originalPrice: 2500,
-      discountPrice: 2000,
-      discountPercentage: 20,
-      status: "approved",
-      startDate: "2025-01-10",
-      endDate: "2025-03-10",
-      createdAt: "2024-12-18",
-      views: 156,
-      purchases: 8,
-      revenue: 16000,
+      originalPrice: 3000,
+      discountPrice: 2200,
+      discountPercentage: 27,
+      status: "pending",
+      startDate: "2025-02-01",
+      endDate: "2025-04-01",
+      createdAt: "2024-12-22",
+      views: 0,
+      purchases: 0,
+      revenue: 0,
       extensionCount: 0,
       maxExtensions: 4,
       companyId: "company1"
     },
     {
-      id: "4",
+      id: "6",
+      title: "Winter Sports Package",
+      type: "active",
+      category: "Adventure & Tours",
+      originalPrice: 120000,
+      discountPrice: 95000,
+      discountPercentage: 21,
+      status: "pending",
+      startDate: "2025-02-10",
+      endDate: "2025-03-10",
+      createdAt: "2024-12-25",
+      views: 0,
+      purchases: 0,
+      revenue: 0,
+      extensionCount: 0,
+      maxExtensions: 4,
+      companyId: "company1"
+    },
+    // Inactive/Expired offers (3)
+    {
+      id: "7",
       title: "Spa & Wellness Gift Card",
       type: "gift_card",
       category: "Wellness & Spa",
@@ -114,23 +177,136 @@ export default function OffersPage() {
       extensionCount: 2,
       maxExtensions: 4,
       companyId: "company1"
+    },
+    {
+      id: "8",
+      title: "Autumn Restaurant Special",
+      type: "weekdays",
+      category: "Food & Dining",
+      originalPrice: 2000,
+      discountPrice: 1500,
+      discountPercentage: 25,
+      status: "expired",
+      startDate: "2024-10-01",
+      endDate: "2024-11-30",
+      createdAt: "2024-09-20",
+      views: 134,
+      purchases: 9,
+      revenue: 13500,
+      extensionCount: 1,
+      maxExtensions: 4,
+      companyId: "company1"
+    },
+    {
+      id: "9",
+      title: "Summer Beach Getaway",
+      type: "active",
+      category: "Hotels & Accommodation",
+      originalPrice: 60000,
+      discountPrice: 45000,
+      discountPercentage: 25,
+      status: "expired",
+      startDate: "2024-06-01",
+      endDate: "2024-08-31",
+      createdAt: "2024-05-15",
+      views: 567,
+      purchases: 45,
+      revenue: 2025000,
+      extensionCount: 0,
+      maxExtensions: 4,
+      companyId: "company1"
+    },
+    // Rejected offers (3)
+    {
+      id: "10",
+      title: "Night Club VIP Experience",
+      type: "happy_hour",
+      category: "Entertainment",
+      originalPrice: 5000,
+      discountPrice: 3500,
+      discountPercentage: 30,
+      status: "rejected",
+      startDate: "2025-01-20",
+      endDate: "2025-02-20",
+      createdAt: "2024-12-28",
+      views: 0,
+      purchases: 0,
+      revenue: 0,
+      extensionCount: 0,
+      maxExtensions: 4,
+      companyId: "company1"
+    },
+    {
+      id: "11",
+      title: "Premium Golf Package",
+      type: "active",
+      category: "Sports & Recreation",
+      originalPrice: 75000,
+      discountPrice: 55000,
+      discountPercentage: 27,
+      status: "rejected",
+      startDate: "2025-03-01",
+      endDate: "2025-05-01",
+      createdAt: "2024-12-30",
+      views: 0,
+      purchases: 0,
+      revenue: 0,
+      extensionCount: 0,
+      maxExtensions: 4,
+      companyId: "company1"
+    },
+    {
+      id: "12",
+      title: "Gourmet Dining Experience",
+      type: "weekdays",
+      category: "Food & Dining",
+      originalPrice: 12000,
+      discountPrice: 9000,
+      discountPercentage: 25,
+      status: "rejected",
+      startDate: "2025-02-15",
+      endDate: "2025-04-15",
+      createdAt: "2025-01-02",
+      views: 0,
+      purchases: 0,
+      revenue: 0,
+      extensionCount: 0,
+      maxExtensions: 4,
+      companyId: "company1"
     }
   ]);
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [activeTab, setActiveTab] = useState<"active" | "inactive" | "pending" | "rejected">("active");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
+  const [itemsPerPage] = useState(12);
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
 
-  const filteredOffers = offers.filter(offer => {
+  // Filter offers by tab
+  const getFilteredOffersByTab = () => {
+    return offers.filter(offer => {
+      switch (activeTab) {
+        case "active":
+          return offer.status === "active" || offer.status === "approved";
+        case "inactive":
+          return offer.status === "expired";
+        case "pending":
+          return offer.status === "pending";
+        case "rejected":
+          return offer.status === "rejected";
+        default:
+          return true;
+      }
+    });
+  };
+
+  const filteredOffers = getFilteredOffersByTab().filter(offer => {
     const matchesSearch = offer.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          offer.category.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || offer.status === statusFilter;
     const matchesType = typeFilter === "all" || offer.type === typeFilter;
-    return matchesSearch && matchesStatus && matchesType;
+    return matchesSearch && matchesType;
   });
 
   // Pagination logic
@@ -142,85 +318,105 @@ export default function OffersPage() {
   // Reset to first page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, statusFilter, typeFilter]);
+  }, [searchTerm, activeTab, typeFilter]);
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "active":
-        return <CheckCircle className="text-green" size={20} />;
-      case "approved":
-        return <CheckCircle className="text-blue-500" size={20} />;
-      case "pending":
-        return <Clock className="text-yellow" size={20} />;
-      case "expired":
-        return <XCircle className="text-gray-500" size={20} />;
-      case "rejected":
-        return <XCircle className="text-red-500" size={20} />;
-      default:
-        return <Clock className="text-gray-400" size={20} />;
-    }
+  // Helper function to calculate time left
+  const calculateTimeLeft = (endDate: string) => {
+    const end = new Date(endDate);
+    const now = new Date();
+    const diff = end.getTime() - now.getTime();
+    if (diff <= 0) return "Expired";
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    return `${days} days left`;
   };
 
-  const getStatusTextClass = (status: string) => {
-    switch (status) {
-      case "active":
-        return "text-green";
-      case "approved":
-        return "text-blue-500";
-      case "pending":
-        return "text-yellow";
-      case "expired":
-        return "text-gray-500";
-      case "rejected":
-        return "text-red-500";
-      default:
-        return "text-gray-400";
-    }
+  // Transform offer data for ActiveOfferCard
+  const transformToActiveOffer = (offer: Offer) => {
+    return {
+      id: parseInt(offer.id),
+      offerType: offer.type,
+      title: offer.title,
+      discount: `${offer.discountPercentage}% Discount`,
+      description: `${offer.title} - ${offer.category}`,
+      image: "/placeholder-image.jpg",
+      category: offer.category,
+      timeLeft: calculateTimeLeft(offer.endDate),
+      location: "",
+      price: offer.originalPrice.toLocaleString(),
+      discountPrice: offer.discountPrice.toLocaleString(),
+      link: `/offers/${offer.id}`
+    };
   };
 
-  const getTypeIcon = (type: string) => {
-    switch (type) {
+  // Transform offer data for WeeklyOfferCard
+  const transformToWeeklyOffer = (offer: Offer) => {
+    return {
+      id: parseInt(offer.id),
+      offerType: offer.type,
+      title: offer.title,
+      discount: `${offer.discountPercentage}% Discount`,
+      description: `${offer.title} - ${offer.category}`,
+      image: "/placeholder-image.jpg",
+      badge: offer.category,
+      location: "",
+      time: "Available all day",
+      availableDays: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+      link: `/offers/${offer.id}`
+    };
+  };
+
+  // Transform offer data for HappyHourOfferCard
+  const transformToHappyHourOffer = (offer: Offer) => {
+    return {
+      id: parseInt(offer.id),
+      offerType: offer.type,
+      title: offer.title,
+      time: "5:00 PM - 7:00 PM",
+      description: `${offer.title} - ${offer.category}`,
+      image: "/placeholder-image.jpg",
+      status: offer.status === "active" ? "Open now" : "Closed",
+      location: "",
+      pricing: `${offer.discountPrice.toLocaleString()} kr.`,
+      availableDays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      link: `/offers/${offer.id}`
+    };
+  };
+
+  // Transform offer data for GiftOfferCard
+  const transformToGiftOffer = (offer: Offer) => {
+    return {
+      id: parseInt(offer.id),
+      offerType: offer.type,
+      title: offer.title,
+      price: offer.discountPrice.toLocaleString(),
+      description: `${offer.title} - ${offer.category}`,
+      image: "/placeholder-image.jpg",
+      category: offer.category,
+      timeLeft: calculateTimeLeft(offer.endDate),
+      purchaseCount: offer.purchases,
+      link: `/offers/${offer.id}`
+    };
+  };
+
+  // Render appropriate card based on offer type
+  const renderOfferCard = (offer: Offer) => {
+    switch (offer.type) {
       case "active":
-        return <Tag className="text-blue-500" size={16} />;
+        return <ActiveOfferCard offer={transformToActiveOffer(offer)} />;
       case "weekdays":
-        return <Calendar className="text-green" size={16} />;
+        return <WeeklyOfferCard offer={transformToWeeklyOffer(offer)} />;
       case "happy_hour":
-        return <Clock className="text-purple-500" size={16} />;
+        return <HappyHourOfferCard offer={transformToHappyHourOffer(offer)} />;
       case "gift_card":
-        return <DollarSign className="text-orange-500" size={16} />;
+        return <GiftOfferCard offer={transformToGiftOffer(offer)} />;
       default:
-        return <Tag className="text-gray-500" size={16} />;
-    }
-  };
-
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case "active":
-        return "bg-blue-500/10 text-blue-500";
-      case "weekdays":
-        return "bg-green/10 text-green";
-      case "happy_hour":
-        return "bg-purple-500/10 text-purple-500";
-      case "gift_card":
-        return "bg-orange-500/10 text-orange-500";
-      default:
-        return "bg-gray-500/10 text-gray-500";
+        return <ActiveOfferCard offer={transformToActiveOffer(offer)} />;
     }
   };
 
   const handleEditOffer = (offer: Offer) => {
     setSelectedOffer(offer);
     setShowEditModal(true);
-  };
-
-  const handleExtendOffer = (offer: Offer) => {
-    if (offer.extensionCount < offer.maxExtensions) {
-      setOffers(prev => prev.map(o =>
-        o.id === offer.id
-          ? { ...o, extensionCount: o.extensionCount + 1, endDate: new Date(Date.parse(o.endDate) + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] }
-          : o
-      ));
-    }
   };
 
   const stats = {
@@ -325,6 +521,52 @@ export default function OffersPage() {
         </div>
       </div>
 
+      {/* Tabs */}
+      <div className="bg-card-background border border-primary rounded-2xl p-4">
+        <div className="flex items-center gap-2 overflow-x-auto">
+          <button
+            onClick={() => setActiveTab("active")}
+            className={`px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap ${
+              activeTab === "active"
+                ? "bg-primary text-dark"
+                : "bg-background text-gray-300 hover:bg-primary/20"
+            }`}
+          >
+            Active
+          </button>
+          <button
+            onClick={() => setActiveTab("inactive")}
+            className={`px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap ${
+              activeTab === "inactive"
+                ? "bg-primary text-dark"
+                : "bg-background text-gray-300 hover:bg-primary/20"
+            }`}
+          >
+            Inactive
+          </button>
+          <button
+            onClick={() => setActiveTab("pending")}
+            className={`px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap ${
+              activeTab === "pending"
+                ? "bg-primary text-dark"
+                : "bg-background text-gray-300 hover:bg-primary/20"
+            }`}
+          >
+            Pending
+          </button>
+          <button
+            onClick={() => setActiveTab("rejected")}
+            className={`px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap ${
+              activeTab === "rejected"
+                ? "bg-primary text-dark"
+                : "bg-background text-gray-300 hover:bg-primary/20"
+            }`}
+          >
+            Rejected
+          </button>
+        </div>
+      </div>
+
       {/* Filters */}
       <div className="bg-card-background border border-primary rounded-2xl p-4">
         <div className="flex flex-col sm:flex-row gap-4">
@@ -344,22 +586,6 @@ export default function OffersPage() {
           <div className="flex items-center gap-2">
             <Filter size={20} className="text-gray-400" />
             <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="pending">Pending</option>
-              <option value="approved">Approved</option>
-              <option value="expired">Expired</option>
-              <option value="rejected">Rejected</option>
-            </select>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Filter size={20} className="text-gray-400" />
-            <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
               className="px-3 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
@@ -374,19 +600,19 @@ export default function OffersPage() {
         </div>
       </div>
 
-      {/* Offers Table */}
+      {/* Offers Grid */}
       <div className="bg-card-background border border-primary rounded-2xl p-6">
         {filteredOffers.length === 0 ? (
           <div className="text-center py-8">
             <Tag className="mx-auto text-gray-400 mb-4" size={48} />
             <h3 className="text-xl font-bold text-white mb-2">No offers found</h3>
             <p className="text-gray-400 mb-4">
-              {searchTerm || statusFilter !== "all" || typeFilter !== "all"
+              {searchTerm || typeFilter !== "all"
                 ? "Try adjusting your search or filter criteria"
-                : "You haven't created any offers yet"
+                : `You don't have any ${activeTab} offers yet`
               }
             </p>
-            {!searchTerm && statusFilter === "all" && typeFilter === "all" && (
+            {!searchTerm && typeFilter === "all" && activeTab === "active" && (
               <Link
                 to="/company/create-offer"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-dark font-semibold rounded-full hover:bg-primary/90 transition-all"
@@ -397,86 +623,24 @@ export default function OffersPage() {
             )}
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[900px]">
-              <thead>
-                <tr className="text-left text-gray-400 text-sm border-b border-primary/50">
-                  <th className="pb-3 px-2">Offer</th>
-                  <th className="pb-3 px-2">Type</th>
-                  <th className="pb-3 px-2">Status</th>
-                  <th className="pb-3 px-2">Price</th>
-                  <th className="pb-3 px-2">Duration</th>
-                  <th className="pb-3 px-2 text-center">Views</th>
-                  <th className="pb-3 px-2 text-center">Purchases</th>
-                  <th className="pb-3 px-2 text-center">Revenue</th>
-                  <th className="pb-3 px-2 text-center">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="text-white">
-                {currentPageItems.map((offer) => (
-                  <tr key={offer.id} className="border-b border-primary/10 hover:bg-primary/5">
-                    <td className="py-4 px-2">
-                      <div className="flex items-center gap-3">
-                        {getTypeIcon(offer.type)}
-                        <div className="min-w-0 flex-1">
-                          <p className="font-medium truncate">{offer.title}</p>
-                          <p className="text-sm text-gray-400 truncate">{offer.category}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-4 px-2">
-                      <span className={`px-2 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${getTypeColor(offer.type)}`}>
-                        {offer.type.replace("_", " ")}
-                      </span>
-                    </td>
-                    <td className="py-4 px-2">
-                      <div className="flex items-center gap-2 min-w-0">
-                        {getStatusIcon(offer.status)}
-                        <span className={`text-sm font-medium truncate ${getStatusTextClass(offer.status)}`}>
-                          {offer.status.charAt(0).toUpperCase() + offer.status.slice(1)}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-2">
-                      <div className="min-w-0">
-                        <p className="font-medium text-sm">{offer.discountPrice.toLocaleString()} kr.</p>
-                        <p className="text-xs text-gray-400 line-through">{offer.originalPrice.toLocaleString()} kr.</p>
-                      </div>
-                    </td>
-                    <td className="py-4 px-2">
-                      <div className="min-w-0">
-                        <p className="font-medium text-sm">{offer.startDate}</p>
-                        <p className="text-xs text-gray-400">to {offer.endDate}</p>
-                      </div>
-                    </td>
-                    <td className="py-4 px-2 text-center text-sm">{offer.views}</td>
-                    <td className="py-4 px-2 text-center text-sm">{offer.purchases}</td>
-                    <td className="py-4 px-2 text-center text-sm">{offer.revenue.toLocaleString()} kr.</td>
-                    <td className="py-4 px-2">
-                      <div className="flex items-center justify-center gap-1">
-                        <button className="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded transition-all">
-                          <Eye size={14} />
-                        </button>
-                        <button
-                          onClick={() => handleEditOffer(offer)}
-                          className="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded transition-all"
-                        >
-                          <Edit size={14} />
-                        </button>
-                        {offer.status === "active" && offer.extensionCount < offer.maxExtensions && (
-                          <button
-                            onClick={() => handleExtendOffer(offer)}
-                            className="px-2 py-1 bg-green text-white font-semibold rounded text-xs hover:bg-green transition-all"
-                          >
-                            Extend
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
+            {currentPageItems.map((offer) => (
+              <div key={offer.id} className="relative">
+                {renderOfferCard(offer)}
+                {/* Action buttons overlay */}
+                <div className="absolute top-4 right-4 flex gap-2 z-50">
+                  <button className="p-2 bg-black/50 backdrop-blur-sm text-white rounded-lg hover:bg-primary/50 transition-all">
+                    <Eye size={16} />
+                  </button>
+                  <button
+                    onClick={() => handleEditOffer(offer)}
+                    className="p-2 bg-black/50 backdrop-blur-sm text-white rounded-lg hover:bg-primary/50 transition-all"
+                  >
+                    <Edit size={16} />
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

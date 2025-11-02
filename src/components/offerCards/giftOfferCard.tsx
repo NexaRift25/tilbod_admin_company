@@ -41,7 +41,7 @@ export default function GiftOfferCard({
     <div className="theme-orange">
       <div
         className={cn(
-          "w-full h-[34rem] sm:h-[38rem] md:h-[42rem] relative overflow-hidden border border-primary rounded-[2.5rem] bg-card-background mx-auto flex flex-col",
+          "w-full min-h-[34rem] h-[34rem] sm:h-[34rem] md:h-[38.75rem] relative overflow-hidden border border-primary rounded-[2.5rem] bg-card-background mx-auto flex flex-col",
           className
         )}
       >
