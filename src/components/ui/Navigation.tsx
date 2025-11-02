@@ -23,6 +23,13 @@ export default function Navigation({ navItems }: NavigationProps) {
   const visibleItems = navItems.slice(0, 4);
   const hiddenItems = navItems.slice(4);
 
+  // Helper function to check if a route is active
+  const isRouteActive = (href: string) => {
+    const pathname = location.pathname;
+    // Exact match or starts with (for nested routes)
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
+
   return (
     <>
       {/* Desktop Sidebar */}
@@ -36,7 +43,7 @@ export default function Navigation({ navItems }: NavigationProps) {
           <nav className="space-y-2">
             {navItems.map((item, index) => {
               const Icon = item.icon;
-              const isActive = location.pathname === item.href;
+              const isActive = isRouteActive(item.href);
               
               return (
                 <motion.div
@@ -59,71 +66,24 @@ export default function Navigation({ navItems }: NavigationProps) {
                     )}
                   >
                     {/* Smooth background hover effect */}
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-primary/50 to-primary/25 rounded-lg opacity-0"
-                      whileHover={{ opacity: 1 }}
-                      transition={{ duration: 0.3, ease: "easeOut" }}
+                    <div
+                      className="absolute inset-0 bg-gradient-to-r from-primary/50 to-primary/25 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                     />
                     
-                    {/* Ripple effect background */}
-                    <motion.div
-                      className="absolute inset-0 bg-primary/50 rounded-lg"
-                      initial={{ scale: 0, opacity: 0 }}
-                      whileTap={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.15 }}
-                    />
-                    
-                    {/* Icon with smooth hover animation */}
-                    <motion.div
-                      whileHover={{ 
-                        scale: 1.15,
-                        rotate: 5,
-                        color: "var(--primary)"
-                      }}
-                      whileTap={{ scale: 0.9 }}
-                      transition={{ 
-                        duration: 0.2, 
-                        ease: "easeOut",
-                        type: "spring",
-                        stiffness: 300
-                      }}
-                      className="relative z-10"
-                    >
+                    {/* Icon */}
+                    <div className="relative z-10">
                       <Icon size={18} />
-                    </motion.div>
+                    </div>
                     
-                    {/* Text with smooth slide animation */}
-                    <motion.span
-                      initial={{ x: -10 }}
-                      animate={{ x: 0 }}
-                      whileHover={{ 
-                        x: 2,
-                        color: "var(--primary)"
-                      }}
-                      transition={{ 
-                        duration: 0.2, 
-                        delay: index * 0.05,
-                        ease: "easeOut"
-                      }}
-                      className="relative z-10 flex-1"
-                    >
+                    {/* Text */}
+                    <span className="relative z-10 flex-1">
                       {item.name}
-                    </motion.span>
+                    </span>
                     {/* Badge */}
                     {item.badge && (
-                      <motion.span
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ 
-                          duration: 0.2, 
-                          delay: index * 0.05 + 0.1,
-                          type: "spring",
-                          stiffness: 300
-                        }}
-                        className="relative z-10 bg-red-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full"
-                      >
+                      <span className="relative z-10 bg-red-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
                         {item.badge}
-                      </motion.span>
+                      </span>
                     )}
                   </Link>
                 </motion.div>
@@ -145,7 +105,7 @@ export default function Navigation({ navItems }: NavigationProps) {
           <div className="flex items-center justify-around">
             {visibleItems.map((item, index) => {
               const Icon = item.icon;
-              const isActive = location.pathname === item.href;
+              const isActive = isRouteActive(item.href);
               
               return (
                 <motion.div
@@ -168,62 +128,24 @@ export default function Navigation({ navItems }: NavigationProps) {
                     )}
                   >
                     {/* Smooth background hover effect */}
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-b from-primary/50 to-primary/25 rounded-lg opacity-0"
-                      whileHover={{ opacity: 1 }}
-                      transition={{ duration: 0.3, ease: "easeOut" }}
+                    <div
+                      className="absolute inset-0 bg-gradient-to-b from-primary/50 to-primary/25 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                     />
                     
-                    {/* Ripple effect */}
-                    <motion.div
-                      className="absolute inset-0 bg-primary/50 rounded-lg"
-                      initial={{ scale: 0, opacity: 0 }}
-                      whileTap={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.15 }}
-                    />
-                    
-                    {/* Icon with smooth hover animation */}
-                    <motion.div
-                      whileHover={{ 
-                        scale: 1.2,
-                        rotate: 3,
-                        color: "var(--primary)"
-                      }}
-                      whileTap={{ scale: 0.85 }}
-                      transition={{ 
-                        duration: 0.2, 
-                        ease: "easeOut",
-                        type: "spring",
-                        stiffness: 400
-                      }}
-                      className="relative z-10"
-                    >
+                    {/* Icon */}
+                    <div className="relative z-10">
                       <Icon size={20} />
-                    </motion.div>
+                    </div>
                     
-                    {/* Text with smooth animation */}
-                    <motion.span 
-                      className="text-xs font-medium truncate w-full text-center relative z-10"
-                      whileHover={{ 
-                        scale: 1.1,
-                        color: "var(--primary)"
-                      }}
-                      transition={{ 
-                        duration: 0.2, 
-                        ease: "easeOut"
-                      }}
-                    >
+                    {/* Text */}
+                    <span className="text-xs font-medium truncate w-full text-center relative z-10">
                       {item.name.split(' ')[0]}
-                    </motion.span>
+                    </span>
                     {/* Badge for mobile */}
                     {item.badge && (
-                      <motion.span
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded-full min-w-[18px] h-[18px] flex items-center justify-center"
-                      >
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded-full min-w-[18px] h-[18px] flex items-center justify-center">
                         {item.badge}
-                      </motion.span>
+                      </span>
                     )}
                   </Link>
                 </motion.div>
@@ -312,7 +234,7 @@ export default function Navigation({ navItems }: NavigationProps) {
                   >
                     {hiddenItems.map((item, index) => {
                       const Icon = item.icon;
-                      const isActive = location.pathname === item.href;
+                      const isActive = isRouteActive(item.href);
                       
                       return (
                         <motion.div
@@ -336,57 +258,24 @@ export default function Navigation({ navItems }: NavigationProps) {
                             )}
                           >
                             {/* Smooth background hover effect */}
-                            <motion.div
-                              className="absolute inset-0 bg-gradient-to-r from-primary/50 to-primary/25 rounded-lg opacity-0"
-                              whileHover={{ opacity: 1 }}
-                              transition={{ duration: 0.3, ease: "easeOut" }}
+                            <div
+                              className="absolute inset-0 bg-gradient-to-r from-primary/50 to-primary/25 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                             />
                             
-                            {/* Ripple effect */}
-                            <motion.div
-                              className="absolute inset-0 bg-primary/50 rounded-lg"
-                              initial={{ scale: 0, opacity: 0 }}
-                              whileTap={{ scale: 1, opacity: 1 }}
-                              transition={{ duration: 0.15 }}
-                            />
-                            
-                            <motion.div
-                              whileHover={{ 
-                                scale: 1.15,
-                                rotate: 3,
-                                color: "var(--primary)"
-                              }}
-                              whileTap={{ scale: 0.9 }}
-                              transition={{ 
-                                duration: 0.2, 
-                                ease: "easeOut",
-                                type: "spring",
-                                stiffness: 300
-                              }}
-                              className="relative z-10"
-                            >
+                            {/* Icon */}
+                            <div className="relative z-10">
                               <Icon size={16} />
-                            </motion.div>
+                            </div>
                             
-                            <motion.span 
-                              className="truncate relative z-10 flex-1"
-                              whileHover={{ 
-                                x: 2,
-                                color: "var(--primary)"
-                              }}
-                              transition={{ duration: 0.2 }}
-                            >
+                            {/* Text */}
+                            <span className="truncate relative z-10 flex-1">
                               {item.name}
-                            </motion.span>
+                            </span>
                             {/* Badge in expanded menu */}
                             {item.badge && (
-                              <motion.span
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                className="bg-red-500 text-white text-xs font-semibold px-1.5 py-0.5 rounded-full"
-                              >
+                              <span className="bg-red-500 text-white text-xs font-semibold px-1.5 py-0.5 rounded-full">
                                 {item.badge}
-                              </motion.span>
+                              </span>
                             )}
                           </Link>
                         </motion.div>
