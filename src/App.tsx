@@ -13,6 +13,8 @@ import AnalyticsPage from './pages/company/Analytics';
 import SalesPage from './pages/company/Sales';
 import OffersPage from './pages/company/Offers';
 import CreateOfferPage from './pages/company/CreateOffer';
+import PendingApprovalsPage from './pages/company/PendingApprovals';
+import PendingItemDetailsPage from './pages/company/PendingItemDetails';
 import AdminDashboardPage from './pages/admin/Dashboard';
 import AdminApprovalQueuePage from './pages/admin/ApprovalQueue';
 import AdminCompaniesPage from './pages/admin/Companies';
@@ -54,6 +56,8 @@ function App() {
             <Route path="sales" element={<SalesPage />} />
             <Route path="analytics" element={<AnalyticsPage />} />
             <Route path="profile" element={<ProfilePage />} />
+            <Route path="pending-approvals" element={<PendingApprovalsPage />} />
+            <Route path="pending-approvals/:type/:id" element={<PendingItemDetailsPage />} />
           </Route>
 
           {/* Admin Routes */}

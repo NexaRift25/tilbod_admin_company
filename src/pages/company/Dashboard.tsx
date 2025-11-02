@@ -141,9 +141,12 @@ export default function CompanyDashboardPage() {
               {pendingItems.length}
             </span>
           </div>
-          <button className="text-primary hover:text-primary font-medium text-xs sm:text-xl">
+          <Link 
+            to="/company/pending-approvals"
+            className="text-primary hover:text-primary font-medium text-xs sm:text-xl transition-colors"
+          >
             View All
-          </button>
+          </Link>
         </div>
 
         <div className="space-y-3 sm:space-y-4">
