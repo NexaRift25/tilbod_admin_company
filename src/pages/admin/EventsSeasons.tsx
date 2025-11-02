@@ -116,7 +116,7 @@ export default function AdminEventsPage() {
   ]);
 
   const getEventIcon = (iconName: string) => {
-    const icons: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+    const icons: Record<string, React.ComponentType<any>> = {
       gift: Gift,
       star: Star,
       sun: Sun,
@@ -170,7 +170,7 @@ export default function AdminEventsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <Link
-            href="/admin/dashboard"
+            to="/admin/dashboard"
             className="p-2 hover:bg-red-500/10 rounded-lg transition-all"
           >
             <ArrowLeft className="text-red-500" size={20} />

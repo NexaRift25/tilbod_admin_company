@@ -41,7 +41,7 @@ interface Offer {
 }
 
 export default function OffersPage() {
-  const [offers, setOffers] = useState<Offer[]>([
+  const [offers] = useState<Offer[]>([
     // Active offers (3)
     {
       id: "1",

@@ -5,15 +5,12 @@ import { Link } from "react-router-dom";
 import {
   DollarSign,
   TrendingUp,
-  TrendingDown,
-  Save,
   ArrowLeft,
   Tag,
   Calendar,
   Clock,
   CreditCard,
   Settings,
-  AlertCircle,
   CheckCircle,
   Edit,
   Plus
@@ -168,7 +165,7 @@ export default function AdminPricingPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <Link
-            href="/admin/dashboard"
+            to="/admin/dashboard"
             className="p-2 hover:bg-red-500/10 rounded-lg transition-all"
           >
             <ArrowLeft className="text-red-500" size={20} />
