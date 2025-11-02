@@ -87,54 +87,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [companies]);
 
-  const login = async (email: string, password: string, role?: UserRole) => {
+  const login = async (email: string, _password: string, role?: UserRole) => {
     setIsLoading(true);
     try {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      // Mock valid credentials for demo
-      const validCredentials = {
-        admin: {
-          email: "admin@tilbod.is",
-          password: "password123"
-        },
-        company: {
-          email: "company@example.com", 
-          password: "password123"
-        }
-      };
-
-      // Check if credentials are valid
-      const isValidAdmin = email === validCredentials.admin.email && password === validCredentials.admin.password;
-      const isValidCompany = email === validCredentials.company.email && password === validCredentials.company.password;
-
-      if (!isValidAdmin && !isValidCompany) {
-        throw new Error("Invalid email or password. Please check your credentials and try again.");
+      // Use the selected role directly (any email/password is accepted)
+      if (!role) {
+        throw new Error("Please select an account type (Admin or Company)");
       }
 
-      // Determine user role based on valid credentials
-      let userRole: UserRole;
-      if (isValidAdmin) {
-        userRole = "admin";
-      } else if (isValidCompany) {
-        userRole = "company";
-      } else {
-        throw new Error("Invalid credentials");
-      }
-
-      // Check if selected role matches valid credentials
-      if (role && role !== userRole) {
-        throw new Error(`Please select the correct account type. This email belongs to a ${userRole} account.`);
-      }
-
-      // Mock user data based on validated role
+      // Mock user data based on selected role
       const mockUser: User = {
         id: Math.random().toString(36).substr(2, 9),
         email,
-        firstName: userRole === "admin" ? "Admin" : "John",
-        lastName: userRole === "admin" ? "User" : "Doe",
-        role: userRole,
+        firstName: role === "admin" ? "Admin" : "John",
+        lastName: role === "admin" ? "User" : "Doe",
+        role: role,
         isVerified: true,
         createdAt: new Date().toISOString(),
       };

@@ -90,7 +90,7 @@ export default function LoginPage() {
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="w-full pl-9 sm:pl-10 pr-4 py-2.5 sm:py-3 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all text-sm sm:text-base"
-                placeholder={selectedRole === "admin" ? "admin@tilbod.is" : "company@example.com"}
+                placeholder="Enter your email"
                 required
               />
             </div>
@@ -132,15 +132,6 @@ export default function LoginPage() {
             )}
           </button>
         </form>
-
-        {/* Demo Credentials */}
-        <div className="mt-4 sm:mt-6 mb-8 bg-blue-500/10 border border-blue-500 rounded-lg p-3 sm:p-4">
-          <h4 className="text-blue-500 font-semibold mb-2 text-sm sm:text-base">Demo Credentials</h4>
-          <div className="text-xs sm:text-sm text-gray-300 space-y-1">
-            <p><strong>Admin:</strong> admin@tilbod.is / password123</p>
-            <p><strong>Company:</strong> company@example.com / password123</p>
-          </div>
-        </div>
       </div>
     </div>
   );
