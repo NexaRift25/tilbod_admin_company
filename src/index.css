@@ -83,3 +83,96 @@
   width: 68%;
 }
 
+/* Override react-day-picker default blue colors - Remove ALL blue */
+.rdp-day_selected,
+.rdp-day_selected:focus-visible,
+.rdp-day_selected:hover,
+.rdp-day_selected:focus,
+.rdp-day_selected:active,
+.rdp-day_selected[aria-selected="true"] {
+  background-color: var(--primary) !important;
+  background: var(--primary) !important;
+  color: var(--text-dark) !important;
+  border-color: var(--primary) !important;
+  outline-color: var(--primary) !important;
+  box-shadow: none !important;
+  border: 2px solid var(--primary) !important;
+  border-radius: 0.375rem !important;
+}
+
+.rdp-day_today,
+.rdp-day_today:focus,
+.rdp-day_today:hover,
+.rdp-day_today:focus-visible,
+button.rdp-day_today {
+  background-color: var(--primary) !important;
+  background: var(--primary) !important;
+  color: var(--text-dark) !important;
+  border-color: var(--primary) !important;
+  outline-color: var(--primary) !important;
+  box-shadow: none !important;
+}
+
+.rdp-day:hover:not([aria-disabled]):not(.rdp-day_selected):not(.rdp-day_today) {
+  background-color: rgba(255, 238, 0, 0.2) !important;
+  background: rgba(255, 238, 0, 0.2) !important;
+  color: white !important;
+}
+
+.rdp-day:focus-visible,
+.rdp-day:focus,
+button.rdp-day:focus,
+button.rdp-day:focus-visible {
+  outline-color: var(--primary) !important;
+  outline-offset: 0 !important;
+  box-shadow: 0 0 0 2px var(--primary) !important;
+  border-color: var(--primary) !important;
+}
+
+.rdp-day {
+  border-color: transparent !important;
+}
+
+/* Remove any ring or shadow that might be blue */
+.rdp-day_selected::before,
+.rdp-day_selected::after,
+.rdp-day::before,
+.rdp-day::after {
+  display: none !important;
+}
+
+/* Override any blue ring utilities */
+.rdp [class*="ring-blue"],
+.rdp [class*="ring-"] {
+  --tw-ring-color: var(--primary) !important;
+}
+
+/* Target calendar container specifically - remove ALL blue */
+.rdp button:focus,
+.rdp button:focus-visible,
+.rdp button:active,
+.rdp button:hover {
+  outline-color: var(--primary) !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 2px var(--primary) !important;
+}
+
+/* Remove all blue from calendar - CSS variables */
+.rdp,
+.rdp * {
+  --rdp-selected-background: var(--primary) !important;
+  --rdp-selected-color: var(--text-dark) !important;
+  --rdp-today-background: var(--primary) !important;
+  --rdp-today-color: var(--text-dark) !important;
+  --rdp-accent-color: var(--primary) !important;
+}
+
+/* Force remove blue from any element */
+.rdp *[style*="blue"],
+.rdp *[style*="#3b82f6"],
+.rdp *[style*="#2563eb"] {
+  background-color: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: var(--text-dark) !important;
+}
+
