@@ -9,6 +9,7 @@ import CompanyDashboardPage from './pages/company/Dashboard';
 import CompaniesPage from './pages/company/Companies';
 import RegisterCompanyPage from './pages/company/RegisterCompany';
 import EditCompanyPage from './pages/company/EditCompany';
+import CompanyDetailsPage from './pages/company/CompanyDetails';
 import ProfilePage from './pages/company/Profile';
 import AnalyticsPage from './pages/company/Analytics';
 import SalesPage from './pages/company/Sales';
@@ -52,6 +53,7 @@ function App() {
             <Route path="dashboard" element={<CompanyDashboardPage />} />
             <Route path="companies" element={<CompaniesPage />} />
             <Route path="companies/new" element={<RegisterCompanyPage />} />
+            <Route path="companies/:id" element={<CompanyDetailsPage />} />
             <Route path="companies/:id/edit" element={<EditCompanyPage />} />
             <Route path="create-offer" element={<CreateOfferPage />} />
             <Route path="offers" element={<OffersPage />} />
