@@ -10,7 +10,6 @@ import {
   ArrowLeft,
   Filter,
   Search,
-  MoreVertical,
   Edit,
   Plus,
 } from "lucide-react";

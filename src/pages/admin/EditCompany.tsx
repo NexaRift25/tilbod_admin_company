@@ -3,10 +3,7 @@ import { useNavigate, Link, useParams } from "react-router-dom";
 import {
   Building2,
   Mail,
-  Phone,
-  MapPin,
   FileText,
-  Upload,
   ArrowLeft,
   Save,
   AlertCircle,
