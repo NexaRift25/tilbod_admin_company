@@ -643,7 +643,7 @@ export default function AdminAnalyticsPage() {
         };
 
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1">
             {chartType === "revenue" && (
               <div className="bg-card-background border border-primary rounded-2xl p-6">
                 <h3 className="text-lg font-bold text-white mb-4">Revenue Trend (Filtered)</h3>
