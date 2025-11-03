@@ -16,6 +16,7 @@ import {
 import Pagination from "@/components/ui/Pagination";
 import Modal from "@/components/ui/modal";
 import { getAllRejectionReasons } from "@/utils/rejectionReasons";
+import { calculateSLA, formatTimeRemaining, formatTimeRemainingDetailed, getSLABadgeColorClass } from "@/utils/slaTracking";
 
 interface ApprovalItem {
   id: string;
@@ -24,7 +25,6 @@ interface ApprovalItem {
   companyName?: string;
   submittedBy: string;
   submittedAt: string;
-  timeRemaining: number; // minutes remaining
   priority: "low" | "medium" | "high" | "urgent";
   category?: string;
   description?: string;
@@ -32,7 +32,7 @@ interface ApprovalItem {
 }
 
 export default function ApprovalsPage() {
-  const [approvals, setApprovals] = useState<ApprovalItem[]>([
+  const [approvals] = useState<ApprovalItem[]>([
     {
       id: "1",
       type: "company",
@@ -40,7 +40,6 @@ export default function ApprovalsPage() {
       companyName: "Nordic Group",
       submittedBy: "John Doe",
       submittedAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(), // 5 minutes ago
-      timeRemaining: 25,
       priority: "high",
       category: "Wellness & Spa",
       status: "pending"
@@ -52,7 +51,6 @@ export default function ApprovalsPage() {
       companyName: "Hotel Aurora",
       submittedBy: "Jane Smith",
       submittedAt: new Date(Date.now() - 12 * 60 * 1000).toISOString(), // 12 minutes ago
-      timeRemaining: 18,
       priority: "high",
       description: "Holiday season promotion for hotel stays",
       status: "pending"
@@ -64,7 +62,6 @@ export default function ApprovalsPage() {
       companyName: "Nightlife Co.",
       submittedBy: "Mike Johnson",
       submittedAt: new Date(Date.now() - 20 * 60 * 1000).toISOString(), // 20 minutes ago
-      timeRemaining: 10,
       priority: "urgent",
       category: "Food & Dining",
       status: "pending"
@@ -76,7 +73,6 @@ export default function ApprovalsPage() {
       companyName: "Mountain Resort",
       submittedBy: "Sarah Wilson",
       submittedAt: new Date(Date.now() - 28 * 60 * 1000).toISOString(), // 28 minutes ago
-      timeRemaining: 2,
       priority: "urgent",
       description: "Weekend package with spa and dining included",
       status: "pending"
@@ -88,7 +84,6 @@ export default function ApprovalsPage() {
       companyName: "Iceland Adventures",
       submittedBy: "Alex Chen",
       submittedAt: new Date(Date.now() - 8 * 60 * 1000).toISOString(),
-      timeRemaining: 22,
       priority: "medium",
       category: "Activities & Entertainment",
       status: "pending"
@@ -100,7 +95,6 @@ export default function ApprovalsPage() {
       companyName: "Blue Lagoon Spa",
       submittedBy: "Maria Rodriguez",
       submittedAt: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
-      timeRemaining: 15,
       priority: "medium",
       description: "Full day spa experience with treatments",
       status: "pending"
@@ -112,7 +106,6 @@ export default function ApprovalsPage() {
       companyName: "Food Group Ltd",
       submittedBy: "David Kim",
       submittedAt: new Date(Date.now() - 22 * 60 * 1000).toISOString(),
-      timeRemaining: 8,
       priority: "high",
       category: "Food & Dining",
       status: "pending"
@@ -124,7 +117,6 @@ export default function ApprovalsPage() {
       companyName: "Restaurant Downtown",
       submittedBy: "Emma Taylor",
       submittedAt: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
-      timeRemaining: 5,
       priority: "urgent",
       description: "Special lunch menu for business meetings",
       status: "pending"
@@ -136,7 +128,6 @@ export default function ApprovalsPage() {
       companyName: "Style Corp",
       submittedBy: "Lisa Wang",
       submittedAt: new Date(Date.now() - 18 * 60 * 1000).toISOString(),
-      timeRemaining: 12,
       priority: "low",
       category: "Shopping & Retail",
       status: "pending"
@@ -148,7 +139,6 @@ export default function ApprovalsPage() {
       companyName: "Fashion Boutique",
       submittedBy: "Tom Anderson",
       submittedAt: new Date(Date.now() - 35 * 60 * 1000).toISOString(),
-      timeRemaining: 0,
       priority: "urgent",
       description: "End of season sale on winter clothing",
       status: "pending"
@@ -160,7 +150,6 @@ export default function ApprovalsPage() {
       companyName: "Health First",
       submittedBy: "Rachel Green",
       submittedAt: new Date(Date.now() - 7 * 60 * 1000).toISOString(),
-      timeRemaining: 23,
       priority: "medium",
       category: "Health & Fitness",
       status: "pending"
@@ -172,7 +161,6 @@ export default function ApprovalsPage() {
       companyName: "Gym & Fitness Center",
       submittedBy: "Mark Johnson",
       submittedAt: new Date(Date.now() - 14 * 60 * 1000).toISOString(),
-      timeRemaining: 16,
       priority: "medium",
       description: "6-week personal training program",
       status: "pending"
@@ -184,7 +172,6 @@ export default function ApprovalsPage() {
       companyName: "Culture Hub",
       submittedBy: "Sophie Brown",
       submittedAt: new Date(Date.now() - 9 * 60 * 1000).toISOString(),
-      timeRemaining: 21,
       priority: "low",
       category: "Activities & Entertainment",
       status: "pending"
@@ -196,7 +183,6 @@ export default function ApprovalsPage() {
       companyName: "Art Gallery",
       submittedBy: "Chris Davis",
       submittedAt: new Date(Date.now() - 26 * 60 * 1000).toISOString(),
-      timeRemaining: 4,
       priority: "high",
       description: "Weekly art workshops for beginners",
       status: "pending"
@@ -208,7 +194,6 @@ export default function ApprovalsPage() {
       companyName: "Wanderlust Tours",
       submittedBy: "Nina Patel",
       submittedAt: new Date(Date.now() - 11 * 60 * 1000).toISOString(),
-      timeRemaining: 19,
       priority: "medium",
       category: "Transportation",
       status: "pending"
@@ -226,14 +211,13 @@ export default function ApprovalsPage() {
   const [rejectionNotes, setRejectionNotes] = useState("");
   const [isRejecting, setIsRejecting] = useState(false);
 
-  // Update countdown timers
+  // Force re-render every second for real-time countdown updates
+  const [, setCurrentTime] = useState(new Date());
+
   useEffect(() => {
     const interval = setInterval(() => {
-      setApprovals(prev => prev.map(item => ({
-        ...item,
-        timeRemaining: Math.max(0, item.timeRemaining - 1)
-      })));
-    }, 60000); // Update every minute
+      setCurrentTime(new Date());
+    }, 1000); // Update every second for real-time countdown
 
     return () => clearInterval(interval);
   }, []);
@@ -277,19 +261,17 @@ export default function ApprovalsPage() {
     }
   };
 
-  const formatTimeRemaining = (minutes: number) => {
-    if (minutes <= 0) return "Overdue";
-    if (minutes < 60) return `${minutes} min`;
-    const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
-    return `${hours}h ${remainingMinutes}m`;
-  };
-
   const stats = {
     total: approvals.length,
-    urgent: approvals.filter(a => a.priority === "urgent").length,
+    urgent: approvals.filter(a => {
+      const sla = calculateSLA(a.submittedAt);
+      return sla.status === "urgent" || sla.status === "expired";
+    }).length,
     high: approvals.filter(a => a.priority === "high").length,
-    overdue: approvals.filter(a => a.timeRemaining <= 0).length,
+    overdue: approvals.filter(a => {
+      const sla = calculateSLA(a.submittedAt);
+      return sla.status === "expired";
+    }).length,
   };
 
   return (
@@ -420,16 +402,18 @@ export default function ApprovalsPage() {
             </p>
           </div>
         ) : (
-          currentPageItems.map((item) => (
+          currentPageItems.map((item) => {
+            const sla = calculateSLA(item.submittedAt);
+            return (
             <div
               key={item.id}
               className={`bg-card-background border rounded-2xl p-6 hover:border-primary/80 transition-all ${
-                item.timeRemaining <= 5 ? "border-red-500 animate-pulse" : "border-primary"
+                sla.status === "urgent" || sla.status === "expired" ? "border-red-500 animate-pulse" : "border-primary"
               }`}
             >
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
+                  <div className="flex items-center gap-3 mb-2 flex-wrap">
                     {item.type === "company" ? (
                       <Building2 className="text-primary" size={24} />
                     ) : (
@@ -442,13 +426,9 @@ export default function ApprovalsPage() {
                       <span className="ml-1 capitalize">{item.priority}</span>
                     </span>
 
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      item.timeRemaining <= 5 ? "bg-red-500/10 text-red-500" :
-                      item.timeRemaining <= 10 ? "bg-orange-500/10 text-orange-500" :
-                      "bg-green/10 text-green"
-                    }`}>
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getSLABadgeColorClass(sla.status)}`}>
                       <Clock size={12} className="inline mr-1" />
-                      {formatTimeRemaining(item.timeRemaining)}
+                      {formatTimeRemaining(sla.timeRemaining)}
                     </span>
                   </div>
 
@@ -486,12 +466,24 @@ export default function ApprovalsPage() {
                     </div>
                   )}
 
-                  {item.timeRemaining <= 5 && (
+                  {(sla.status === "urgent" || sla.status === "expired") && (
                     <div className="mt-3 bg-red-500/10 border border-red-500 rounded-lg p-3">
                       <div className="flex items-center gap-2">
                         <AlertTriangle className="text-red-500" size={16} />
                         <span className="text-red-500 text-sm font-semibold">
-                          URGENT: Only {item.timeRemaining} minutes remaining!
+                          {sla.status === "expired" 
+                            ? "EXPIRED: Review time has exceeded 30 minutes!"
+                            : `URGENT: Only ${formatTimeRemainingDetailed(sla.timeRemainingSeconds)} remaining!`}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                  {sla.status === "warning" && (
+                    <div className="mt-3 bg-yellow/10 border border-yellow rounded-lg p-3">
+                      <div className="flex items-center gap-2">
+                        <Clock className="text-yellow" size={16} />
+                        <span className="text-yellow text-sm font-semibold">
+                          Warning: Only {formatTimeRemainingDetailed(sla.timeRemainingSeconds)} remaining!
                         </span>
                       </div>
                     </div>
@@ -526,7 +518,8 @@ export default function ApprovalsPage() {
                 </div>
               </div>
             </div>
-          ))
+            );
+          })
         )}
       </div>
 
@@ -597,8 +590,9 @@ export default function ApprovalsPage() {
                   reason: selectedReason,
                   notes: rejectionNotes,
                 });
-                // Remove the item from the list after rejection
-                setApprovals(prev => prev.filter(item => item.id !== rejectingItem.id));
+              // In a real app, this would update the backend and remove from list
+              // For now, the item remains (since approvals is const)
+              console.log("Item rejected and should be removed from list:", rejectingItem.id);
                 setIsRejecting(false);
                 setShowRejectModal(false);
                 setRejectingItem(null);

@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import Modal from "@/components/ui/modal";
 import { getAllRejectionReasons } from "@/utils/rejectionReasons";
+import { calculateSLA, formatTimeRemaining, formatTimeRemainingDetailed, getSLAColorClass, getSLABadgeColorClass } from "@/utils/slaTracking";
 
 interface ApprovalItemDetails {
   id: string;
@@ -29,7 +30,6 @@ interface ApprovalItemDetails {
   companyName?: string;
   submittedBy: string;
   submittedAt: string;
-  timeRemaining: number;
   priority: "low" | "medium" | "high" | "urgent";
   status: "pending";
   // Company specific fields
@@ -68,7 +68,6 @@ const mockApprovalItems: Record<string, ApprovalItemDetails> = {
     companyName: "Nordic Group",
     submittedBy: "John Doe",
     submittedAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-    timeRemaining: 25,
     priority: "high",
     status: "pending",
     category: "Wellness & Spa",
@@ -87,7 +86,6 @@ const mockApprovalItems: Record<string, ApprovalItemDetails> = {
     companyName: "Nightlife Co.",
     submittedBy: "Mike Johnson",
     submittedAt: new Date(Date.now() - 20 * 60 * 1000).toISOString(),
-    timeRemaining: 10,
     priority: "urgent",
     status: "pending",
     category: "Food & Dining",
@@ -107,7 +105,6 @@ const mockApprovalItems: Record<string, ApprovalItemDetails> = {
     companyName: "Hotel Aurora",
     submittedBy: "Jane Smith",
     submittedAt: new Date(Date.now() - 12 * 60 * 1000).toISOString(),
-    timeRemaining: 18,
     priority: "high",
     status: "pending",
     offerType: "active",
@@ -129,7 +126,6 @@ const mockApprovalItems: Record<string, ApprovalItemDetails> = {
     companyName: "Mountain Resort",
     submittedBy: "Sarah Wilson",
     submittedAt: new Date(Date.now() - 28 * 60 * 1000).toISOString(),
-    timeRemaining: 2,
     priority: "urgent",
     status: "pending",
     offerType: "active",
@@ -153,6 +149,17 @@ export default function AdminApprovalDetailsPage() {
   const [selectedReason, setSelectedReason] = useState<string>("");
   const [rejectionNotes, setRejectionNotes] = useState("");
   const [isRejecting, setIsRejecting] = useState(false);
+
+  // Force re-render every second for real-time countdown updates
+  const [, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000); // Update every second for real-time countdown
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     // Simulate API call
@@ -195,13 +202,6 @@ export default function AdminApprovalDetailsPage() {
     }
   };
 
-  const formatTimeRemaining = (minutes: number) => {
-    if (minutes <= 0) return "Overdue";
-    if (minutes < 60) return `${minutes} min`;
-    const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
-    return `${hours}h ${remainingMinutes}m`;
-  };
 
   const getTypeColor = (offerType?: string) => {
     switch (offerType) {
@@ -273,6 +273,9 @@ export default function AdminApprovalDetailsPage() {
     );
   }
 
+  // Calculate SLA for real-time tracking
+  const sla = calculateSLA(item.submittedAt);
+
   const weekdayMap: Record<string, string> = {
     "monday": "Monday",
     "tuesday": "Tuesday",
@@ -319,27 +322,33 @@ export default function AdminApprovalDetailsPage() {
                     {getPriorityIcon(item.priority)}
                     <span className="capitalize">{item.priority} Priority</span>
                   </span>
-                  <span className={`px-4 py-2 rounded-full text-sm font-semibold ${
-                    item.timeRemaining <= 5 ? "bg-red-500/10 text-red-500" :
-                    item.timeRemaining <= 10 ? "bg-orange-500/10 text-orange-500" :
-                    "bg-green/10 text-green"
-                  }`}>
+                  <span className={`px-4 py-2 rounded-full text-sm font-semibold border ${getSLABadgeColorClass(sla.status)}`}>
                     <Clock size={14} className="inline mr-1" />
-                    {formatTimeRemaining(item.timeRemaining)} remaining
+                    {formatTimeRemaining(sla.timeRemaining)} remaining
                   </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {item.timeRemaining <= 10 && (
+          {(sla.status === "urgent" || sla.status === "expired") && (
             <div className="bg-red-500/20 border border-red-500 rounded-lg p-4 mb-4">
               <div className="flex items-center gap-2">
                 <AlertTriangle className="text-red-500" size={20} />
                 <span className="text-red-500 font-bold">
-                  {item.timeRemaining <= 5
-                    ? `URGENT: Only ${item.timeRemaining} minutes remaining!`
-                    : `High Priority: ${item.timeRemaining} minutes remaining`}
+                  {sla.status === "expired"
+                    ? "EXPIRED: Review time has exceeded 30 minutes!"
+                    : `URGENT: Only ${formatTimeRemainingDetailed(sla.timeRemainingSeconds)} remaining!`}
+                </span>
+              </div>
+            </div>
+          )}
+          {sla.status === "warning" && (
+            <div className="bg-yellow/20 border border-yellow rounded-lg p-4 mb-4">
+              <div className="flex items-center gap-2">
+                <Clock className="text-yellow" size={20} />
+                <span className="text-yellow font-bold">
+                  Warning: Only {formatTimeRemainingDetailed(sla.timeRemainingSeconds)} remaining!
                 </span>
               </div>
             </div>
@@ -690,12 +699,8 @@ export default function AdminApprovalDetailsPage() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-400">Time Remaining</span>
-                <span className={`font-semibold ${
-                  item.timeRemaining <= 5 ? "text-red-500" :
-                  item.timeRemaining <= 10 ? "text-orange-500" :
-                  "text-green"
-                }`}>
-                  {formatTimeRemaining(item.timeRemaining)}
+                <span className={`font-semibold ${getSLAColorClass(sla.status)}`}>
+                  {formatTimeRemaining(sla.timeRemaining)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
@@ -734,14 +739,34 @@ export default function AdminApprovalDetailsPage() {
           </div>
 
           {/* SLA Warning */}
-          {item.timeRemaining <= 10 && (
-            <div className="bg-red-500/10 border border-red-500 rounded-2xl p-6">
+          {(sla.status === "warning" || sla.status === "urgent" || sla.status === "expired") && (
+            <div className={`rounded-2xl p-6 border ${
+              sla.status === "expired" || sla.status === "urgent" 
+                ? "bg-red-500/10 border-red-500" 
+                : "bg-yellow/10 border-yellow"
+            }`}>
               <div className="flex items-start gap-3">
-                <AlertTriangle className="text-red-500 flex-shrink-0 mt-0.5" size={20} />
+                <AlertTriangle className={`flex-shrink-0 mt-0.5 ${
+                  sla.status === "expired" || sla.status === "urgent" 
+                    ? "text-red-500" 
+                    : "text-yellow"
+                }`} size={20} />
                 <div>
-                  <h4 className="text-red-500 font-bold mb-1">SLA Deadline Approaching</h4>
+                  <h4 className={`font-bold mb-1 ${
+                    sla.status === "expired" || sla.status === "urgent" 
+                      ? "text-red-500" 
+                      : "text-yellow"
+                  }`}>
+                    {sla.status === "expired" 
+                      ? "SLA EXPIRED" 
+                      : sla.status === "urgent" 
+                        ? "URGENT: SLA Deadline Approaching" 
+                        : "SLA Deadline Warning"}
+                  </h4>
                   <p className="text-sm text-gray-300">
-                    This item must be reviewed within the next {item.timeRemaining} minutes to meet the 30-minute SLA requirement.
+                    {sla.status === "expired"
+                      ? "This item has exceeded the 30-minute SLA requirement. Please review immediately."
+                      : `This item must be reviewed within ${formatTimeRemainingDetailed(sla.timeRemainingSeconds)} to meet the 30-minute SLA requirement.`}
                   </p>
                 </div>
               </div>
