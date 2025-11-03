@@ -1,7 +1,5 @@
 import {
   Building2,
-  CheckCircle,
-  XCircle,
   Clock,
   AlertCircle,
   DollarSign,
