@@ -16,6 +16,7 @@ import SalesPage from './pages/company/Sales';
 import OffersPage from './pages/company/Offers';
 import CreateOfferPage from './pages/company/CreateOffer';
 import EditOfferPage from './pages/company/EditOffer';
+import OfferDetailsPage from './pages/company/OfferDetails';
 import PendingApprovalsPage from './pages/company/PendingApprovals';
 import PendingItemDetailsPage from './pages/company/PendingItemDetails';
 import AdminDashboardPage from './pages/admin/Dashboard';
@@ -58,6 +59,7 @@ function App() {
             <Route path="companies/:id/edit" element={<EditCompanyPage />} />
             <Route path="create-offer" element={<CreateOfferPage />} />
             <Route path="offers" element={<OffersPage />} />
+            <Route path="offers/:id" element={<OfferDetailsPage />} />
             <Route path="offers/:id/edit" element={<EditOfferPage />} />
             <Route path="sales" element={<SalesPage />} />
             <Route path="analytics" element={<AnalyticsPage />} />

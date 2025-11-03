@@ -621,9 +621,13 @@ export default function OffersPage() {
                 {renderOfferCard(offer)}
                 {/* Action buttons overlay */}
                 <div className="absolute top-4 right-4 flex gap-2 z-50">
-                  <button className="p-2 bg-black/50 backdrop-blur-sm text-white rounded-lg hover:bg-primary/50 transition-all">
+                  <Link
+                    to={`/company/offers/${offer.id}`}
+                    className="p-2 bg-black/50 backdrop-blur-sm text-white rounded-lg hover:bg-primary/50 transition-all"
+                    title="View Offer Details"
+                  >
                     <Eye size={16} />
-                  </button>
+                  </Link>
                   <Link
                     to={`/company/offers/${offer.id}/edit`}
                     className="p-2 bg-black/50 backdrop-blur-sm text-white rounded-lg hover:bg-primary/50 transition-all"
