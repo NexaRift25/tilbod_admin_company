@@ -394,11 +394,11 @@ export default function AdminEventsPage() {
       </div>
 
       {/* Upcoming Events Alert */}
-      <div className="bg-yellow-500/10 border border-yellow-500 rounded-2xl p-4">
+      <div className="bg-yellow/10 border border-yellow rounded-2xl p-4">
         <div className="flex items-start gap-3">
-          <Calendar className="text-yellow-500 flex-shrink-0 mt-0.5" size={20} />
+          <Calendar className="text-yellow flex-shrink-0 mt-0.5" size={20} />
           <div>
-            <h3 className="text-yellow-500 font-bold mb-1">
+            <h3 className="text-yellow font-bold mb-1">
               Upcoming Events
             </h3>
             <p className="text-sm text-gray-300">

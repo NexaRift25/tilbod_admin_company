@@ -2,350 +2,201 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Settings,
-  ArrowLeft,
   Save,
+  ArrowLeft,
   Shield,
   Bell,
+  CreditCard,
+  Globe,
+  Database,
   Key,
-  Building2,
-  FileText,
-  AlertTriangle,
-  Eye,
-  EyeOff,
+  RefreshCw,
 } from "lucide-react";
 
-export default function AdminSettingsPage() {
-  const [activeTab, setActiveTab] = useState("general");
-  const [showApiKey, setShowApiKey] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+interface SettingSection {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ComponentType<any>;
+}
 
+export default function AdminSettingsPage() {
+  const [activeSection, setActiveSection] = useState("general");
   const [settings, setSettings] = useState({
-    // General Settings
-    platformName: "Tilbod Platform",
-    platformDescription: "Iceland's premier business offer management platform",
-    supportEmail: "support@tilbod.is",
-    adminEmail: "admin@tilbod.is",
-    
-    // Company Settings
-    maxCompaniesPerUser: 10,
-    companyRevisionLimit: 3,
-    
-    // Offer Settings
-    maxOffersPerCompany: 50,
-    offerRevisionLimit: 2,
-    offerReviewTimeLimit: 24, // hours
-    minOfferDuration: 1, // days
-    maxOfferDuration: 365, // days
-    
-    // Review Settings
-    autoApproveThreshold: 0,
-    reviewTimeLimit: 48, // hours
-    requireVerification: true,
-    
-    // Notification Settings
-    emailNotifications: true,
-    smsNotifications: false,
-    pushNotifications: true,
-    weeklyReports: true,
-    
-    // API Settings
-    apiKey: "sk_live_1234567890abcdef",
-    apiRateLimit: 1000,
-    webhookUrl: "https://api.tilbod.is/webhooks",
-    
-    // Security Settings
-    sessionTimeout: 24, // hours
-    requireTwoFactor: false,
-    passwordMinLength: 8,
-    loginAttemptLimit: 5,
+    general: {
+      platformName: "Tilbod",
+      platformDescription: "Iceland's premier offers and deals platform",
+      contactEmail: "admin@tilbod.is",
+      supportPhone: "+354 555 0000",
+      maintenanceMode: false,
+      registrationEnabled: true,
+    },
+    security: {
+      twoFactorRequired: false,
+      passwordMinLength: 8,
+      sessionTimeout: 30,
+      maxLoginAttempts: 5,
+      ipWhitelist: "",
+      auditLogging: true,
+    },
+    notifications: {
+      emailNotifications: true,
+      smsNotifications: false,
+      pushNotifications: true,
+      approvalAlerts: true,
+      systemAlerts: true,
+      marketingEmails: false,
+    },
+    payments: {
+      commissionActiveOffers: 1,
+      commissionWeekdaysOffers: 4,
+      commissionHappyHourOffers: 10,
+      commissionGiftCards: 5,
+      paymentProcessor: "Teya",
+      autoPayoutEnabled: true,
+      minimumPayout: 10000,
+    },
+    integrations: {
+      googleAnalytics: "",
+      facebookPixel: "",
+      paymentGateway: "Teya",
+      emailProvider: "SendGrid",
+      smsProvider: "Twilio",
+    },
   });
 
-  const handleSettingChange = (key: string, value: any) => {
-    setSettings(prev => ({ ...prev, [key]: value }));
-  };
-
-  const handleSave = async () => {
-    setIsSaving(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setIsSaving(false);
-    // Show success message
-    alert("Settings saved successfully!");
-  };
-
-  const tabs = [
-    { id: "general", name: "General", icon: Settings },
-    { id: "companies", name: "Companies", icon: Building2 },
-    { id: "offers", name: "Offers", icon: FileText },
-    { id: "notifications", name: "Notifications", icon: Bell },
-    { id: "api", name: "API", icon: Key },
-    { id: "security", name: "Security", icon: Shield },
+  const settingSections: SettingSection[] = [
+    {
+      id: "general",
+      title: "General Settings",
+      description: "Basic platform configuration",
+      icon: Settings,
+    },
+    {
+      id: "security",
+      title: "Security",
+      description: "Security and access controls",
+      icon: Shield,
+    },
+    {
+      id: "notifications",
+      title: "Notifications",
+      description: "Email and alert preferences",
+      icon: Bell,
+    },
+    {
+      id: "payments",
+      title: "Payments & Commissions",
+      description: "Commission rates and payment settings",
+      icon: CreditCard,
+    },
+    {
+      id: "integrations",
+      title: "Integrations",
+      description: "Third-party service connections",
+      icon: Globe,
+    },
   ];
+
+  const handleSettingChange = (section: string, key: string, value: string | number | boolean) => {
+    setSettings(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section as keyof typeof prev],
+        [key]: value,
+      },
+    }));
+  };
+
+  const handleSaveSettings = (section: string) => {
+    // Here you would normally save to your backend
+    console.log(`Saving ${section} settings:`, settings[section as keyof typeof settings]);
+    alert(`${section} settings saved successfully!`);
+  };
 
   const renderGeneralSettings = () => (
     <div className="space-y-6">
-      <div className="bg-card-background border border-primary rounded-2xl p-6">
-        <h3 className="text-lg font-bold text-white mb-4">Platform Information</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="text-gray-400 text-sm mb-2 block">Platform Name</label>
-            <input
-              type="text"
-              value={settings.platformName}
-              onChange={(e) => handleSettingChange("platformName", e.target.value)}
-              className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-            />
-          </div>
-          <div>
-            <label className="text-gray-400 text-sm mb-2 block">Support Email</label>
-            <input
-              type="email"
-              value={settings.supportEmail}
-              onChange={(e) => handleSettingChange("supportEmail", e.target.value)}
-              className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-            />
-          </div>
-          <div className="md:col-span-2">
-            <label className="text-gray-400 text-sm mb-2 block">Platform Description</label>
-            <textarea
-              value={settings.platformDescription}
-              onChange={(e) => handleSettingChange("platformDescription", e.target.value)}
-              rows={3}
-              className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary resize-none"
-            />
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="text-gray-400 text-sm mb-2 block">
+            Platform Name
+          </label>
+          <input
+            type="text"
+            value={settings.general.platformName}
+            onChange={(e) => handleSettingChange("general", "platformName", e.target.value)}
+            className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+          />
         </div>
-      </div>
-    </div>
-  );
 
-  const renderCompanySettings = () => (
-    <div className="space-y-6">
-      <div className="bg-card-background border border-primary rounded-2xl p-6">
-        <h3 className="text-lg font-bold text-white mb-4">Company Limits</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="text-gray-400 text-sm mb-2 block">Max Companies Per User</label>
-            <input
-              type="number"
-              value={settings.maxCompaniesPerUser}
-              onChange={(e) => handleSettingChange("maxCompaniesPerUser", parseInt(e.target.value))}
-              className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-            />
-          </div>
-          <div>
-            <label className="text-gray-400 text-sm mb-2 block">Company Revision Limit</label>
-            <input
-              type="number"
-              value={settings.companyRevisionLimit}
-              onChange={(e) => handleSettingChange("companyRevisionLimit", parseInt(e.target.value))}
-              className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-            />
-          </div>
+        <div>
+          <label className="text-gray-400 text-sm mb-2 block">
+            Contact Email
+          </label>
+          <input
+            type="email"
+            value={settings.general.contactEmail}
+            onChange={(e) => handleSettingChange("general", "contactEmail", e.target.value)}
+            className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+          />
+        </div>
+
+        <div className="md:col-span-2">
+          <label className="text-gray-400 text-sm mb-2 block">
+            Platform Description
+          </label>
+          <textarea
+            value={settings.general.platformDescription}
+            onChange={(e) => handleSettingChange("general", "platformDescription", e.target.value)}
+            rows={3}
+            className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary resize-none"
+          />
+        </div>
+
+        <div>
+          <label className="text-gray-400 text-sm mb-2 block">
+            Support Phone
+          </label>
+          <input
+            type="tel"
+            value={settings.general.supportPhone}
+            onChange={(e) => handleSettingChange("general", "supportPhone", e.target.value)}
+            className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+          />
         </div>
       </div>
 
-      <div className="bg-card-background border border-primary rounded-2xl p-6">
-        <h3 className="text-lg font-bold text-white mb-4">Company Review Settings</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="space-y-4">
+        <div className="flex items-center justify-between p-4 bg-background border border-primary/30 rounded-lg">
           <div>
-            <label className="text-gray-400 text-sm mb-2 block">Company Review Time Limit (hours)</label>
-            <input
-              type="number"
-              value={settings.reviewTimeLimit}
-              onChange={(e) => handleSettingChange("reviewTimeLimit", parseInt(e.target.value))}
-              className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-            />
+            <h4 className="text-white font-medium">Maintenance Mode</h4>
+            <p className="text-gray-400 text-sm">Temporarily disable platform access</p>
           </div>
-          <div className="flex items-center gap-3">
+          <label className="relative inline-flex items-center cursor-pointer">
             <input
               type="checkbox"
-              checked={settings.requireVerification}
-              onChange={(e) => handleSettingChange("requireVerification", e.target.checked)}
-              className="w-5 h-5 text-primary bg-background border-primary/50 rounded focus:ring-primary"
+              checked={settings.general.maintenanceMode}
+              onChange={(e) => handleSettingChange("general", "maintenanceMode", e.target.checked)}
+              className="sr-only peer"
             />
-            <label className="text-gray-400 text-sm">Require Email Verification</label>
-          </div>
+            <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
+          </label>
         </div>
-      </div>
-    </div>
-  );
 
-  const renderOfferSettings = () => (
-    <div className="space-y-6">
-      <div className="bg-card-background border border-primary rounded-2xl p-6">
-        <h3 className="text-lg font-bold text-white mb-4">Offer Limits</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="flex items-center justify-between p-4 bg-background border border-primary/30 rounded-lg">
           <div>
-            <label className="text-gray-400 text-sm mb-2 block">Max Offers Per Company</label>
-            <input
-              type="number"
-              value={settings.maxOffersPerCompany}
-              onChange={(e) => handleSettingChange("maxOffersPerCompany", parseInt(e.target.value))}
-              className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-            />
+            <h4 className="text-white font-medium">User Registration</h4>
+            <p className="text-gray-400 text-sm">Allow new users to register</p>
           </div>
-          <div>
-            <label className="text-gray-400 text-sm mb-2 block">Offer Revision Limit</label>
-            <input
-              type="number"
-              value={settings.offerRevisionLimit}
-              onChange={(e) => handleSettingChange("offerRevisionLimit", parseInt(e.target.value))}
-              className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-card-background border border-primary rounded-2xl p-6">
-        <h3 className="text-lg font-bold text-white mb-4">Offer Review Settings</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="text-gray-400 text-sm mb-2 block">Offer Review Time Limit (hours)</label>
-            <input
-              type="number"
-              value={settings.offerReviewTimeLimit || 24}
-              onChange={(e) => handleSettingChange("offerReviewTimeLimit", parseInt(e.target.value))}
-              className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-            />
-          </div>
-          <div>
-            <label className="text-gray-400 text-sm mb-2 block">Auto-approve Threshold</label>
-            <input
-              type="number"
-              value={settings.autoApproveThreshold}
-              onChange={(e) => handleSettingChange("autoApproveThreshold", parseInt(e.target.value))}
-              className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-card-background border border-primary rounded-2xl p-6">
-        <h3 className="text-lg font-bold text-white mb-4">Offer Content Settings</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="text-gray-400 text-sm mb-2 block">Min Offer Duration (days)</label>
-            <input
-              type="number"
-              value={settings.minOfferDuration || 1}
-              onChange={(e) => handleSettingChange("minOfferDuration", parseInt(e.target.value))}
-              className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-            />
-          </div>
-          <div>
-            <label className="text-gray-400 text-sm mb-2 block">Max Offer Duration (days)</label>
-            <input
-              type="number"
-              value={settings.maxOfferDuration || 365}
-              onChange={(e) => handleSettingChange("maxOfferDuration", parseInt(e.target.value))}
-              className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderNotificationSettings = () => (
-    <div className="space-y-6">
-      <div className="bg-card-background border border-primary rounded-2xl p-6">
-        <h3 className="text-lg font-bold text-white mb-4">Notification Preferences</h3>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-white font-medium">Email Notifications</p>
-              <p className="text-gray-400 text-sm">Send notifications via email</p>
-            </div>
+          <label className="relative inline-flex items-center cursor-pointer">
             <input
               type="checkbox"
-              checked={settings.emailNotifications}
-              onChange={(e) => handleSettingChange("emailNotifications", e.target.checked)}
-              className="w-5 h-5 text-primary bg-background border-primary/50 rounded focus:ring-primary"
+              checked={settings.general.registrationEnabled}
+              onChange={(e) => handleSettingChange("general", "registrationEnabled", e.target.checked)}
+              className="sr-only peer"
             />
-          </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-white font-medium">SMS Notifications</p>
-              <p className="text-gray-400 text-sm">Send notifications via SMS</p>
-            </div>
-            <input
-              type="checkbox"
-              checked={settings.smsNotifications}
-              onChange={(e) => handleSettingChange("smsNotifications", e.target.checked)}
-              className="w-5 h-5 text-primary bg-background border-primary/50 rounded focus:ring-primary"
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-white font-medium">Push Notifications</p>
-              <p className="text-gray-400 text-sm">Send browser push notifications</p>
-            </div>
-            <input
-              type="checkbox"
-              checked={settings.pushNotifications}
-              onChange={(e) => handleSettingChange("pushNotifications", e.target.checked)}
-              className="w-5 h-5 text-primary bg-background border-primary/50 rounded focus:ring-primary"
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-white font-medium">Weekly Reports</p>
-              <p className="text-gray-400 text-sm">Send weekly performance reports</p>
-            </div>
-            <input
-              type="checkbox"
-              checked={settings.weeklyReports}
-              onChange={(e) => handleSettingChange("weeklyReports", e.target.checked)}
-              className="w-5 h-5 text-primary bg-background border-primary/50 rounded focus:ring-primary"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderApiSettings = () => (
-    <div className="space-y-6">
-      <div className="bg-card-background border border-primary rounded-2xl p-6">
-        <h3 className="text-lg font-bold text-white mb-4">API Configuration</h3>
-        <div className="space-y-6">
-          <div>
-            <label className="text-gray-400 text-sm mb-2 block">API Key</label>
-            <div className="relative">
-              <input
-                type={showApiKey ? "text" : "password"}
-                value={settings.apiKey}
-                onChange={(e) => handleSettingChange("apiKey", e.target.value)}
-                className="w-full px-4 py-3 pr-12 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-              />
-              <button
-                type="button"
-                onClick={() => setShowApiKey(!showApiKey)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-primary transition-colors"
-              >
-                {showApiKey ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-          </div>
-          <div>
-            <label className="text-gray-400 text-sm mb-2 block">API Rate Limit (requests/hour)</label>
-            <input
-              type="number"
-              value={settings.apiRateLimit}
-              onChange={(e) => handleSettingChange("apiRateLimit", parseInt(e.target.value))}
-              className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-            />
-          </div>
-          <div>
-            <label className="text-gray-400 text-sm mb-2 block">Webhook URL</label>
-            <input
-              type="url"
-              value={settings.webhookUrl}
-              onChange={(e) => handleSettingChange("webhookUrl", e.target.value)}
-              className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-            />
-          </div>
+            <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green"></div>
+          </label>
         </div>
       </div>
     </div>
@@ -353,64 +204,368 @@ export default function AdminSettingsPage() {
 
   const renderSecuritySettings = () => (
     <div className="space-y-6">
-      <div className="bg-card-background border border-primary rounded-2xl p-6">
-        <h3 className="text-lg font-bold text-white mb-4">Security Settings</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="text-gray-400 text-sm mb-2 block">
+            Minimum Password Length
+          </label>
+          <input
+            type="number"
+            value={settings.security.passwordMinLength}
+            onChange={(e) => handleSettingChange("security", "passwordMinLength", parseInt(e.target.value))}
+            className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+            min="6"
+            max="20"
+          />
+        </div>
+
+        <div>
+          <label className="text-gray-400 text-sm mb-2 block">
+            Session Timeout (minutes)
+          </label>
+          <input
+            type="number"
+            value={settings.security.sessionTimeout}
+            onChange={(e) => handleSettingChange("security", "sessionTimeout", parseInt(e.target.value))}
+            className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+            min="15"
+            max="480"
+          />
+        </div>
+
+        <div>
+          <label className="text-gray-400 text-sm mb-2 block">
+            Max Login Attempts
+          </label>
+          <input
+            type="number"
+            value={settings.security.maxLoginAttempts}
+            onChange={(e) => handleSettingChange("security", "maxLoginAttempts", parseInt(e.target.value))}
+            className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+            min="3"
+            max="10"
+          />
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <div className="flex items-center justify-between p-4 bg-background border border-primary/30 rounded-lg">
           <div>
-            <label className="text-gray-400 text-sm mb-2 block">Session Timeout (hours)</label>
-            <input
-              type="number"
-              value={settings.sessionTimeout}
-              onChange={(e) => handleSettingChange("sessionTimeout", parseInt(e.target.value))}
-              className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-            />
+            <h4 className="text-white font-medium">Two-Factor Authentication</h4>
+            <p className="text-gray-400 text-sm">Require 2FA for all admin accounts</p>
           </div>
-          <div>
-            <label className="text-gray-400 text-sm mb-2 block">Password Min Length</label>
-            <input
-              type="number"
-              value={settings.passwordMinLength}
-              onChange={(e) => handleSettingChange("passwordMinLength", parseInt(e.target.value))}
-              className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-            />
-          </div>
-          <div>
-            <label className="text-gray-400 text-sm mb-2 block">Login Attempt Limit</label>
-            <input
-              type="number"
-              value={settings.loginAttemptLimit}
-              onChange={(e) => handleSettingChange("loginAttemptLimit", parseInt(e.target.value))}
-              className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-            />
-          </div>
-          <div className="flex items-center gap-3">
+          <label className="relative inline-flex items-center cursor-pointer">
             <input
               type="checkbox"
-              checked={settings.requireTwoFactor}
-              onChange={(e) => handleSettingChange("requireTwoFactor", e.target.checked)}
-              className="w-5 h-5 text-primary bg-background border-primary/50 rounded focus:ring-primary"
+              checked={settings.security.twoFactorRequired}
+              onChange={(e) => handleSettingChange("security", "twoFactorRequired", e.target.checked)}
+              className="sr-only peer"
             />
-            <label className="text-gray-400 text-sm">Require Two-Factor Authentication</label>
+            <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green"></div>
+          </label>
+        </div>
+
+        <div className="flex items-center justify-between p-4 bg-background border border-primary/30 rounded-lg">
+          <div>
+            <h4 className="text-white font-medium">Audit Logging</h4>
+            <p className="text-gray-400 text-sm">Log all admin actions for security</p>
           </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={settings.security.auditLogging}
+              onChange={(e) => handleSettingChange("security", "auditLogging", e.target.checked)}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green"></div>
+          </label>
+        </div>
+      </div>
+
+      <div>
+        <label className="text-gray-400 text-sm mb-2 block">
+          IP Whitelist (Optional)
+        </label>
+        <textarea
+          value={settings.security.ipWhitelist}
+          onChange={(e) => handleSettingChange("security", "ipWhitelist", e.target.value)}
+          rows={3}
+          className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary resize-none"
+          placeholder="Enter allowed IP addresses, one per line"
+        />
+      </div>
+    </div>
+  );
+
+  const renderNotificationSettings = () => (
+    <div className="space-y-6">
+      <div className="space-y-4">
+        <div className="flex items-center justify-between p-4 bg-background border border-primary/30 rounded-lg">
+          <div>
+            <h4 className="text-white font-medium">Email Notifications</h4>
+            <p className="text-gray-400 text-sm">Send email alerts for important events</p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={settings.notifications.emailNotifications}
+              onChange={(e) => handleSettingChange("notifications", "emailNotifications", e.target.checked)}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green"></div>
+          </label>
+        </div>
+
+        <div className="flex items-center justify-between p-4 bg-background border border-primary/30 rounded-lg">
+          <div>
+            <h4 className="text-white font-medium">SMS Notifications</h4>
+            <p className="text-gray-400 text-sm">Send SMS alerts for urgent matters</p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={settings.notifications.smsNotifications}
+              onChange={(e) => handleSettingChange("notifications", "smsNotifications", e.target.checked)}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green"></div>
+          </label>
+        </div>
+
+        <div className="flex items-center justify-between p-4 bg-background border border-primary/30 rounded-lg">
+          <div>
+            <h4 className="text-white font-medium">Push Notifications</h4>
+            <p className="text-gray-400 text-sm">Browser push notifications for real-time alerts</p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={settings.notifications.pushNotifications}
+              onChange={(e) => handleSettingChange("notifications", "pushNotifications", e.target.checked)}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green"></div>
+          </label>
+        </div>
+
+        <div className="flex items-center justify-between p-4 bg-background border border-primary/30 rounded-lg">
+          <div>
+            <h4 className="text-white font-medium">Approval Alerts</h4>
+            <p className="text-gray-400 text-sm">Notify when new approvals are pending</p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={settings.notifications.approvalAlerts}
+              onChange={(e) => handleSettingChange("notifications", "approvalAlerts", e.target.checked)}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green"></div>
+          </label>
+        </div>
+
+        <div className="flex items-center justify-between p-4 bg-background border border-primary/30 rounded-lg">
+          <div>
+            <h4 className="text-white font-medium">System Alerts</h4>
+            <p className="text-gray-400 text-sm">Critical system notifications</p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={settings.notifications.systemAlerts}
+              onChange={(e) => handleSettingChange("notifications", "systemAlerts", e.target.checked)}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green"></div>
+          </label>
         </div>
       </div>
     </div>
   );
 
-  const renderTabContent = () => {
-    switch (activeTab) {
+  const renderPaymentSettings = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="text-gray-400 text-sm mb-2 block">
+            Active Offers Commission (kr./day)
+          </label>
+          <input
+            type="number"
+            value={settings.payments.commissionActiveOffers}
+            onChange={(e) => handleSettingChange("payments", "commissionActiveOffers", parseFloat(e.target.value))}
+            className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+            min="0"
+            step="0.01"
+          />
+        </div>
+
+        <div>
+          <label className="text-gray-400 text-sm mb-2 block">
+            Weekdays Offers Commission (kr./week)
+          </label>
+          <input
+            type="number"
+            value={settings.payments.commissionWeekdaysOffers}
+            onChange={(e) => handleSettingChange("payments", "commissionWeekdaysOffers", parseFloat(e.target.value))}
+            className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+            min="0"
+            step="0.01"
+          />
+        </div>
+
+        <div>
+          <label className="text-gray-400 text-sm mb-2 block">
+            Happy Hour Commission (kr./month)
+          </label>
+          <input
+            type="number"
+            value={settings.payments.commissionHappyHourOffers}
+            onChange={(e) => handleSettingChange("payments", "commissionHappyHourOffers", parseFloat(e.target.value))}
+            className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+            min="0"
+            step="0.01"
+          />
+        </div>
+
+        <div>
+          <label className="text-gray-400 text-sm mb-2 block">
+            Gift Cards Commission (%)
+          </label>
+          <input
+            type="number"
+            value={settings.payments.commissionGiftCards}
+            onChange={(e) => handleSettingChange("payments", "commissionGiftCards", parseFloat(e.target.value))}
+            className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+            min="0"
+            max="100"
+            step="0.01"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="text-gray-400 text-sm mb-2 block">
+            Payment Processor
+          </label>
+          <select
+            value={settings.payments.paymentProcessor}
+            onChange={(e) => handleSettingChange("payments", "paymentProcessor", e.target.value)}
+            className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+          >
+            <option value="Teya">Teya</option>
+            <option value="Stripe">Stripe</option>
+            <option value="PayPal">PayPal</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="text-gray-400 text-sm mb-2 block">
+            Minimum Payout Amount (kr.)
+          </label>
+          <input
+            type="number"
+            value={settings.payments.minimumPayout}
+            onChange={(e) => handleSettingChange("payments", "minimumPayout", parseInt(e.target.value))}
+            className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+            min="1000"
+          />
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between p-4 bg-background border border-primary/30 rounded-lg">
+        <div>
+          <h4 className="text-white font-medium">Automatic Payouts</h4>
+          <p className="text-gray-400 text-sm">Automatically process payouts when minimum is reached</p>
+        </div>
+        <label className="relative inline-flex items-center cursor-pointer">
+          <input
+            type="checkbox"
+            checked={settings.payments.autoPayoutEnabled}
+            onChange={(e) => handleSettingChange("payments", "autoPayoutEnabled", e.target.checked)}
+            className="sr-only peer"
+          />
+          <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green"></div>
+        </label>
+      </div>
+    </div>
+  );
+
+  const renderIntegrationSettings = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="text-gray-400 text-sm mb-2 block">
+            Google Analytics ID
+          </label>
+          <input
+            type="text"
+            value={settings.integrations.googleAnalytics}
+            onChange={(e) => handleSettingChange("integrations", "googleAnalytics", e.target.value)}
+            className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+            placeholder="G-XXXXXXXXXX"
+          />
+        </div>
+
+        <div>
+          <label className="text-gray-400 text-sm mb-2 block">
+            Facebook Pixel ID
+          </label>
+          <input
+            type="text"
+            value={settings.integrations.facebookPixel}
+            onChange={(e) => handleSettingChange("integrations", "facebookPixel", e.target.value)}
+            className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+            placeholder="XXXXXXXXXXXXXXX"
+          />
+        </div>
+
+        <div>
+          <label className="text-gray-400 text-sm mb-2 block">
+            Email Provider
+          </label>
+          <select
+            value={settings.integrations.emailProvider}
+            onChange={(e) => handleSettingChange("integrations", "emailProvider", e.target.value)}
+            className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+          >
+            <option value="SendGrid">SendGrid</option>
+            <option value="Mailgun">Mailgun</option>
+            <option value="AWS SES">AWS SES</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="text-gray-400 text-sm mb-2 block">
+            SMS Provider
+          </label>
+          <select
+            value={settings.integrations.smsProvider}
+            onChange={(e) => handleSettingChange("integrations", "smsProvider", e.target.value)}
+            className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+          >
+            <option value="Twilio">Twilio</option>
+            <option value="AWS SNS">AWS SNS</option>
+            <option value="MessageBird">MessageBird</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderSettingsContent = () => {
+    switch (activeSection) {
       case "general":
         return renderGeneralSettings();
-      case "companies":
-        return renderCompanySettings();
-      case "offers":
-        return renderOfferSettings();
-      case "notifications":
-        return renderNotificationSettings();
-      case "api":
-        return renderApiSettings();
       case "security":
         return renderSecuritySettings();
+      case "notifications":
+        return renderNotificationSettings();
+      case "payments":
+        return renderPaymentSettings();
+      case "integrations":
+        return renderIntegrationSettings();
       default:
         return renderGeneralSettings();
     }
@@ -419,73 +574,91 @@ export default function AdminSettingsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <Link
-            to="/admin/dashboard"
-            className="p-2 hover:bg-primary/10 rounded-lg transition-all"
-          >
-            <ArrowLeft className="text-primary" size={20} />
-          </Link>
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white">
-              Platform Settings
-            </h1>
-            <p className="text-gray-400 text-sm">
-              Configure platform-wide settings and preferences
-            </p>
+      <div className="flex items-center gap-4">
+        <Link
+          to="/admin/dashboard"
+          className="p-2 hover:bg-red-500/10 rounded-lg transition-all"
+        >
+          <ArrowLeft className="text-red-500" size={20} />
+        </Link>
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">
+            Platform Settings
+          </h1>
+          <p className="text-gray-400 text-sm">
+            Configure platform behavior and integrations
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Settings Sidebar */}
+        <div className="lg:col-span-1">
+          <div className="bg-card-background border border-primary rounded-2xl p-4">
+            <nav className="space-y-2">
+              {settingSections.map((section) => {
+                const Icon = section.icon;
+                return (
+                  <button
+                    key={section.id}
+                    onClick={() => setActiveSection(section.id)}
+                    className={`w-full flex items-center gap-3 p-3 rounded-lg text-left transition-all ${
+                      activeSection === section.id
+                        ? "bg-red-500/10 text-red-500 border border-red-500"
+                        : "text-gray-400 hover:text-white hover:bg-primary/10"
+                    }`}
+                  >
+                    <Icon size={20} />
+                    <div>
+                      <div className="font-medium">{section.title}</div>
+                      <div className="text-xs opacity-75">{section.description}</div>
+                    </div>
+                  </button>
+                );
+              })}
+            </nav>
           </div>
         </div>
 
-        <button
-          onClick={handleSave}
-          disabled={isSaving}
-          className="flex items-center gap-2 px-6 py-3 bg-primary text-dark font-semibold rounded-full hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isSaving ? (
-            <div className="w-5 h-5 border-2 border-dark border-t-transparent rounded-full animate-spin" />
-          ) : (
-            <Save size={20} />
-          )}
-          {isSaving ? "Saving..." : "Save Settings"}
-        </button>
-      </div>
-
-      {/* Settings Tabs */}
-      <div className="bg-card-background border border-primary rounded-2xl p-6">
-        <div className="flex flex-wrap gap-2 mb-6">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            return (
+        {/* Settings Content */}
+        <div className="lg:col-span-3">
+          <div className="bg-card-background border border-primary rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-bold text-white">
+                {settingSections.find(s => s.id === activeSection)?.title}
+              </h3>
               <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
-                  activeTab === tab.id
-                    ? "bg-primary text-dark"
-                    : "text-gray-400 hover:text-white hover:bg-primary/10"
-                }`}
+                onClick={() => handleSaveSettings(activeSection)}
+                className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white font-semibold rounded-full hover:bg-red-600 transition-all"
               >
-                <Icon size={16} />
-                <span className="font-medium">{tab.name}</span>
+                <Save size={20} />
+                Save Changes
               </button>
-            );
-          })}
-        </div>
+            </div>
 
-        {/* Tab Content */}
-        {renderTabContent()}
-      </div>
+            {renderSettingsContent()}
 
-      {/* Warning Notice */}
-      <div className="bg-yellow/10 border border-yellow rounded-2xl p-4">
-        <div className="flex items-start gap-3">
-          <AlertTriangle className="text-yellow flex-shrink-0 mt-0.5" size={20} />
-          <div>
-            <h3 className="text-yellow font-bold mb-1">Settings Notice</h3>
-            <p className="text-sm text-gray-300">
-              Changes to platform settings will affect all users. Please review changes carefully before saving.
-            </p>
+            {/* System Actions */}
+            <div className="mt-8 pt-6 border-t border-primary/30">
+              <h4 className="text-lg font-bold text-white mb-4">System Actions</h4>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button className="flex items-center gap-2 p-3 bg-background border border-primary/30 rounded-lg hover:bg-primary/10 transition-all">
+                  <Database size={20} className="text-blue-500" />
+                  <span className="text-white text-sm">Backup Data</span>
+                </button>
+
+                <button className="flex items-center gap-2 p-3 bg-background border border-primary/30 rounded-lg hover:bg-primary/10 transition-all">
+                  <RefreshCw size={20} className="text-green-500" />
+                  <span className="text-white text-sm">Clear Cache</span>
+                </button>
+
+                <button className="flex items-center gap-2 p-3 bg-background border border-primary/30 rounded-lg hover:bg-primary/10 transition-all">
+                  <Key size={20} className="text-purple-500" />
+                  <span className="text-white text-sm">Reset API Keys</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
