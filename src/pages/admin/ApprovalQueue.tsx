@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -494,9 +492,13 @@ export default function ApprovalsPage() {
                 </div>
 
                 <div className="flex items-center gap-2 flex-wrap lg:flex-nowrap">
-                  <button className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-500/10 rounded-lg transition-all flex-shrink-0" title="View Details">
+                  <Link
+                    to={`/admin/approval-queue/${item.type}/${item.id}`}
+                    className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-500/10 rounded-lg transition-all flex-shrink-0"
+                    title="View Details"
+                  >
                     <Eye size={20} />
-                  </button>
+                  </Link>
                   <button className="px-4 py-2 bg-green text-white font-semibold rounded-lg hover:bg-green transition-all whitespace-nowrap">
                     Approve
                   </button>

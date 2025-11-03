@@ -21,6 +21,7 @@ import PendingApprovalsPage from './pages/company/PendingApprovals';
 import PendingItemDetailsPage from './pages/company/PendingItemDetails';
 import AdminDashboardPage from './pages/admin/Dashboard';
 import AdminApprovalQueuePage from './pages/admin/ApprovalQueue';
+import AdminApprovalDetailsPage from './pages/admin/ApprovalDetails';
 import AdminCompaniesPage from './pages/admin/Companies';
 import AdminOffersPage from './pages/admin/Offers';
 import AdminOfferDetailsPage from './pages/admin/OfferDetails';
@@ -80,6 +81,7 @@ function App() {
           >
             <Route path="dashboard" element={<AdminDashboardPage />} />
             <Route path="approval-queue" element={<AdminApprovalQueuePage />} />
+            <Route path="approval-queue/:type/:id" element={<AdminApprovalDetailsPage />} />
             <Route path="companies" element={<AdminCompaniesPage />} />
             <Route path="offers" element={<AdminOffersPage />} />
             <Route path="offers/:id" element={<AdminOfferDetailsPage />} />
