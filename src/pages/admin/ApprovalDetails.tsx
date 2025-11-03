@@ -19,6 +19,8 @@ import {
   XCircle,
   AlertCircle
 } from "lucide-react";
+import Modal from "@/components/ui/modal";
+import { getAllRejectionReasons } from "@/utils/rejectionReasons";
 
 interface ApprovalItemDetails {
   id: string;
@@ -147,6 +149,10 @@ export default function AdminApprovalDetailsPage() {
   const { id, type } = useParams<{ id: string; type: string }>();
   const [item, setItem] = useState<ApprovalItemDetails | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [selectedReason, setSelectedReason] = useState<string>("");
+  const [rejectionNotes, setRejectionNotes] = useState("");
+  const [isRejecting, setIsRejecting] = useState(false);
 
   useEffect(() => {
     // Simulate API call
@@ -717,7 +723,10 @@ export default function AdminApprovalDetailsPage() {
                 <AlertCircle size={18} />
                 Request Revision
               </button>
-              <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition-all">
+              <button 
+                onClick={() => setShowRejectModal(true)}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition-all"
+              >
                 <XCircle size={18} />
                 Reject
               </button>
@@ -740,6 +749,123 @@ export default function AdminApprovalDetailsPage() {
           )}
         </div>
       </div>
+
+      {/* Rejection Modal */}
+      <Modal
+        isOpen={showRejectModal}
+        onClose={() => {
+          setShowRejectModal(false);
+          setSelectedReason("");
+          setRejectionNotes("");
+        }}
+        title={`Reject ${type === 'company' ? 'Company' : 'Offer'}`}
+        size="lg"
+        footer={
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3">
+            <button
+              onClick={() => {
+                setShowRejectModal(false);
+                setSelectedReason("");
+                setRejectionNotes("");
+              }}
+              className="px-4 sm:px-6 py-2.5 sm:py-2 text-gray-400 hover:text-white hover:bg-primary/10 rounded-lg transition-all text-sm sm:text-base min-h-[44px] sm:min-h-[40px]"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={async () => {
+                if (!selectedReason) return;
+                setIsRejecting(true);
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                // Here you would normally call the API to reject with reason
+                console.log("Rejecting", {
+                  id,
+                  type,
+                  reason: selectedReason,
+                  notes: rejectionNotes,
+                });
+                setIsRejecting(false);
+                setShowRejectModal(false);
+                setSelectedReason("");
+                setRejectionNotes("");
+                // In real app, redirect or update UI
+                alert(`${type === 'company' ? 'Company' : 'Offer'} rejected successfully`);
+              }}
+              disabled={!selectedReason || isRejecting}
+              className="px-4 sm:px-6 py-2.5 sm:py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base min-h-[44px] sm:min-h-[40px]"
+            >
+              {isRejecting ? "Rejecting..." : "Confirm Rejection"}
+            </button>
+          </div>
+        }
+      >
+        <div className="space-y-4 sm:space-y-6">
+          <div>
+            <label className="text-gray-400 text-sm sm:text-base mb-2 block">
+              Rejection Reason <span className="text-red-500">*</span>
+            </label>
+            <div className="relative w-full">
+              <select
+                value={selectedReason}
+                onChange={(e) => setSelectedReason(e.target.value)}
+                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-background border border-primary/50 rounded-lg text-white text-sm sm:text-base focus:outline-none focus:ring-2 focus:border-primary appearance-none cursor-pointer
+                           hover:border-primary/70 transition-all
+                           min-h-[44px] sm:min-h-[48px]
+                           truncate pr-10 sm:pr-12"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23FFEE00' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                  backgroundPosition: 'right 0.5rem center',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundSize: '1.25em 1.25em',
+                }}
+              >
+                <option value="" className="bg-background text-white">Select a reason...</option>
+                {getAllRejectionReasons(type as "company" | "offer").map(reason => (
+                  <option key={reason.id} value={reason.id} className="bg-background text-white">
+                    {reason.reason}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {selectedReason && (
+              <div className="mt-2 p-2 sm:p-3 bg-background/50 border border-primary/30 rounded-lg">
+                <p className="text-primary text-xs sm:text-sm font-semibold mb-1">
+                  {getAllRejectionReasons(type as "company" | "offer").find(r => r.id === selectedReason)?.reason}
+                </p>
+                <p className="text-gray-400 text-xs sm:text-sm break-words">
+                  {getAllRejectionReasons(type as "company" | "offer").find(r => r.id === selectedReason)?.description}
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label className="text-gray-400 text-sm sm:text-base mb-2 block">
+              Additional Notes (Optional)
+            </label>
+            <textarea
+              value={rejectionNotes}
+              onChange={(e) => setRejectionNotes(e.target.value)}
+              placeholder="Add any additional information about the rejection..."
+              rows={4}
+              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-background border border-primary/50 rounded-lg text-white text-sm sm:text-base placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary resize-none min-h-[100px]"
+            />
+          </div>
+
+          <div className="bg-yellow/10 border border-yellow rounded-lg p-3 sm:p-4">
+            <div className="flex items-start gap-2 sm:gap-3">
+              <AlertTriangle className="text-yellow flex-shrink-0 mt-0.5" size={18} />
+              <div className="flex-1 min-w-0">
+                <h4 className="text-yellow font-bold mb-1 text-sm sm:text-base">Important</h4>
+                <p className="text-xs sm:text-sm text-gray-300 break-words">
+                  The {type === 'company' ? 'company' : 'offer'} will be rejected and an email notification will be sent to the submitter with the rejection reason.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

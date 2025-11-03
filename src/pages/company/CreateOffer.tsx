@@ -7,12 +7,14 @@ import {
   DollarSign,
   Plus,
   ArrowLeft,
-  Eye
+  Eye,
+  Search
 } from "lucide-react";
 import ActiveOfferCard from "@/components/offerCards/active-offer-card";
 import WeeklyOfferCard from "@/components/offerCards/weeklyOfferCard";
 import HappyHourOfferCard from "@/components/offerCards/happyHour";
 import GiftOfferCard from "@/components/offerCards/giftOfferCard";
+import { getActiveProductCategories } from "@/utils/productCategories";
 
 type OfferType = "active" | "weekdays" | "happy_hour" | "gift_card";
 
@@ -67,7 +69,8 @@ const offerTypes = [
   }
 ];
 
-const categories = [
+// Fallback categories if no product categories are stored
+const fallbackCategories = [
   "Food & Dining",
   "Hotels & Accommodation",
   "Wellness & Spa",
@@ -96,6 +99,15 @@ export default function CreateOfferPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+  const [categorySearchTerm, setCategorySearchTerm] = useState("");
+  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+  
+  // Load product categories from localStorage
+  const [categories] = useState<string[]>(() => {
+    const productCats = getActiveProductCategories();
+    return productCats.length > 0 ? productCats : fallbackCategories;
+  });
+  
   const [formData, setFormData] = useState<OfferFormData>({
     type: "active",
     title: "",
@@ -450,22 +462,71 @@ export default function CreateOfferPage() {
 
             <div className="md:col-span-2">
               <label className="text-gray-400 text-sm mb-2 block">
-                Category *
+                Product Category *
               </label>
-              <select
-                name="category"
-                value={formData.category}
-                onChange={handleInputChange}
-                className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
-                  errors.category ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
-                }`}
-              >
-                <option value="">Select category</option>
-                {categories.map(category => (
-                  <option key={category} value={category}>{category}</option>
-                ))}
-              </select>
+              <div className="relative">
+                <div className="relative">
+                  <input
+                    list="product-categories-list"
+                    type="text"
+                    value={categorySearchTerm}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setCategorySearchTerm(value);
+                      // Auto-select if exact match
+                      const exactMatch = categories.find(cat => cat.toLowerCase() === value.toLowerCase());
+                      if (exactMatch) {
+                        setFormData(prev => ({ ...prev, category: exactMatch }));
+                      }
+                      setShowCategoryDropdown(true);
+                    }}
+                    onBlur={() => setTimeout(() => setShowCategoryDropdown(false), 200)}
+                    onFocus={() => setShowCategoryDropdown(true)}
+                    placeholder="Search or type product category..."
+                    className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
+                      errors.category ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                    }`}
+                  />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                  <input
+                    type="hidden"
+                    name="category"
+                    value={formData.category}
+                  />
+                </div>
+                <datalist id="product-categories-list">
+                  {categories.map(category => (
+                    <option key={category} value={category}>{category}</option>
+                  ))}
+                </datalist>
+                {showCategoryDropdown && categorySearchTerm && (
+                  <div className="absolute z-10 w-full mt-1 bg-card-background border border-primary/50 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                    {categories
+                      .filter(cat => cat.toLowerCase().includes(categorySearchTerm.toLowerCase()))
+                      .map(category => (
+                        <button
+                          key={category}
+                          type="button"
+                          onClick={() => {
+                            setCategorySearchTerm(category);
+                            setFormData(prev => ({ ...prev, category }));
+                            setShowCategoryDropdown(false);
+                          }}
+                          className="w-full text-left px-4 py-2 hover:bg-primary/10 text-white transition-all"
+                        >
+                          {category}
+                        </button>
+                      ))
+                      .length === 0 && (
+                        <div className="px-4 py-2 text-gray-400 text-sm">No matching categories</div>
+                      )}
+                  </div>
+                )}
+              </div>
               {errors.category && <p className="text-red-500 text-xs mt-1">{errors.category}</p>}
+              <p className="text-gray-500 text-xs mt-1">
+                Type or search to find a product category (e.g., Clothing, Jewelry)
+              </p>
             </div>
 
             <div className="md:col-span-2">

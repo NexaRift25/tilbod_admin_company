@@ -66,6 +66,43 @@
   .scrollbar-custom::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 238, 0, 0.8);
   }
+
+  /* Prevent select dropdown overflow on mobile */
+  select {
+    word-wrap: break-word;
+    word-break: break-word;
+    text-overflow: ellipsis;
+    overflow-wrap: break-word;
+    max-width: 100%;
+  }
+
+  /* Ensure select options don't overflow on mobile */
+  select option {
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+  }
+
+  /* Modal overflow prevention */
+  .modal-content-no-margin {
+    contain: layout style;
+    isolation: isolate;
+  }
+
+  @media (max-width: 640px) {
+    select {
+      font-size: 14px;
+      padding-right: 2.5rem !important;
+    }
+
+    select option {
+      font-size: 14px;
+      padding: 8px 12px;
+      white-space: normal;
+      line-height: 1.4;
+    }
+  }
 }
 
 /* Animated Button Css */

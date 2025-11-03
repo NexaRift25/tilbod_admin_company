@@ -87,18 +87,19 @@ export default function Modal({
       <div className="fixed inset-0 bg-black/50" />
       
       {/* Modal Content Container */}
-      <div className="relative min-h-full flex items-center justify-center p-4">
+      <div className="relative min-h-full lg:w-[50%] lg:mx-auto flex items-center justify-center p-3 sm:p-4">
         <div
           className={cn(
-            "modal-content-no-margin bg-card-background border border-primary rounded-2xl w-full max-h-[90vh] flex flex-col",
+            "modal-content-no-margin bg-card-background border border-primary rounded-xl sm:rounded-2xl w-full max-h-[90vh] flex flex-col overflow-hidden",
+            "max-w-[calc(100vw-1.5rem)] sm:max-w-full",
             sizeClasses[size]
           )}
           onClick={(e) => e.stopPropagation()}
         >
         {(title || showCloseButton) && (
-          <div className="flex items-center justify-between p-6 border-b border-primary/50 flex-shrink-0">
+          <div className="flex items-center justify-between p-4 sm:p-6 border-b border-primary/50 flex-shrink-0">
             {title && (
-              <h2 className="text-2xl font-bold text-white">{title}</h2>
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white pr-2 break-words">{title}</h2>
             )}
             {showCloseButton && (
               <button
@@ -111,9 +112,9 @@ export default function Modal({
             )}
           </div>
         )}
-        <div className="p-6 overflow-y-auto flex-1">{children}</div>
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1 text-sm sm:text-base overflow-x-hidden">{children}</div>
         {footer && (
-          <div className="p-6 border-t border-primary/50 flex-shrink-0">{footer}</div>
+          <div className="p-4 sm:p-6 border-t border-primary/50 flex-shrink-0">{footer}</div>
         )}
         </div>
       </div>

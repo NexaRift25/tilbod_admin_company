@@ -14,8 +14,10 @@ import {
   AlertCircle,
   CheckCircle,
   XCircle,
-  Edit
+  Edit,
+  CalendarPlus
 } from "lucide-react";
+import Modal from "@/components/ui/modal";
 
 interface OfferDetails {
   id: string;
@@ -169,6 +171,9 @@ export default function OfferDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const [offer, setOffer] = useState<OfferDetails | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showExtendModal, setShowExtendModal] = useState(false);
+  const [newEndDate, setNewEndDate] = useState("");
+  const [isExtending, setIsExtending] = useState(false);
 
   useEffect(() => {
     // Simulate API call
@@ -630,10 +635,142 @@ export default function OfferDetailsPage() {
                     : 'No extensions remaining'}
                 </span>
               </div>
+              {offer.status === "active" && offer.maxExtensions - offer.extensionCount > 0 && (
+                <div className="mt-4">
+                  <button
+                    onClick={() => {
+                      setNewEndDate("");
+                      setShowExtendModal(true);
+                    }}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all"
+                  >
+                    <CalendarPlus size={18} />
+                    Extend Offer
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Extend Offer Modal */}
+      <Modal
+        isOpen={showExtendModal}
+        onClose={() => {
+          setShowExtendModal(false);
+          setNewEndDate("");
+        }}
+        title="Extend Offer"
+        size="md"
+        footer={
+          <div className="flex items-center justify-end gap-3">
+            <button
+              onClick={() => {
+                setShowExtendModal(false);
+                setNewEndDate("");
+              }}
+              className="px-6 py-2 text-gray-400 hover:text-white hover:bg-primary/10 rounded-lg transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={async () => {
+                if (!newEndDate) return;
+                
+                const currentEndDate = new Date(offer!.endDate);
+                const selectedDate = new Date(newEndDate);
+                
+                if (selectedDate <= currentEndDate) {
+                  alert("New end date must be after the current end date");
+                  return;
+                }
+
+                setIsExtending(true);
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Update offer with new end date and increment extension count
+                setOffer(prev => prev ? {
+                  ...prev,
+                  endDate: newEndDate,
+                  extensionCount: prev.extensionCount + 1,
+                } : null);
+                
+                setIsExtending(false);
+                setShowExtendModal(false);
+                setNewEndDate("");
+                alert("Offer extended successfully!");
+              }}
+              disabled={!newEndDate || isExtending}
+              className="px-6 py-2 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isExtending ? "Extending..." : "Extend Offer"}
+            </button>
+          </div>
+        }
+      >
+        <div className="space-y-6">
+          <div className="bg-background/50 border border-primary/30 rounded-lg p-4">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-400">Current End Date</span>
+                <span className="text-white font-semibold">
+                  {offer ? new Date(offer.endDate).toLocaleDateString() : ""}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-400">Extensions Used</span>
+                <span className="text-white font-semibold">
+                  {offer?.extensionCount} / {offer?.maxExtensions}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-400">Extensions Remaining</span>
+                <span className="text-primary font-semibold">
+                  {offer ? offer.maxExtensions - offer.extensionCount - 1 : 0}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label className="text-gray-400 text-sm mb-2 block">
+              New End Date <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="date"
+              value={newEndDate}
+              onChange={(e) => setNewEndDate(e.target.value)}
+              min={offer ? new Date(new Date(offer.endDate).getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0] : undefined}
+              className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+            />
+            <p className="text-gray-500 text-xs mt-1">
+              Select a date after the current end date
+            </p>
+          </div>
+
+          {newEndDate && offer && new Date(newEndDate) <= new Date(offer.endDate) && (
+            <div className="bg-red-500/10 border border-red-500 rounded-lg p-3">
+              <p className="text-red-500 text-sm">
+                New end date must be after {new Date(offer.endDate).toLocaleDateString()}
+              </p>
+            </div>
+          )}
+
+          <div className="bg-yellow/10 border border-yellow rounded-lg p-4">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="text-yellow flex-shrink-0 mt-0.5" size={20} />
+              <div>
+                <h4 className="text-yellow font-bold mb-1">Extension Limit</h4>
+                <p className="text-sm text-gray-300">
+                  You can extend this offer up to {offer?.maxExtensions} times. This will be extension #{offer ? offer.extensionCount + 1 : 0}.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

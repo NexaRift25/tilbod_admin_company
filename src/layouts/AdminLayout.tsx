@@ -12,6 +12,7 @@ import {
   Calendar,
   Tag,
   FolderOpen,
+  Package,
 } from "lucide-react";
 import Container from "@/components/ui/Container";
 import { Logo, MobileLogo } from "@/components/ui/Header";
@@ -68,6 +69,16 @@ export default function AdminLayout() {
       name: "Categories",
       href: "/admin/categories",
       icon: FolderOpen,
+    },
+    {
+      name: "Product Categories",
+      href: "/admin/product-categories",
+      icon: Package,
+    },
+    {
+      name: "Discount Labels",
+      href: "/admin/discount-labels",
+      icon: Tag,
     },
     {
       name: "Settings",
