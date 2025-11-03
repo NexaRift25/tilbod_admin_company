@@ -23,6 +23,7 @@
   /* RGB components for Tailwind opacity support */
   --primary-rgb: 255 238 0;
   --text-yellow-rgb: 255 238 0;
+  --text-pink-rgb: 237 154 234;
   --text-green-rgb: 16 194 120;
 }
 
@@ -45,6 +46,25 @@
 
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Custom scrollbar styling */
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-track {
+    background: var(--card-background);
+    border-radius: 4px;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 4px;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 238, 0, 0.8);
   }
 }
 

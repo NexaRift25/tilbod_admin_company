@@ -29,7 +29,7 @@ module.exports = {
         },
         dark: "var(--text-dark)",
         yellow: "rgb(var(--text-yellow-rgb) / <alpha-value>)",
-        pink: "var(--text-pink)",
+        pink: "rgb(var(--text-pink-rgb) / <alpha-value>)",
         green: "rgb(var(--text-green-rgb) / <alpha-value>)",
         "smoky-white": "var(--text-smoky-white)",
         "card-background": "var(--card-background)",

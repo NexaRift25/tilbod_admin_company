@@ -41,19 +41,19 @@ export default function GiftOfferCard({
     <div className="theme-orange">
       <div
         className={cn(
-          "w-full min-h-[34rem] h-[34rem] sm:h-[34rem] md:h-[38.75rem] relative overflow-hidden border border-primary rounded-[2.5rem] bg-card-background mx-auto flex flex-col",
+          "w-full min-h-[34rem] h-[34rem] sm:h-[34rem] md:h-[38.75rem] relative overflow-hidden border border-orange-500 rounded-[2.5rem] bg-card-background mx-auto flex flex-col",
           className
         )}
       >
         {/* Price Banner */}
-        <div className="bg-primary absolute left-[1rem] right-[1rem] top-[1rem] z-30 flex select-none items-center justify-center rounded-full py-[0.375rem] h-[2.5rem] md:h-[3.5rem] w-auto bg-offer-banner">
-          <span className="text-xl md:text-[1.75rem] font-semibold text-dark max-w-[80%] w-full text-center truncate">
+        <div className="bg-orange-500 absolute left-[1rem] right-[1rem] top-[1rem] z-30 flex select-none items-center justify-center rounded-full py-[0.375rem] h-[2.5rem] md:h-[3.5rem] w-auto">
+          <span className="text-xl md:text-[1.75rem] font-bold text-dark max-w-[80%] w-full text-center truncate">
             {"/gift-certificates" !== pathname ? price : category}
           </span>
         </div>
 
         {/* Main Image */}
-        <div className="relative h-[10rem] sm:h-[12rem] md:h-[14rem] w-full bg-card-background border-b border-primary flex-shrink-0">
+        <div className="relative h-[10rem] sm:h-[12rem] md:h-[14rem] w-full bg-card-background border-b border-orange-500 flex-shrink-0">
           <img
             src={image}
             alt={title}
@@ -61,7 +61,7 @@ export default function GiftOfferCard({
           />
           {/* Time Left Indicator */}
           <div className="min-w-[9rem] text-center absolute bottom-0 left-1/2 z-40 -translate-x-1/2 transform">
-            <div className="max-w-[14.5rem] min-w-[9rem] rounded-t-3xl text-sm shadow-lg px-[2rem] py-[0.34375rem] font-semibold lg:text-base border border-b-0 bg-card-background text-smoky-white border-primary w-full truncate">
+            <div className="max-w-[14.5rem] min-w-[9rem] rounded-t-3xl text-sm shadow-lg px-[2rem] py-[0.34375rem] font-semibold lg:text-base border border-b-0 bg-card-background text-smoky-white border-orange-500 w-full truncate">
               {timeLeft}
             </div>
           </div>
@@ -71,7 +71,7 @@ export default function GiftOfferCard({
         <div className="z-30 p-[1rem] md:p-[1.5rem] flex flex-col justify-between sm:rounded-b-3xl bg-card-background">
           {/* Content Section */}
           <div className="pointer-events-none flex-1">
-            <div className="border-b border-primary">
+            <div className="border-b border-orange-500">
               {/* Category */}
               <div className="text-xs sm:text-sm lg:text-base font-semibold text-yellow">
                 {"/gift-certificates" !== pathname

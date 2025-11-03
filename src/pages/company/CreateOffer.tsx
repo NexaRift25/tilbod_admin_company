@@ -1,142 +1,149 @@
-import { useState, useMemo, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useMemo } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import {
-  Info,
-  Building2,
-  Paperclip,
-  ArrowRight,
-  ChevronDown,
-  Sparkles,
+  Tag,
+  Calendar,
+  Clock,
+  DollarSign,
+  Plus,
+  ArrowLeft,
   Eye
 } from "lucide-react";
-import { DateInput } from "@/components/ui/date-input";
 import ActiveOfferCard from "@/components/offerCards/active-offer-card";
-import GiftOfferCard from "@/components/offerCards/giftOfferCard";
-import HappyHourOfferCard from "@/components/offerCards/happyHour";
 import WeeklyOfferCard from "@/components/offerCards/weeklyOfferCard";
+import HappyHourOfferCard from "@/components/offerCards/happyHour";
+import GiftOfferCard from "@/components/offerCards/giftOfferCard";
+
+type OfferType = "active" | "weekdays" | "happy_hour" | "gift_card";
 
 interface OfferFormData {
-  offerType: string;
+  type: OfferType;
   title: string;
-  typeToggle: "discount" | "offer";
+  description: string;
+  category: string;
+  originalPrice: string;
+  discountPrice: string;
   discountPercentage: string;
-  companyForDiscount: string;
   startDate: string;
   endDate: string;
-  offerText: string;
-  companyCustomers: string;
-  photo: File | null;
-  price: string;
-  startHour: string;
-  endHour: string;
   weekdays: string[];
+  startTime: string;
+  endTime: string;
+  location: string;
+  terms: string;
+  image: string;
+  weekdayAddress: string;
+  offerLink: string;
 }
 
-const offerTypesList = [
-  "Active offers",
-  "Weekday offers",
-  "Happy hour offers",
-  "Gift cards"
+const offerTypes = [
+  {
+    id: "active",
+    name: "Active Offer",
+    description: "Daily promotional deals available year-round",
+    icon: Tag,
+    color: "bg-yellow/10 text-yellow border-yellow"
+  },
+  {
+    id: "weekdays",
+    name: "Weekdays Offer",
+    description: "Special deals for restaurants and activities",
+    icon: Calendar,
+    color: "bg-pink/10 text-pink border-pink"
+  },
+  {
+    id: "happy_hour",
+    name: "Happy Hour Offer",
+    description: "Time-based promotions for bars & restaurants",
+    icon: Clock,
+    color: "bg-green/10 text-green border-green"
+  },
+  {
+    id: "gift_card",
+    name: "Gift Card",
+    description: "Prepaid value cards for hotels & services",
+    icon: DollarSign,
+    color: "bg-orange-500/10 text-orange-500 border-orange-500"
+  }
 ];
 
-const mockCompanies = [
-  "Nordic Spa & Wellness",
-  "Hotel Aurora",
-  "Reykjavik Bar & Lounge",
-  "Mountain Resort",
-  "Blue Lagoon Tours"
+const categories = [
+  "Food & Dining",
+  "Hotels & Accommodation",
+  "Wellness & Spa",
+  "Activities & Entertainment",
+  "Shopping & Retail",
+  "Beauty & Personal Care",
+  "Health & Fitness",
+  "Travel & Tourism",
+  "Education & Training",
+  "Professional Services"
+];
+
+const weekdays = [
+  { id: "monday", name: "Monday" },
+  { id: "tuesday", name: "Tuesday" },
+  { id: "wednesday", name: "Wednesday" },
+  { id: "thursday", name: "Thursday" },
+  { id: "friday", name: "Friday" },
+  { id: "saturday", name: "Saturday" },
+  { id: "sunday", name: "Sunday" }
 ];
 
 export default function CreateOfferPage() {
   const navigate = useNavigate();
+  const [selectedType, setSelectedType] = useState<OfferType>("active");
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
   const [formData, setFormData] = useState<OfferFormData>({
-    offerType: "Active offers",
+    type: "active",
     title: "",
-    typeToggle: "discount",
+    description: "",
+    category: "",
+    originalPrice: "",
+    discountPrice: "",
     discountPercentage: "",
-    companyForDiscount: "",
     startDate: "",
     endDate: "",
-    offerText: "",
-    companyCustomers: "",
-    photo: null,
-    price: "",
-    startHour: "9",
-    endHour: "17",
-    weekdays: []
+    weekdays: [],
+    startTime: "",
+    endTime: "",
+    location: "",
+    terms: "",
+    image: "",
+    weekdayAddress: "",
+    offerLink: ""
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  // Update type when selectedType changes
+  useEffect(() => {
+    setFormData(prev => ({ ...prev, type: selectedType }));
+  }, [selectedType]);
 
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: "" }));
+  // Calculate discount percentage when prices change
+  useEffect(() => {
+    if (formData.originalPrice && formData.discountPrice) {
+      const original = parseFloat(formData.originalPrice);
+      const discounted = parseFloat(formData.discountPrice);
+      
+      if (!isNaN(original) && !isNaN(discounted) && original > 0) {
+        const percentage = ((original - discounted) / original * 100).toFixed(0);
+        setFormData(prev => ({ ...prev, discountPercentage: percentage }));
+      }
     }
-  };
-
-  const handleToggleChange = (value: "discount" | "offer") => {
-    setFormData(prev => ({ ...prev, typeToggle: value }));
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFormData(prev => ({ ...prev, photo: e.target.files![0] }));
-    }
-  };
-
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.title.trim()) newErrors.title = "Offer title is required";
-    if (!formData.discountPercentage) newErrors.discountPercentage = "Discount percentage is required";
-    if (!formData.startDate) newErrors.startDate = "Start date is required";
-    if (!formData.endDate) newErrors.endDate = "End date is required";
-    if (!formData.offerText.trim()) newErrors.offerText = "Offer text is required";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateForm()) return;
-
-    setIsLoading(true);
-
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      console.log("Creating offer:", formData);
-
-      // Redirect to offers list
-      navigate("/company/offers");
-    } catch (error) {
-      console.error("Offer creation failed", error);
-      setErrors({ general: "Failed to create offer. Please try again." });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [formData.originalPrice, formData.discountPrice]);
 
   // Clean up object URL when component unmounts or photo changes
-  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
-  
   useEffect(() => {
-    if (formData.photo) {
-      const url = URL.createObjectURL(formData.photo);
-      setPreviewImageUrl(url);
-      return () => URL.revokeObjectURL(url);
-    } else {
-      setPreviewImageUrl(null);
-    }
-  }, [formData.photo]);
+    return () => {
+      if (previewImageUrl) {
+        URL.revokeObjectURL(previewImageUrl);
+      }
+    };
+  }, [previewImageUrl]);
 
-  // Calculate time left from end date
+  // Calculate time left for preview
   const calculateTimeLeft = (endDate: string) => {
     if (!endDate) return "Ends soon";
     const end = new Date(endDate + "T23:59:59");
@@ -155,532 +162,643 @@ export default function CreateOfferPage() {
     return "Ends soon";
   };
 
-  // Create preview offer data for Active offers
-  const previewOffer = useMemo(() => {
-    const discountText = formData.typeToggle === "discount" && formData.discountPercentage
-      ? `${formData.discountPercentage}% OFF`
-      : "Special Offer";
-    
-    const imageUrl = previewImageUrl || "/placeholder-image.jpg";
-
-    // Calculate prices from discount
-    let price = null;
-    let discountPrice = null;
-    if (formData.discountPercentage && formData.price) {
-      const numericPrice = parseFloat(formData.price.replace(/[,\s]/g, ''));
-      if (!isNaN(numericPrice)) {
-        price = numericPrice.toString();
-        const discount = parseFloat(formData.discountPercentage);
-        if (!isNaN(discount)) {
-          discountPrice = (numericPrice * (1 - discount / 100)).toFixed(0);
-        }
-      }
-    }
-
+  // Transform form data for ActiveOfferCard preview
+  const previewActiveOffer = useMemo(() => {
     return {
       id: 0,
-      offerType: formData.offerType,
+      offerType: "active",
       title: formData.title || "Your offer title",
-      discount: discountText,
-      description: formData.offerText || "Your offer description will appear here",
-      image: imageUrl,
-      category: formData.companyForDiscount || "Category",
+      discount: formData.discountPercentage ? `${formData.discountPercentage}% OFF` : "Special Offer",
+      description: formData.description || "Your offer description will appear here",
+      image: previewImageUrl || formData.image || "/placeholder-image.jpg",
+      category: formData.category || "Category",
       timeLeft: calculateTimeLeft(formData.endDate),
       location: "",
-      price: price,
-      discountPrice: discountPrice,
-      link: "#"
+      price: formData.originalPrice || null,
+      discountPrice: formData.discountPrice || null,
+      link: formData.offerLink || "#"
     };
   }, [formData, previewImageUrl]);
 
-  // Create preview gift card data
-  const previewGiftOffer = useMemo(() => {
-    const imageUrl = previewImageUrl || "/placeholder-image.jpg";
-    
+  // Transform form data for WeeklyOfferCard preview
+  const previewWeeklyOffer = useMemo(() => {
+    // Convert weekday IDs to abbreviations
+    const weekdayMap: Record<string, string> = {
+      "monday": "Mon",
+      "tuesday": "Tue",
+      "wednesday": "Wed",
+      "thursday": "Thu",
+      "friday": "Fri",
+      "saturday": "Sat",
+      "sunday": "Sun"
+    };
+    const availableDays = formData.weekdays.map(id => weekdayMap[id] || id);
+
     return {
       id: 0,
-      offerType: formData.offerType,
+      offerType: "weekdays",
+      title: formData.title || "Your weekly offer title",
+      discount: formData.discountPercentage ? `${formData.discountPercentage}% Discount` : "Discount Available",
+      description: formData.description || "Your weekly offer description",
+      image: previewImageUrl || formData.image || "/placeholder-image.jpg",
+      badge: formData.category || "Weekly Special",
+      location: formData.weekdayAddress || "Location",
+      time: formData.startTime && formData.endTime ? `${formData.startTime} - ${formData.endTime}` : "Available all day",
+      availableDays: availableDays.length > 0 ? availableDays : ["Mon", "Tue", "Wed", "Thu", "Fri"],
+      link: formData.offerLink || "#"
+    };
+  }, [formData, previewImageUrl]);
+
+  // Transform form data for HappyHourOfferCard preview
+  const previewHappyHourOffer = useMemo(() => {
+    const calculateStatus = () => {
+      if (!formData.startTime || !formData.endTime) return "Closed";
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const currentTime = hours + minutes / 60;
+      
+      const [startHour, startMin] = formData.startTime.split(':').map(Number);
+      const [endHour, endMin] = formData.endTime.split(':').map(Number);
+      const startDecimal = startHour + startMin / 60;
+      const endDecimal = endHour + endMin / 60;
+      
+      if (currentTime >= startDecimal && currentTime < endDecimal) {
+        return "Open now";
+      }
+      return "Closed";
+    };
+
+    const formatTimeRange = () => {
+      if (formData.startTime && formData.endTime) {
+        const formatTo12Hour = (time: string) => {
+          const [hours, minutes] = time.split(':');
+          const hour = parseInt(hours);
+          const ampm = hour >= 12 ? 'PM' : 'AM';
+          const displayHour = hour % 12 || 12;
+          return `${displayHour}:${minutes} ${ampm}`;
+        };
+        return `${formatTo12Hour(formData.startTime)} - ${formatTo12Hour(formData.endTime)}`;
+      }
+      return "Happy Hour Time";
+    };
+
+    return {
+      id: 0,
+      offerType: "happy_hour",
+      title: formData.title || "Your happy hour title",
+      time: formatTimeRange(),
+      description: formData.description || "Your happy hour description",
+      image: previewImageUrl || formData.image || "/placeholder-image.jpg",
+      status: calculateStatus(),
+      location: formData.location || "Location",
+      pricing: formData.discountPrice ? `${formData.discountPrice} kr.` : "Special pricing",
+      availableDays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      link: formData.offerLink || "#"
+    };
+  }, [formData, previewImageUrl]);
+
+  // Transform form data for GiftOfferCard preview
+  const previewGiftOffer = useMemo(() => {
+    return {
+      id: 0,
+      offerType: "gift_card",
       title: formData.title || "Your gift card title",
-      price: formData.price || "0",
-      description: formData.offerText || "Your gift card description will appear here",
-      image: imageUrl,
-      category: formData.companyForDiscount || "Category",
+      price: formData.discountPrice || "0",
+      description: formData.description || "Your gift card description",
+      image: previewImageUrl || formData.image || "/placeholder-image.jpg",
+      category: formData.category || "Category",
       timeLeft: calculateTimeLeft(formData.endDate),
       purchaseCount: 0,
       link: "#"
     };
   }, [formData, previewImageUrl]);
 
-  // Create preview happy hour data
-  const previewHappyHourOffer = useMemo(() => {
-    const imageUrl = previewImageUrl || "/placeholder-image.jpg";
-    
-    // Format time range from dates or use placeholder
-    const formatTimeRange = () => {
-      if (formData.startDate && formData.endDate) {
-        // For preview, we'll show a generic time range
-        return "5:00 PM - 7:00 PM";
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const handleWeekdayChange = (dayId: string) => {
+    setFormData(prev => ({
+      ...prev,
+      weekdays: prev.weekdays.includes(dayId)
+        ? prev.weekdays.filter(d => d !== dayId)
+        : [...prev.weekdays, dayId]
+    }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const url = URL.createObjectURL(file);
+      setPreviewImageUrl(url);
+      setFormData(prev => ({ ...prev, image: url }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.title.trim()) newErrors.title = "Offer title is required";
+    if (!formData.description.trim()) newErrors.description = "Description is required";
+    if (!formData.category) newErrors.category = "Category is required";
+    if (!formData.originalPrice) newErrors.originalPrice = "Original price is required";
+    if (!formData.discountPrice) newErrors.discountPrice = "Discounted price is required";
+    if (!formData.startDate) newErrors.startDate = "Start date is required";
+    if (!formData.endDate) newErrors.endDate = "End date is required";
+
+    // Type-specific validations
+    if (selectedType === "weekdays") {
+      if (formData.weekdays.length === 0) {
+        newErrors.weekdays = "At least one weekday must be selected";
       }
-      return "Happy Hour Time";
-    };
+      if (!formData.startTime) newErrors.startTime = "Start time is required";
+      if (!formData.endTime) newErrors.endTime = "End time is required";
+      if (!formData.weekdayAddress.trim()) newErrors.weekdayAddress = "Restaurant address is required";
+    }
+    if (selectedType === "happy_hour") {
+      if (!formData.startTime) newErrors.startTime = "Start time is required";
+      if (!formData.endTime) newErrors.endTime = "End time is required";
+      if (!formData.location.trim()) newErrors.location = "Location is required";
+    }
 
-    // Calculate status based on current time vs happy hour time
-    const calculateStatus = () => {
-      // For preview, default to "Closed" or we could check current time
-      const now = new Date();
-      const hours = now.getHours();
-      // If it's between 5-7 PM, show "Open now", otherwise "Closed"
-      if (hours >= 17 && hours < 19) {
-        return "Open now";
-      }
-      return "Closed";
-    };
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-    // Convert companyCustomers to location or use placeholder
-    const location = formData.companyCustomers || formData.companyForDiscount || "Location";
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-    // Format pricing
-    const pricing = formData.price ? `${formData.price} kr.` : "Special pricing";
+    if (!validateForm()) return;
 
-    // Available days - for preview, show all days, but in real implementation
-    // this would come from form data for happy hour
-    const availableDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    setIsLoading(true);
 
-    return {
-      id: 0,
-      offerType: formData.offerType,
-      title: formData.title || "Your happy hour title",
-      time: formatTimeRange(),
-      description: formData.offerText || "Your happy hour description will appear here",
-      image: imageUrl,
-      status: calculateStatus(),
-      location: location,
-      pricing: pricing,
-      availableDays: availableDays,
-      link: "#"
-    };
-  }, [formData, previewImageUrl]);
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
 
-  // Create preview weekly offer data
-  const previewWeeklyOffer = useMemo(() => {
-    const imageUrl = previewImageUrl || "/placeholder-image.jpg";
-    
-    // Format discount from typeToggle and discountPercentage
-    const formatDiscount = () => {
-      if (formData.discountPercentage) {
-        return formData.typeToggle === "discount" 
-          ? `${formData.discountPercentage}% Discount`
-          : `${formData.discountPercentage}% Off`;
-      }
-      return formData.typeToggle === "discount" ? "Discount Available" : "Special Offer";
-    };
+      // Here you would normally submit to your API
+      console.log("Creating offer:", { ...formData, type: selectedType });
 
-    // Format time range from hours (24-hour format)
-    const formatTime = () => {
-      if (formData.startHour && formData.endHour) {
-        const startHour = parseInt(formData.startHour);
-        const endHour = parseInt(formData.endHour);
-        const formatHour = (hour: number) => {
-          return hour.toString().padStart(2, '0') + ':00';
-        };
-        return `${formatHour(startHour)} - ${formatHour(endHour)}`;
-      }
-      return "Available all day";
-    };
+      // Redirect to offers list
+      navigate("/company/offers");
+    } catch (error) {
+      console.error("Offer creation failed", error);
+      setErrors({ general: "Failed to create offer. Please try again." });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    // Badge text (could be category or company name)
-    const badge = formData.companyForDiscount || "Weekly Special";
+  const selectedOfferType = offerTypes.find(type => type.id === selectedType)!;
 
-    // Location
-    const location = formData.companyCustomers || formData.companyForDiscount || "Location";
-
-    // Available days - use selected weekdays from form data
-    const availableDays = formData.weekdays.length > 0 
-      ? formData.weekdays 
-      : ["Mon", "Tue", "Wed", "Thu", "Fri"]; // Default to weekdays if none selected
-
-    return {
-      id: 0,
-      offerType: formData.offerType,
-      title: formData.title || "Your weekly offer title",
-      discount: formatDiscount(),
-      description: formData.offerText || "Your weekly offer description will appear here",
-      image: imageUrl,
-      badge: badge,
-      location: location,
-      time: formatTime(),
-      availableDays: availableDays,
-      link: "#"
-    };
-  }, [formData, previewImageUrl]);
+  const renderSelectedIcon = () => {
+    const Icon = selectedOfferType.icon;
+    return <Icon size={24} className="text-primary" />;
+  };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="space-y-6">
       {/* Header */}
+      <div className="flex items-center gap-4">
+        <Link
+          to="/company/offers"
+          className="p-2 hover:bg-primary/10 rounded-lg transition-all"
+        >
+          <ArrowLeft className="text-primary" size={20} />
+        </Link>
         <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-          Create Offer Page
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">
+            Create New Offer
           </h1>
+          <p className="text-gray-400 text-sm">
+            Choose offer type and set up your promotion
+          </p>
+        </div>
+      </div>
+
+      {/* Offer Type Selection */}
+      <div className="bg-card-background border border-primary rounded-2xl p-6">
+        <h3 className="text-lg font-bold text-white mb-4">Choose Offer Type</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {offerTypes.map((type) => {
+            const Icon = type.icon;
+            return (
+              <button
+                key={type.id}
+                type="button"
+                onClick={() => setSelectedType(type.id as OfferType)}
+                className={`p-4 rounded-xl border-2 transition-all text-left ${
+                  selectedType === type.id
+                    ? `${type.color} border-opacity-100`
+                    : "border-primary/30 hover:border-primary/60 bg-background"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Icon size={24} />
+                  <div>
+                    <h4 className="font-semibold text-white">{type.name}</h4>
+                    <p className="text-sm text-gray-400">{type.description}</p>
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Create Offer Form */}
-        <form onSubmit={handleSubmit} className="bg-card-background border border-primary rounded-2xl p-6 lg:p-8">
+        {/* Create Offer Form */}
+        <div className="bg-card-background border border-primary rounded-2xl p-6 lg:p-8 max-h-[800px] overflow-y-auto scrollbar-custom">
         {errors.general && (
           <div className="bg-red-500/10 border border-red-500 rounded-lg p-4 mb-6">
             <p className="text-red-500">{errors.general}</p>
           </div>
         )}
 
-        {/* Select type of offer */}
-        <div className="mb-6">
-          <label className="flex items-center gap-2 text-gray-300 text-sm mb-2">
-            <Info size={16} className="text-gray-400" />
-            Select type of offer
-          </label>
-          <div className="relative">
-            <select
-              name="offerType"
-              value={formData.offerType}
-              onChange={handleInputChange}
-              className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary transition-all appearance-none pr-10"
-            >
-              {offerTypesList.map(type => (
-                <option key={type} value={type}>{type}</option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
-          </div>
+        <div className="flex items-center gap-3 mb-6">
+          {renderSelectedIcon()}
+          <h3 className="text-xl font-bold text-white">
+            Create {selectedOfferType.name}
+          </h3>
         </div>
 
-        {/* Single Column Layout */}
-        <div className="space-y-6">
-          {/* Offer title */}
-          <div>
-            <label className="flex items-center gap-2 text-gray-300 text-sm mb-2">
-              <Info size={16} className="text-gray-400" />
-              Offer title
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Basic Information */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="md:col-span-2">
+              <label className="text-gray-400 text-sm mb-2 block">
+                Offer Title *
               </label>
-            <div className="relative">
               <input
                 type="text"
                 name="title"
                 value={formData.title}
                 onChange={handleInputChange}
-                className={`w-full px-4 py-3 pr-10 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                  errors.title ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
+                className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
+                  errors.title ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
                 }`}
-                placeholder="What are you going to put on offer?"
+                placeholder="Enter offer title"
               />
-              <Sparkles className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-            </div>
-            {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title}</p>}
+              {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title}</p>}
             </div>
 
-          {/* Type of offer toggle */}
-            <div>
-            <label className="flex items-center gap-2 text-gray-300 text-sm mb-2">
-              <Info size={16} className="text-gray-400" />
-              Type of offer
+            <div className="md:col-span-2">
+              <label className="text-gray-400 text-sm mb-2 block">
+                Category *
               </label>
-            <div className="relative flex items-center bg-background border border-primary/50 rounded-lg p-1">
-              <div
-                className={`absolute h-[calc(100%-8px)] w-[calc(50%-4px)] bg-white rounded-md transition-all duration-300 ease-in-out ${
-                  formData.typeToggle === "offer" ? "translate-x-full" : "translate-x-0"
-                }`}
-                style={{
-                  left: "4px"
-                }}
-              />
-              <button
-                type="button"
-                onClick={() => handleToggleChange("discount")}
-                className={`relative z-10 flex-1 px-4 py-3 rounded-md font-medium transition-colors ${
-                  formData.typeToggle === "discount"
-                    ? "text-dark"
-                    : "text-gray-400"
-                }`}
-              >
-                Discount
-              </button>
-              <button
-                type="button"
-                onClick={() => handleToggleChange("offer")}
-                className={`relative z-10 flex-1 px-4 py-3 rounded-md font-medium transition-colors ${
-                  formData.typeToggle === "offer"
-                    ? "text-dark"
-                    : "text-gray-400"
-                }`}
-              >
-                Offer
-              </button>
-            </div>
-            </div>
-
-          {/* Amount of discount */}
-          <div>
-            <label className="flex items-center gap-2 text-gray-300 text-sm mb-2">
-              <Info size={16} className="text-gray-400" />
-              Amount of discount
-              </label>
-            <div className="relative">
-              <input
-                type="number"
-                name="discountPercentage"
-                value={formData.discountPercentage}
-                onChange={handleInputChange}
-                className={`w-full px-4 py-3 pr-10 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                  errors.discountPercentage ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
-                }`}
-                placeholder="Discount %"
-              />
-              <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">%</span>
-            </div>
-            {errors.discountPercentage && <p className="text-red-500 text-xs mt-1">{errors.discountPercentage}</p>}
-          </div>
-
-          {/* Companies for which the discount is available */}
-          <div>
-            <label className="flex items-center gap-2 text-gray-300 text-sm mb-2">
-              <Info size={16} className="text-gray-400" />
-              Companies for which the discount is available
-                </label>
-            <div className="relative">
               <select
-                name="companyForDiscount"
-                value={formData.companyForDiscount}
-                  onChange={handleInputChange}
-                className="w-full px-4 py-3 pr-10 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary transition-all appearance-none"
+                name="category"
+                value={formData.category}
+                onChange={handleInputChange}
+                className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
+                  errors.category ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                }`}
               >
-                <option value="">Company</option>
-                {mockCompanies.map(company => (
-                  <option key={company} value={company}>{company}</option>
+                <option value="">Select category</option>
+                {categories.map(category => (
+                  <option key={category} value={category}>{category}</option>
                 ))}
               </select>
-              <Building2 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
+              {errors.category && <p className="text-red-500 text-xs mt-1">{errors.category}</p>}
             </div>
+
+            <div className="md:col-span-2">
+              <label className="text-gray-400 text-sm mb-2 block">
+                Description *
+              </label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                rows={4}
+                className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all resize-none ${
+                  errors.description ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                }`}
+                placeholder="Describe your offer in detail..."
+              />
+              {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description}</p>}
+            </div>
+          </div>
+
+          {/* Pricing */}
+          <div>
+            <h4 className="text-lg font-bold text-white mb-4">Pricing Information</h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label className="text-gray-400 text-sm mb-2 block">
+                  Original Price (kr.) *
+                </label>
+                <input
+                  type="number"
+                  name="originalPrice"
+                  value={formData.originalPrice}
+                  onChange={handleInputChange}
+                  className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
+                    errors.originalPrice ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                  }`}
+                  placeholder="1000"
+                />
+                {errors.originalPrice && <p className="text-red-500 text-xs mt-1">{errors.originalPrice}</p>}
               </div>
 
-          {/* Discount valid from time to time */}
               <div>
-            <label className="flex items-center gap-2 text-gray-300 text-sm mb-2">
-              <Info size={16} className="text-gray-400" />
-              Discount valid from time to time
+                <label className="text-gray-400 text-sm mb-2 block">
+                  Discounted Price (kr.) *
                 </label>
-            <div className="flex flex-col lg:flex-row gap-4">
-              <div className="flex-1">
-                <DateInput
-                  name="startDate"
-                  value={formData.startDate}
+                <input
+                  type="number"
+                  name="discountPrice"
+                  value={formData.discountPrice}
                   onChange={handleInputChange}
-                  placeholder="From"
-                  error={!!errors.startDate}
+                  className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
+                    errors.discountPrice ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                  }`}
+                  placeholder="800"
                 />
-                {errors.startDate && <p className="text-red-500 text-xs mt-1">{errors.startDate}</p>}
+                {errors.discountPrice && <p className="text-red-500 text-xs mt-1">{errors.discountPrice}</p>}
               </div>
-              <div className="flex-1">
-                <DateInput
-                  name="endDate"
-                  value={formData.endDate}
+
+              <div>
+                <label className="text-gray-400 text-sm mb-2 block">
+                  Discount %
+                </label>
+                <input
+                  type="number"
+                  name="discountPercentage"
+                  value={formData.discountPercentage}
                   onChange={handleInputChange}
-                  placeholder="To"
-                  error={!!errors.endDate}
+                  className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all"
+                  placeholder="20"
+                  readOnly
                 />
-                {errors.endDate && <p className="text-red-500 text-xs mt-1">{errors.endDate}</p>}
               </div>
             </div>
           </div>
 
-          {/* Weekday offers specific fields */}
-          {formData.offerType === "Weekday offers" && (
-            <>
-              {/* Select hours (24-hour format) */}
+          {/* Date & Time (varies by offer type) */}
+          {selectedType !== "happy_hour" && (
             <div>
-                <label className="flex items-center gap-2 text-gray-300 text-sm mb-2">
-                  <Info size={16} className="text-gray-400" />
-                  Select hours (24-hour format)
+              <h4 className="text-lg font-bold text-white mb-4">Offer Duration</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="text-gray-400 text-sm mb-2 block">
+                    Start Date *
                   </label>
-                <div className="flex flex-col lg:flex-row gap-4">
-                  <div className="flex-1">
-                    <div className="relative">
-                      <select
-                        name="startHour"
-                        value={formData.startHour}
+                  <input
+                    type="date"
+                    name="startDate"
+                    value={formData.startDate}
                     onChange={handleInputChange}
-                        className="w-full px-4 py-3 pr-10 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary transition-all appearance-none"
-                      >
-                        {Array.from({ length: 24 }, (_, i) => (
-                          <option key={i} value={i.toString().padStart(2, '0')}>
-                            {i.toString().padStart(2, '0')}:00
-                          </option>
-                        ))}
-                      </select>
-                      <ArrowRight className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
-                    </div>
-                    {errors.startHour && <p className="text-red-500 text-xs mt-1">{errors.startHour}</p>}
+                    className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
+                      errors.startDate ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                    }`}
+                  />
+                  {errors.startDate && <p className="text-red-500 text-xs mt-1">{errors.startDate}</p>}
                 </div>
-                  <div className="flex-1">
-                    <div className="relative">
-                      <select
-                        name="endHour"
-                        value={formData.endHour}
+
+                <div>
+                  <label className="text-gray-400 text-sm mb-2 block">
+                    End Date *
+                  </label>
+                  <input
+                    type="date"
+                    name="endDate"
+                    value={formData.endDate}
                     onChange={handleInputChange}
-                        className="w-full px-4 py-3 pr-10 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary transition-all appearance-none"
-                      >
-                        {Array.from({ length: 24 }, (_, i) => (
-                          <option key={i} value={i.toString().padStart(2, '0')}>
-                            {i.toString().padStart(2, '0')}:00
-                          </option>
-                        ))}
-                      </select>
-                      <ArrowRight className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
-                    </div>
-                    {errors.endHour && <p className="text-red-500 text-xs mt-1">{errors.endHour}</p>}
+                    className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
+                      errors.endDate ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                    }`}
+                  />
+                  {errors.endDate && <p className="text-red-500 text-xs mt-1">{errors.endDate}</p>}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Weekdays Selection (for weekdays offers) */}
+          {selectedType === "weekdays" && (
+            <div className="space-y-6">
+              <div>
+                <h4 className="text-lg font-bold text-white mb-4">Select Weekdays</h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {weekdays.map(day => (
+                    <button
+                      key={day.id}
+                      type="button"
+                      onClick={() => handleWeekdayChange(day.id)}
+                      className={`p-3 rounded-lg border transition-all ${
+                        formData.weekdays.includes(day.id)
+                          ? "bg-pink/10 border-pink text-pink"
+                          : "bg-background border-pink/30 text-gray-400 hover:bg-pink/5"
+                      }`}
+                    >
+                      {day.name}
+                    </button>
+                  ))}
+                </div>
+                {errors.weekdays && <p className="text-red-500 text-xs mt-2">{errors.weekdays}</p>}
+              </div>
+
+              <div>
+                <h4 className="text-lg font-bold text-white mb-4">Time Range</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="text-gray-400 text-sm mb-2 block">
+                      Start Time *
+                    </label>
+                    <input
+                      type="time"
+                      name="startTime"
+                      value={formData.startTime}
+                      onChange={handleInputChange}
+                      className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
+                        errors.startTime ? "border-red-500 focus:border-red-500" : "border-pink/30 focus:border-pink"
+                      }`}
+                    />
+                    {errors.startTime && <p className="text-red-500 text-xs mt-1">{errors.startTime}</p>}
+                  </div>
+
+                  <div>
+                    <label className="text-gray-400 text-sm mb-2 block">
+                      End Time *
+                    </label>
+                    <input
+                      type="time"
+                      name="endTime"
+                      value={formData.endTime}
+                      onChange={handleInputChange}
+                      className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
+                        errors.endTime ? "border-red-500 focus:border-red-500" : "border-pink/30 focus:border-pink"
+                      }`}
+                    />
+                    {errors.endTime && <p className="text-red-500 text-xs mt-1">{errors.endTime}</p>}
                   </div>
                 </div>
               </div>
 
-              {/* Select weekdays */}
-            <div>
-                <label className="flex items-center gap-2 text-gray-300 text-sm mb-2">
-                  <Info size={16} className="text-gray-400" />
-                  Select weekdays when offer will run
-                </label>
-                <div className="grid grid-cols-7 gap-2">
-                  {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
-                  <button
-                      key={day}
-                    type="button"
-                      onClick={() => {
-                        setFormData(prev => {
-                          const weekdays = prev.weekdays.includes(day)
-                            ? prev.weekdays.filter(d => d !== day)
-                            : [...prev.weekdays, day];
-                          return { ...prev, weekdays };
-                        });
-                      }}
-                      className={`px-3 py-2 rounded-lg font-semibold text-sm transition-all ${
-                        formData.weekdays.includes(day)
-                          ? 'bg-primary text-dark border-2 border-primary'
-                          : 'bg-background border-2 border-primary/50 text-gray-300 hover:border-primary/80'
-                      }`}
-                    >
-                      {day}
-                  </button>
-                ))}
+              <div>
+                <h4 className="text-lg font-bold text-white mb-4">Location</h4>
+                <div>
+                  <label className="text-gray-400 text-sm mb-2 block">
+                    Restaurant/Address *
+                  </label>
+                  <input
+                    type="text"
+                    name="weekdayAddress"
+                    value={formData.weekdayAddress}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
+                      errors.weekdayAddress ? "border-red-500 focus:border-red-500" : "border-pink/30 focus:border-pink"
+                    }`}
+                    placeholder="Enter restaurant address or location"
+                  />
+                  {errors.weekdayAddress && <p className="text-red-500 text-xs mt-1">{errors.weekdayAddress}</p>}
                 </div>
-                {errors.weekdays && <p className="text-red-500 text-xs mt-1">{errors.weekdays}</p>}
               </div>
-            </>
+            </div>
           )}
 
-          {/* Text in offer box */}
+          {/* Happy Hour Specific Fields */}
+          {selectedType === "happy_hour" && (
             <div>
-            <label className="flex items-center gap-2 text-gray-300 text-sm mb-2">
-              <Info size={16} className="text-gray-400" />
-              Text in offer box
-                  </label>
-            <textarea
-              name="offerText"
-              value={formData.offerText}
-                    onChange={handleInputChange}
-              rows={6}
-              className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all resize-none ${
-                errors.offerText ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
-                    }`}
-              placeholder="Further explanation of the offer"
-                  />
-            {errors.offerText && <p className="text-red-500 text-xs mt-1">{errors.offerText}</p>}
-                </div>
-
-          {/* Discounts for customers only */}
+              <h4 className="text-lg font-bold text-white mb-4">Happy Hour Details</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-            <label className="flex items-center gap-2 text-gray-300 text-sm mb-2">
-              <Info size={16} className="text-gray-400" />
-              Discounts for customers only
+                  <label className="text-gray-400 text-sm mb-2 block">
+                    Start Time *
                   </label>
-            <div className="relative">
-              <select
-                name="companyCustomers"
-                value={formData.companyCustomers}
-                    onChange={handleInputChange}
-                className="w-full px-4 py-3 pr-10 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary transition-all appearance-none"
-              >
-                <option value="">Company customers</option>
-                {mockCompanies.map(company => (
-                  <option key={company} value={company}>{company}</option>
-                ))}
-              </select>
-              <Building2 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
-            </div>
-                </div>
-
-          {/* Upload a photo for a quote */}
-                <div>
-            <label className="flex items-center gap-2 text-gray-300 text-sm mb-2">
-              <Info size={16} className="text-gray-400" />
-              Upload a photo for a quote
-                  </label>
-            <label className="flex items-center justify-center gap-2 px-4 py-3 bg-background border border-primary/50 rounded-lg text-white cursor-pointer hover:border-primary transition-all">
-              <Paperclip size={20} className="text-gray-400" />
-              <span className="text-gray-300">Upload a photo</span>
                   <input
+                    type="time"
+                    name="startTime"
+                    value={formData.startTime}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
+                      errors.startTime ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                    }`}
+                  />
+                  {errors.startTime && <p className="text-red-500 text-xs mt-1">{errors.startTime}</p>}
+                </div>
+
+                <div>
+                  <label className="text-gray-400 text-sm mb-2 block">
+                    End Time *
+                  </label>
+                  <input
+                    type="time"
+                    name="endTime"
+                    value={formData.endTime}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
+                      errors.endTime ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                    }`}
+                  />
+                  {errors.endTime && <p className="text-red-500 text-xs mt-1">{errors.endTime}</p>}
+                </div>
+
+                <div>
+                  <label className="text-gray-400 text-sm mb-2 block">
+                    Location *
+                  </label>
+                  <input
+                    type="text"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
+                      errors.location ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                    }`}
+                    placeholder="Bar/Restaurant name"
+                  />
+                  {errors.location && <p className="text-red-500 text-xs mt-1">{errors.location}</p>}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Offer Link (not for Gift Card) */}
+          {selectedType !== "gift_card" && (
+            <div>
+              <label className="text-gray-400 text-sm mb-2 block">
+                Offer Website Link
+              </label>
+              <input
+                type="url"
+                name="offerLink"
+                value={formData.offerLink}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all"
+                placeholder="https://your-website.com/offer"
+              />
+              <p className="text-gray-500 text-xs mt-1">Link to your original offer or website</p>
+            </div>
+          )}
+
+          {/* Terms & Conditions */}
+          <div>
+            <label className="text-gray-400 text-sm mb-2 block">
+              Terms & Conditions (Optional)
+            </label>
+            <textarea
+              name="terms"
+              value={formData.terms}
+              onChange={handleInputChange}
+              rows={3}
+              className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all resize-none"
+              placeholder="Any specific terms or conditions for this offer..."
+            />
+          </div>
+
+          {/* Image Upload */}
+          <div>
+            <label className="text-gray-400 text-sm mb-2 block">
+              Upload Offer Image (Optional)
+            </label>
+            <label className="flex flex-col items-center justify-center gap-2 px-4 py-6 bg-background border border-primary/30 rounded-lg cursor-pointer hover:border-primary transition-all">
+              <input
                 type="file"
                 accept="image/*"
                 onChange={handleFileChange}
                 className="hidden"
               />
+              {previewImageUrl ? (
+                <img src={previewImageUrl} alt="Preview" className="w-full h-48 object-cover rounded-lg" />
+              ) : (
+                <>
+                  <span className="text-gray-400 text-sm">Click to upload or drag and drop</span>
+                  <span className="text-gray-500 text-xs">PNG, JPG or SVG (max. 2MB)</span>
+                </>
+              )}
             </label>
-            {formData.photo && (
-              <p className="text-sm text-gray-400 mt-2">{formData.photo.name}</p>
-            )}
-            </div>
-
-          {/* Price */}
-          <div>
-            <label className="flex items-center gap-2 text-gray-300 text-sm mb-2">
-              <Info size={16} className="text-gray-400" />
-              Price
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                name="price"
-                value={formData.price}
-                onChange={handleInputChange}
-                className={`w-full px-4 py-3 pr-16 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                  errors.price ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
-                }`}
-                placeholder="Enter price"
-              />
-              <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">kr.</span>
-            </div>
-            {errors.price && <p className="text-red-500 text-xs mt-1">{errors.price}</p>}
-          </div>
           </div>
 
           {/* Submit Button */}
-        <div className="mt-8 pt-6 border-t border-primary/50">
+          <div className="flex items-center justify-end pt-6 border-t border-primary/30">
             <button
               type="submit"
               disabled={isLoading}
-            className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-8 py-3 bg-primary text-dark font-semibold rounded-full hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <div className="w-5 h-5 border-2 border-dark border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>
-                Confirm offer and pay
-                <ArrowRight size={20} />
+                  <Plus size={20} />
+                  Create Offer
                 </>
               )}
             </button>
           </div>
         </form>
+        </div>
 
-      {/* Preview Section - Show for Active offers, Weekday offers, Gift cards, and Happy hour offers */}
-      {(formData.offerType === "Active offers" || formData.offerType === "Weekday offers" || formData.offerType === "Gift cards" || formData.offerType === "Happy hour offers") && (
-        <div className="bg-card-background border border-primary rounded-2xl p-6 lg:p-8">
+        {/* Preview Section */}
+        <div className="bg-card-background border border-primary rounded-2xl p-6 lg:p-8 max-h-[800px] overflow-y-auto scrollbar-custom">
           <div className="flex items-center gap-2 mb-4">
             <Eye className="text-primary" size={20} />
             <h2 className="text-xl font-bold text-white">Preview</h2>
@@ -690,22 +808,21 @@ export default function CreateOfferPage() {
           </p>
           <div className="flex justify-center">
             <div className="w-full max-w-sm">
-              {formData.offerType === "Active offers" && (
-                <ActiveOfferCard offer={previewOffer} />
+              {selectedType === "active" && (
+                <ActiveOfferCard offer={previewActiveOffer} />
               )}
-              {formData.offerType === "Weekday offers" && (
+              {selectedType === "weekdays" && (
                 <WeeklyOfferCard offer={previewWeeklyOffer} />
               )}
-              {formData.offerType === "Gift cards" && (
-                <GiftOfferCard offer={previewGiftOffer} />
-              )}
-              {formData.offerType === "Happy hour offers" && (
+              {selectedType === "happy_hour" && (
                 <HappyHourOfferCard offer={previewHappyHourOffer} />
+              )}
+              {selectedType === "gift_card" && (
+                <GiftOfferCard offer={previewGiftOffer} />
               )}
             </div>
           </div>
         </div>
-      )}
       </div>
     </div>
   );
