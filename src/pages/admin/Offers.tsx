@@ -473,11 +473,11 @@ export default function AdminOffersPage() {
           <div className="space-y-4">
             <div className="flex items-start gap-3">
               <TrendingUp
-                className="text-green-500 flex-shrink-0 mt-0.5"
+                className="text-green flex-shrink-0 mt-0.5"
                 size={20}
               />
               <div>
-                <h4 className="text-green-500 font-bold mb-1">
+                <h4 className="text-green font-bold mb-1">
                   Offer Performance
                 </h4>
                 <p className="text-sm text-gray-300">

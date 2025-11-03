@@ -371,6 +371,59 @@ export default function AdminCompaniesPage() {
               />
             </div>
           )}
+
+
+  {/* User Insights */}
+      <div className="bg-card-background border border-primary rounded-2xl p-6">
+        <h3 className="text-lg font-bold text-white mb-4">User Insights</h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div className="flex items-start gap-3">
+              <Users className="text-green-500 flex-shrink-0 mt-0.5" size={20} />
+              <div>
+                <h4 className="text-green-500 font-bold mb-1">User Distribution</h4>
+                <p className="text-sm text-gray-300">
+                  {stats.companies} company users, {users.filter(u => u.role === "user").length} regular users, and {stats.admins} administrators.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <CheckCircle className="text-blue-500 flex-shrink-0 mt-0.5" size={20} />
+              <div>
+                <h4 className="text-blue-500 font-bold mb-1">Verification Status</h4>
+                <p className="text-sm text-gray-300">
+                  {stats.verified} verified users ({Math.round(stats.verified / stats.total * 100)}% verification rate).
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-start gap-3">
+              <Shield className="text-purple-500 flex-shrink-0 mt-0.5" size={20} />
+              <div>
+                <h4 className="text-purple-500 font-bold mb-1">Account Security</h4>
+                <p className="text-sm text-gray-300">
+                  {users.filter(u => u.status === "active").length} active accounts, {users.filter(u => u.status === "suspended").length} suspended accounts.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <Building2 className="text-orange-500 flex-shrink-0 mt-0.5" size={20} />
+              <div>
+                <h4 className="text-orange-500 font-bold mb-1">Company Activity</h4>
+                <p className="text-sm text-gray-300">
+                  Company users have registered {users.filter(u => u.role === "company").reduce((sum, u) => sum + (u.companyCount || 0), 0)} total companies.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
         </div>
       );
     }
