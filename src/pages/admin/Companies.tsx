@@ -12,6 +12,7 @@ import {
   Search,
   MoreVertical,
   Edit,
+  Plus,
 } from "lucide-react";
 import Pagination from "@/components/ui/Pagination";
 
@@ -177,6 +178,13 @@ export default function AdminCompaniesPage() {
             </p>
           </div>
         </div>
+        <Link
+          to="/admin/companies/create"
+          className="flex items-center gap-2 px-6 py-3 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all"
+        >
+          <Plus size={18} />
+          Create Company
+        </Link>
       </div>
 
       {/* Stats Cards */}

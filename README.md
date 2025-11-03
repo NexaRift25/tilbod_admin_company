@@ -35,28 +35,28 @@ All themes use CSS variables for colors, ensuring consistency and easy customiza
 ### Prerequisites
 
 - Node.js 18+ 
-- npm or yarn
+- pnpm (install globally: `npm install -g pnpm`)
 
 ### Installation
 
 1. Install dependencies:
 ```bash
-npm install
+pnpm install
 ```
 
 2. Start the development server:
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 3. Build for production:
 ```bash
-npm run build
+pnpm run build
 ```
 
 4. Preview production build:
 ```bash
-npm run preview
+pnpm run preview
 ```
 
 ## Project Structure
@@ -89,10 +89,10 @@ tilbod-company/
 
 ## Available Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
+- `pnpm run dev` - Start development server
+- `pnpm run build` - Build for production
+- `pnpm run preview` - Preview production build
+- `pnpm run lint` - Run ESLint
 
 ## Customization
 

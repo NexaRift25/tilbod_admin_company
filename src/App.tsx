@@ -35,6 +35,8 @@ import AdminDiscountLabelsPage from './pages/admin/DiscountLabels';
 import AdminFinancialPage from './pages/admin/Financial';
 import AdminCompanyDetailsPage from './pages/admin/CompanyDetails';
 import AdminEditCompanyPage from './pages/admin/EditCompany';
+import AdminCreateCompanyPage from './pages/admin/CreateCompany';
+import AdminCreateOfferPage from './pages/admin/CreateOffer';
 import AdminSettingsPage from './pages/admin/Settings';
 import UnauthorizedPage from './pages/Unauthorized';
 import VerifyEmailPage from './pages/VerifyEmail';
@@ -88,9 +90,11 @@ function App() {
             <Route path="approval-queue" element={<AdminApprovalQueuePage />} />
             <Route path="approval-queue/:type/:id" element={<AdminApprovalDetailsPage />} />
             <Route path="companies" element={<AdminCompaniesPage />} />
+            <Route path="companies/create" element={<AdminCreateCompanyPage />} />
             <Route path="companies/:id" element={<AdminCompanyDetailsPage />} />
             <Route path="companies/:id/edit" element={<AdminEditCompanyPage />} />
             <Route path="offers" element={<AdminOffersPage />} />
+            <Route path="offers/create" element={<AdminCreateOfferPage />} />
             <Route path="offers/:id" element={<AdminOfferDetailsPage />} />
             <Route path="users" element={<AdminUsersPage />} />
             <Route path="commission-pricing" element={<AdminCommissionPricingPage />} />

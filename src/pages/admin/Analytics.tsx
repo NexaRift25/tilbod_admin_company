@@ -14,9 +14,39 @@ import {
   Download,
   Filter,
 } from "lucide-react";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Bar, Line, Doughnut } from "react-chartjs-2";
+
+// Register Chart.js components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 export default function AdminAnalyticsPage() {
   const [timeRange, setTimeRange] = useState("30d");
+  const [chartType, setChartType] = useState<"revenue" | "companies" | "users" | "offers">("revenue");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [metricFilter, setMetricFilter] = useState<string>("all");
 
   // Mock analytics data
   const overviewStats = [
@@ -482,6 +512,236 @@ export default function AdminAnalyticsPage() {
           );
         })}
       </div>
+
+      {/* Filter Form for Charts */}
+      <div className="bg-card-background border border-primary rounded-2xl p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <Filter className="text-primary" size={20} />
+          <h2 className="text-lg font-bold text-white">Chart Filters</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label className="text-gray-400 text-sm mb-2 block">Chart Type</label>
+            <select
+              value={chartType}
+              onChange={(e) => setChartType(e.target.value as "revenue" | "companies" | "users" | "offers")}
+              className="w-full px-4 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+            >
+              <option value="revenue">Revenue</option>
+              <option value="companies">Companies</option>
+              <option value="users">Users</option>
+              <option value="offers">Offers</option>
+            </select>
+          </div>
+          <div>
+            <label className="text-gray-400 text-sm mb-2 block">Date From</label>
+            <input
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              className="w-full px-4 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+            />
+          </div>
+          <div>
+            <label className="text-gray-400 text-sm mb-2 block">Date To</label>
+            <input
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              className="w-full px-4 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+            />
+          </div>
+          <div>
+            <label className="text-gray-400 text-sm mb-2 block">Metric</label>
+            <select
+              value={metricFilter}
+              onChange={(e) => setMetricFilter(e.target.value)}
+              className="w-full px-4 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+            >
+              <option value="all">All Metrics</option>
+              <option value="revenue">Revenue Only</option>
+              <option value="count">Count Only</option>
+              <option value="growth">Growth Only</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Filtered Chart Data */}
+      {(() => {
+        // Filter revenue data based on date range
+        let filteredRevenueData = revenueData;
+        if (dateFrom && dateTo) {
+          const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+          const fromIndex = months.findIndex(m => m === dateFrom.substring(5, 8));
+          const toIndex = months.findIndex(m => m === dateTo.substring(5, 8));
+          if (fromIndex >= 0 && toIndex >= 0) {
+            filteredRevenueData = revenueData.slice(fromIndex, toIndex + 1);
+          }
+        }
+
+        const revenueChartData = {
+          labels: filteredRevenueData.map(d => d.month),
+          datasets: [
+            {
+              label: 'Revenue (kr.)',
+              data: filteredRevenueData.map(d => d.revenue),
+              backgroundColor: 'rgba(251, 146, 60, 0.8)',
+              borderColor: 'rgba(251, 146, 60, 1)',
+              borderWidth: 2,
+            },
+            {
+              label: 'Companies',
+              data: filteredRevenueData.map(d => d.companies),
+              backgroundColor: 'rgba(59, 130, 246, 0.8)',
+              borderColor: 'rgba(59, 130, 246, 1)',
+              borderWidth: 2,
+            },
+          ],
+        };
+
+        const userGrowthChartData = {
+          labels: userGrowthData.map(d => d.month),
+          datasets: [
+            {
+              label: 'Total Users',
+              data: userGrowthData.map(d => d.users),
+              borderColor: 'rgba(34, 197, 94, 1)',
+              backgroundColor: 'rgba(34, 197, 94, 0.1)',
+              borderWidth: 2,
+              tension: 0.4,
+            },
+            {
+              label: 'New Users',
+              data: userGrowthData.map(d => d.newUsers),
+              borderColor: 'rgba(59, 130, 246, 1)',
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              borderWidth: 2,
+              tension: 0.4,
+            },
+          ],
+        };
+
+        const companyCategoryChartData = {
+          labels: companyRegistrations.map(d => d.category),
+          datasets: [
+            {
+              label: 'Companies',
+              data: companyRegistrations.map(d => d.count),
+              backgroundColor: [
+                'rgba(251, 146, 60, 0.8)',
+                'rgba(59, 130, 246, 0.8)',
+                'rgba(34, 197, 94, 0.8)',
+                'rgba(168, 85, 247, 0.8)',
+                'rgba(236, 72, 153, 0.8)',
+                'rgba(20, 184, 166, 0.8)',
+              ],
+              borderWidth: 2,
+              borderColor: 'rgba(17, 24, 39, 1)',
+            },
+          ],
+        };
+
+        return (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {chartType === "revenue" && (
+              <div className="bg-card-background border border-primary rounded-2xl p-6">
+                <h3 className="text-lg font-bold text-white mb-4">Revenue Trend (Filtered)</h3>
+                <div className="h-[300px]">
+                  <Bar
+                    data={revenueChartData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: {
+                          labels: { color: '#ffffff' },
+                        },
+                        tooltip: {
+                          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                          titleColor: '#ffffff',
+                          bodyColor: '#ffffff',
+                        },
+                      },
+                      scales: {
+                        y: {
+                          beginAtZero: true,
+                          ticks: { color: '#9ca3af' },
+                          grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        },
+                        x: {
+                          ticks: { color: '#9ca3af' },
+                          grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        },
+                      },
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+            {chartType === "users" && (
+              <div className="bg-card-background border border-primary rounded-2xl p-6">
+                <h3 className="text-lg font-bold text-white mb-4">User Growth (Filtered)</h3>
+                <div className="h-[300px]">
+                  <Line
+                    data={userGrowthChartData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: {
+                          labels: { color: '#ffffff' },
+                        },
+                        tooltip: {
+                          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                          titleColor: '#ffffff',
+                          bodyColor: '#ffffff',
+                        },
+                      },
+                      scales: {
+                        y: {
+                          beginAtZero: true,
+                          ticks: { color: '#9ca3af' },
+                          grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        },
+                        x: {
+                          ticks: { color: '#9ca3af' },
+                          grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        },
+                      },
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+            {chartType === "companies" && (
+              <div className="bg-card-background border border-primary rounded-2xl p-6">
+                <h3 className="text-lg font-bold text-white mb-4">Companies by Category (Filtered)</h3>
+                <div className="h-[300px]">
+                  <Doughnut
+                    data={companyCategoryChartData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: {
+                          position: 'bottom' as const,
+                          labels: { color: '#ffffff', padding: 15 },
+                        },
+                        tooltip: {
+                          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                          titleColor: '#ffffff',
+                          bodyColor: '#ffffff',
+                        },
+                      },
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

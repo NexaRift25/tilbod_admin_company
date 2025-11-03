@@ -14,6 +14,7 @@ import {
   Users,
   Building2,
   TrendingUp,
+  Plus,
 } from "lucide-react";
 import Pagination from "@/components/ui/Pagination";
 
@@ -237,6 +238,13 @@ export default function AdminOffersPage() {
             </p>
           </div>
         </div>
+        <Link
+          to="/admin/offers/create"
+          className="flex items-center gap-2 px-6 py-3 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all"
+        >
+          <Plus size={18} />
+          Create Offer
+        </Link>
       </div>
 
       {/* Stats Cards */}

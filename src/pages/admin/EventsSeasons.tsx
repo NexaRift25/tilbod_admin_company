@@ -17,8 +17,10 @@ import {
   Gift,
   Star,
   Heart,
-  Sparkles
+  Sparkles,
+  Save,
 } from "lucide-react";
+import Modal from "@/components/ui/modal";
 
 interface Event {
   id: string;
@@ -37,7 +39,9 @@ interface Event {
 }
 
 export default function AdminEventsPage() {
-  const [events] = useState<Event[]>([
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [events, setEvents] = useState<Event[]>([
     {
       id: "1",
       name: "Christmas Season",
@@ -115,6 +119,58 @@ export default function AdminEventsPage() {
     }
   ]);
 
+  const [newEvent, setNewEvent] = useState({
+    name: "",
+    type: "custom" as "seasonal" | "holiday" | "custom",
+    icon: "sparkles",
+    startDate: "",
+    endDate: "",
+    description: "",
+    discountRange: "",
+    isAutoManaged: false,
+  });
+
+  const handleCreateEvent = async () => {
+    if (!newEvent.name.trim() || !newEvent.startDate || !newEvent.endDate || !newEvent.description.trim()) {
+      alert("Please fill in all required fields");
+      return;
+    }
+
+    setIsSaving(true);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    const createdEvent: Event = {
+      id: Date.now().toString(),
+      name: newEvent.name,
+      type: newEvent.type,
+      icon: newEvent.icon,
+      startDate: newEvent.startDate,
+      endDate: newEvent.endDate,
+      status: new Date(newEvent.startDate) > new Date() ? "upcoming" : "active",
+      description: newEvent.description,
+      discountRange: newEvent.discountRange || "10-30%",
+      affectedOffers: 0,
+      expectedRevenue: 0,
+      createdAt: new Date().toISOString().split('T')[0],
+      isAutoManaged: newEvent.isAutoManaged,
+    };
+
+    setEvents(prev => [...prev, createdEvent]);
+    setShowCreateModal(false);
+    setNewEvent({
+      name: "",
+      type: "custom",
+      icon: "sparkles",
+      startDate: "",
+      endDate: "",
+      description: "",
+      discountRange: "",
+      isAutoManaged: false,
+    });
+    setIsSaving(false);
+    alert("Custom event created successfully!");
+  };
+
   const getEventIcon = (iconName: string) => {
     const icons: Record<string, React.ComponentType<any>> = {
       gift: Gift,
@@ -185,7 +241,10 @@ export default function AdminEventsPage() {
           </div>
         </div>
 
-        <button className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white font-semibold rounded-full hover:bg-red-600 transition-all">
+        <button 
+          onClick={() => setShowCreateModal(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white font-semibold rounded-full hover:bg-red-600 transition-all"
+        >
           <Plus size={20} />
           Create Event
         </button>
@@ -408,6 +467,157 @@ export default function AdminEventsPage() {
           </div>
         </div>
       </div>
+
+      {/* Create Event Modal */}
+      <Modal
+        isOpen={showCreateModal}
+        onClose={() => {
+          setShowCreateModal(false);
+          setNewEvent({
+            name: "",
+            type: "custom",
+            icon: "sparkles",
+            startDate: "",
+            endDate: "",
+            description: "",
+            discountRange: "",
+            isAutoManaged: false,
+          });
+        }}
+        title="Create Custom Event"
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="text-gray-400 text-sm mb-2 block">
+              Event Name <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={newEvent.name}
+              onChange={(e) => setNewEvent(prev => ({ ...prev, name: e.target.value }))}
+              className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary"
+              placeholder="e.g., Restaurant Week, Summer Festival"
+            />
+          </div>
+
+          <div>
+            <label className="text-gray-400 text-sm mb-2 block">
+              Event Type <span className="text-red-500">*</span>
+            </label>
+            <select
+              value={newEvent.type}
+              onChange={(e) => setNewEvent(prev => ({ ...prev, type: e.target.value as "seasonal" | "holiday" | "custom" }))}
+              className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+            >
+              <option value="custom">Custom Event</option>
+              <option value="holiday">Holiday</option>
+              <option value="seasonal">Seasonal</option>
+            </select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-gray-400 text-sm mb-2 block">
+                Start Date <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="date"
+                value={newEvent.startDate}
+                onChange={(e) => setNewEvent(prev => ({ ...prev, startDate: e.target.value }))}
+                className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+              />
+            </div>
+            <div>
+              <label className="text-gray-400 text-sm mb-2 block">
+                End Date <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="date"
+                value={newEvent.endDate}
+                onChange={(e) => setNewEvent(prev => ({ ...prev, endDate: e.target.value }))}
+                className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="text-gray-400 text-sm mb-2 block">
+              Description <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              value={newEvent.description}
+              onChange={(e) => setNewEvent(prev => ({ ...prev, description: e.target.value }))}
+              rows={4}
+              className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary resize-none"
+              placeholder="Describe the event and its purpose..."
+            />
+          </div>
+
+          <div>
+            <label className="text-gray-400 text-sm mb-2 block">
+              Discount Range (Optional)
+            </label>
+            <input
+              type="text"
+              value={newEvent.discountRange}
+              onChange={(e) => setNewEvent(prev => ({ ...prev, discountRange: e.target.value }))}
+              className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary"
+              placeholder="e.g., 15-30%"
+            />
+          </div>
+
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="autoManaged"
+              checked={newEvent.isAutoManaged}
+              onChange={(e) => setNewEvent(prev => ({ ...prev, isAutoManaged: e.target.checked }))}
+              className="w-5 h-5 rounded border-primary/50 bg-background text-primary focus:ring-2 focus:ring-primary"
+            />
+            <label htmlFor="autoManaged" className="text-gray-400 text-sm">
+              Auto-manage this event (automatic activation/deactivation)
+            </label>
+          </div>
+
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-primary/30">
+            <button
+              onClick={() => {
+                setShowCreateModal(false);
+                setNewEvent({
+                  name: "",
+                  type: "custom",
+                  icon: "sparkles",
+                  startDate: "",
+                  endDate: "",
+                  description: "",
+                  discountRange: "",
+                  isAutoManaged: false,
+                });
+              }}
+              className="px-6 py-2 text-gray-400 hover:text-white hover:bg-primary/10 rounded-lg transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleCreateEvent}
+              disabled={isSaving}
+              className="flex items-center gap-2 px-6 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSaving ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  <Save size={18} />
+                  Create Event
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

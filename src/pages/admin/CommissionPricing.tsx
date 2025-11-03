@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -46,9 +44,9 @@ export default function AdminPricingPage() {
       offerType: "Active Offer",
       rate: 1,
       unit: "day",
-      description: "1 kr. per day for active promotional offers",
+      description: "1 kr. per day - Commission charged daily for active promotional offers (max 1 month duration)",
       isActive: true,
-      lastUpdated: "2024-12-01",
+      lastUpdated: new Date().toISOString().split('T')[0],
       updatedBy: "Admin User"
     },
     {
@@ -56,9 +54,9 @@ export default function AdminPricingPage() {
       offerType: "Weekdays Offer",
       rate: 4,
       unit: "week",
-      description: "4 kr. per week for restaurant and activity specials",
+      description: "4 kr. per week - Commission charged weekly for restaurant and activity weekday specials",
       isActive: true,
-      lastUpdated: "2024-12-01",
+      lastUpdated: new Date().toISOString().split('T')[0],
       updatedBy: "Admin User"
     },
     {
@@ -66,9 +64,9 @@ export default function AdminPricingPage() {
       offerType: "Happy Hour Offer",
       rate: 10,
       unit: "month",
-      description: "10 kr. per month for bar and restaurant time-based promotions",
+      description: "10 kr. per month - Commission charged monthly for bar and restaurant time-based promotions",
       isActive: true,
-      lastUpdated: "2024-12-01",
+      lastUpdated: new Date().toISOString().split('T')[0],
       updatedBy: "Admin User"
     },
     {
@@ -76,9 +74,9 @@ export default function AdminPricingPage() {
       offerType: "Gift Card",
       rate: 5,
       unit: "percentage",
-      description: "5% commission on gift card sales",
+      description: "5% commission per sale - Based on total gift card sale amount (commission/per sell)",
       isActive: true,
-      lastUpdated: "2024-12-01",
+      lastUpdated: new Date().toISOString().split('T')[0],
       updatedBy: "Admin User"
     }
   ]);
@@ -153,9 +151,9 @@ export default function AdminPricingPage() {
     ));
   };
 
-  const totalCommission = commissionRules
-    .filter(rule => rule.isActive)
-    .reduce((sum, rule) => sum + rule.rate, 0);
+  // Note: Total commission is calculated dynamically based on active offers
+  // This is just a sum of base rates for display purposes
+  const activeCommissionRules = commissionRules.filter(rule => rule.isActive);
 
   const activePricingRules = pricingRules.filter(rule => rule.isActive).length;
 
@@ -196,8 +194,8 @@ export default function AdminPricingPage() {
         <div className="bg-card-background border border-green-500 rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Total Commission</p>
-              <p className="text-white text-2xl font-bold">{totalCommission} kr.</p>
+              <p className="text-gray-400 text-sm">Commission Rules</p>
+              <p className="text-white text-2xl font-bold">{activeCommissionRules.length}/4</p>
             </div>
             <TrendingUp className="text-green" size={24} />
           </div>
@@ -293,11 +291,14 @@ export default function AdminPricingPage() {
                   ) : (
                     <div className="flex items-center gap-2">
                       <p className="text-white font-bold">
-                        {rule.rate} kr. {rule.unit === "percentage" ? "%" : `per ${rule.unit}`}
+                        {rule.unit === "percentage" 
+                          ? `${rule.rate}% per sale` 
+                          : `${rule.rate} kr. per ${rule.unit}`}
                       </p>
                       <button
                         onClick={() => handleCommissionEdit(rule.id)}
                         className="p-1 hover:bg-primary/10 rounded"
+                        title="Edit Commission Rate"
                       >
                         <Edit size={16} className="text-primary" />
                       </button>
@@ -427,9 +428,32 @@ export default function AdminPricingPage() {
         </div>
       </div>
 
+      {/* Commission Summary */}
+      <div className="bg-card-background border border-primary rounded-2xl p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-bold text-white">Commission Structure Summary</h3>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          {commissionRules.map((rule) => (
+            <div key={rule.id} className="bg-background/50 border border-primary/30 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="font-semibold text-white">{rule.offerType}</h4>
+                <span className={`w-2 h-2 rounded-full ${rule.isActive ? "bg-green" : "bg-gray-500"}`} />
+              </div>
+              <p className="text-primary font-bold text-lg">
+                {rule.unit === "percentage" 
+                  ? `${rule.rate}% per sale` 
+                  : `${rule.rate} kr. per ${rule.unit}`}
+              </p>
+              <p className="text-gray-400 text-sm mt-1">{rule.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Commission Calculator */}
       <div className="bg-card-background border border-primary rounded-2xl p-6">
-        <h3 className="text-lg font-bold text-white mb-4">Commission Calculator</h3>
+        <h3 className="text-lg font-bold text-white mb-4">Commission Calculator Examples</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
