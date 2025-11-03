@@ -11,7 +11,6 @@ import {
   Clock,
   DollarSign,
   CheckCircle,
-  XCircle,
   Users
 } from "lucide-react";
 import Pagination from "@/components/ui/Pagination";
@@ -281,8 +280,6 @@ export default function OffersPage() {
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(12);
-  const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
-  const [showEditModal, setShowEditModal] = useState(false);
 
   // Filter offers by tab
   const getFilteredOffersByTab = () => {
@@ -412,11 +409,6 @@ export default function OffersPage() {
       default:
         return <ActiveOfferCard offer={transformToActiveOffer(offer)} />;
     }
-  };
-
-  const handleEditOffer = (offer: Offer) => {
-    setSelectedOffer(offer);
-    setShowEditModal(true);
   };
 
   const stats = {
@@ -632,12 +624,13 @@ export default function OffersPage() {
                   <button className="p-2 bg-black/50 backdrop-blur-sm text-white rounded-lg hover:bg-primary/50 transition-all">
                     <Eye size={16} />
                   </button>
-                  <button
-                    onClick={() => handleEditOffer(offer)}
+                  <Link
+                    to={`/company/offers/${offer.id}/edit`}
                     className="p-2 bg-black/50 backdrop-blur-sm text-white rounded-lg hover:bg-primary/50 transition-all"
+                    title="Edit Offer"
                   >
                     <Edit size={16} />
-                  </button>
+                  </Link>
                 </div>
               </div>
             ))}
@@ -656,106 +649,6 @@ export default function OffersPage() {
             totalPages={totalPages}
             onPageChange={setCurrentPage}
           />
-        </div>
-      )}
-
-      {/* Edit Offer Modal */}
-      {showEditModal && selectedOffer && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-card-background border border-primary rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-white">Edit Offer</h3>
-              <button
-                onClick={() => setShowEditModal(false)}
-                className="p-2 hover:bg-primary/10 rounded-lg transition-all"
-              >
-                <XCircle className="text-gray-400" size={20} />
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-gray-400 text-sm mb-2 block">Offer Title</label>
-                  <input
-                    type="text"
-                    defaultValue={selectedOffer.title}
-                    className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-                  />
-                </div>
-                <div>
-                  <label className="text-gray-400 text-sm mb-2 block">Category</label>
-                  <select
-                    defaultValue={selectedOffer.category}
-                    className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-                  >
-                    <option value={selectedOffer.category}>{selectedOffer.category}</option>
-                    <option value="Food & Dining">Food & Dining</option>
-                    <option value="Hotels & Accommodation">Hotels & Accommodation</option>
-                    <option value="Wellness & Spa">Wellness & Spa</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <label className="text-gray-400 text-sm mb-2 block">Original Price</label>
-                  <input
-                    type="number"
-                    defaultValue={selectedOffer.originalPrice}
-                    className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-                  />
-                </div>
-                <div>
-                  <label className="text-gray-400 text-sm mb-2 block">Discount Price</label>
-                  <input
-                    type="number"
-                    defaultValue={selectedOffer.discountPrice}
-                    className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-                  />
-                </div>
-                <div>
-                  <label className="text-gray-400 text-sm mb-2 block">Discount %</label>
-                  <input
-                    type="number"
-                    defaultValue={selectedOffer.discountPercentage}
-                    className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-gray-400 text-sm mb-2 block">Start Date</label>
-                  <input
-                    type="date"
-                    defaultValue={selectedOffer.startDate}
-                    className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-                  />
-                </div>
-                <div>
-                  <label className="text-gray-400 text-sm mb-2 block">End Date</label>
-                  <input
-                    type="date"
-                    defaultValue={selectedOffer.endDate}
-                    className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 mt-6 pt-6 border-t border-primary/50">
-              <button
-                onClick={() => setShowEditModal(false)}
-                className="flex-1 px-4 py-2 bg-background border border-primary/50 text-white font-semibold rounded-lg hover:bg-primary/10 transition-all"
-              >
-                Cancel
-              </button>
-              <button className="flex-1 px-4 py-2 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all">
-                Save Changes
-              </button>
-            </div>
-          </div>
         </div>
       )}
     </div>
