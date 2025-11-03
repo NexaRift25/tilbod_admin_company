@@ -341,17 +341,20 @@ export default function AdminCompaniesPage() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <button className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all">
+                  <Link
+                    to={`/admin/companies/${company.id}`}
+                    className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+                    title="View Details"
+                  >
                     <Eye size={20} />
-                  </button>
-                  <button className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all">
+                  </Link>
+                  <Link
+                    to={`/admin/companies/${company.id}/edit`}
+                    className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+                    title="Edit Company"
+                  >
                     <Edit size={20} />
-                  </button>
-                  <div className="relative">
-                    <button className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all">
-                      <MoreVertical size={20} />
-                    </button>
-                  </div>
+                  </Link>
                 </div>
               </div>
             </div>
