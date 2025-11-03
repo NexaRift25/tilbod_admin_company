@@ -37,7 +37,7 @@ export default function Navigation({ navItems }: NavigationProps) {
         initial={{ x: -256, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
-            className="hidden lg:block fixed left-0 top-0 h-full w-64 bg-card-background border-r border-primary/50 z-30"
+            className="hidden lg:block fixed left-0 top-0 h-full w-64 bg-card-background border-r border-primary/50 z-30 overflow-y-auto scrollbar-custom"
       >
         <div className="px-6 py-24">
           <nav className="space-y-2">
