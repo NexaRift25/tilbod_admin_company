@@ -207,14 +207,6 @@ export default function ProductCategoriesPage() {
     ));
   };
 
-  const getStatusIcon = (status: string) => {
-    return status === "active" ? (
-      <CheckCircle className="text-green" size={20} />
-    ) : (
-      <XCircle className="text-gray-400" size={20} />
-    );
-  };
-
   const getStatusColor = (status: string) => {
     return status === "active"
       ? "bg-green/10 text-green border-green"
@@ -333,9 +325,9 @@ export default function ProductCategoriesPage() {
       </div>
 
       {/* Categories List */}
-      <div className="space-y-4">
+      <div className="bg-card-background border border-primary rounded-2xl p-6">
         {filteredCategories.length === 0 ? (
-          <div className="bg-card-background border border-primary rounded-2xl p-8 text-center">
+          <div className="p-8 text-center">
             <Package className="mx-auto text-gray-400 mb-4" size={48} />
             <h3 className="text-xl font-bold text-white mb-2">No product categories found</h3>
             <p className="text-gray-400">
@@ -345,72 +337,88 @@ export default function ProductCategoriesPage() {
             </p>
           </div>
         ) : (
-          filteredCategories.map((category) => (
-            <div
-              key={category.id}
-              className="bg-card-background border border-primary rounded-2xl p-6 hover:border-primary/80 transition-all"
-            >
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2 flex-wrap">
-                    <Package className="text-primary" size={24} />
-                    <h3 className="text-xl font-bold text-white">{category.name}</h3>
-                    <span className={`px-3 py-1 flex items-center gap-1 rounded-full text-xs font-semibold border ${getStatusColor(category.status)}`}>
-                      {getStatusIcon(category.status)}
-                      <span className="ml-1 capitalize">{category.status}</span>
-                    </span>
-                  </div>
-
-                  <p className="text-gray-300 text-sm mb-4">{category.description}</p>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <p className="text-gray-400">Offers</p>
-                      <p className="text-white font-medium">{category.offersCount || 0}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-400">Last Updated</p>
-                      <p className="text-white font-medium">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="text-left text-gray-400 text-sm border-b border-primary/50">
+                  <th className="pb-3">Category Name</th>
+                  <th className="pb-3">Description</th>
+                  <th className="pb-3">Status</th>
+                  <th className="pb-3">Offers</th>
+                  <th className="pb-3">Last Updated</th>
+                  <th className="pb-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="text-white">
+                {filteredCategories.map((category) => (
+                  <tr key={category.id} className="border-b border-primary/10 hover:bg-primary/5">
+                    <td className="py-4">
+                      <div className="flex items-center gap-2">
+                        <Package className="text-primary" size={18} />
+                        <span className="font-medium">{category.name}</span>
+                      </div>
+                    </td>
+                    <td className="py-4">
+                      <p className="text-sm text-gray-300 max-w-xs truncate" title={category.description}>
+                        {category.description}
+                      </p>
+                    </td>
+                    <td className="py-4">
+                      <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold border ${getStatusColor(category.status)}`}>
+                        {category.status === "active" ? (
+                          <CheckCircle className="text-green" size={12} />
+                        ) : (
+                          <XCircle className="text-gray-400" size={12} />
+                        )}
+                        <span className="capitalize">{category.status}</span>
+                      </span>
+                    </td>
+                    <td className="py-4">
+                      <p className="text-sm font-medium">{category.offersCount || 0}</p>
+                    </td>
+                    <td className="py-4">
+                      <p className="text-sm text-gray-300">
                         {new Date(category.updatedAt).toLocaleDateString()}
                       </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => handleToggleStatus(category.id)}
-                    className={`p-2 rounded-lg transition-all ${
-                      category.status === "active"
-                        ? "text-gray-400 hover:text-yellow hover:bg-yellow/10"
-                        : "text-gray-400 hover:text-green hover:bg-green/10"
-                    }`}
-                    title={category.status === "active" ? "Deactivate" : "Activate"}
-                  >
-                    {category.status === "active" ? (
-                      <XCircle size={20} />
-                    ) : (
-                      <CheckCircle size={20} />
-                    )}
-                  </button>
-                  <button
-                    onClick={() => handleOpenModal(category)}
-                    className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
-                    title="Edit Category"
-                  >
-                    <Edit size={20} />
-                  </button>
-                  <button
-                    onClick={() => setShowDeleteConfirm(category.id)}
-                    className="p-2 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
-                    title="Delete Category"
-                  >
-                    <Trash2 size={20} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))
+                    </td>
+                    <td className="py-4">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleToggleStatus(category.id)}
+                          className={`p-2 rounded-lg transition-all ${
+                            category.status === "active"
+                              ? "text-gray-400 hover:text-yellow hover:bg-yellow/10"
+                              : "text-gray-400 hover:text-green hover:bg-green/10"
+                          }`}
+                          title={category.status === "active" ? "Deactivate" : "Activate"}
+                        >
+                          {category.status === "active" ? (
+                            <XCircle size={16} />
+                          ) : (
+                            <CheckCircle size={16} />
+                          )}
+                        </button>
+                        <button
+                          onClick={() => handleOpenModal(category)}
+                          className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+                          title="Edit Category"
+                        >
+                          <Edit size={16} />
+                        </button>
+                        <button
+                          onClick={() => setShowDeleteConfirm(category.id)}
+                          className="p-2 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
+                          title="Delete Category"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 
