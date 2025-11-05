@@ -27,19 +27,6 @@ export default function CompaniesPage() {
     return matchesSearch && matchesStatus;
   });
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "approved":
-        return <CheckCircle className="text-green" size={20} />;
-      case "rejected":
-        return <XCircle className="text-red-500" size={20} />;
-      case "revision":
-        return <AlertCircle className="text-yellow" size={20} />;
-      default:
-        return <Clock className="text-gray-400" size={20} />;
-    }
-  };
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case "approved":
@@ -49,7 +36,7 @@ export default function CompaniesPage() {
       case "revision":
         return "bg-yellow/10 text-yellow";
       default:
-        return "bg-red-500/10 text-red-600 animate-pulse";
+        return "bg-red-500/60 text-white animate-pulse";
     }
   };
 
@@ -193,9 +180,9 @@ export default function CompaniesPage() {
       </div>
 
       {/* Companies List */}
-      <div className="space-y-4">
+      <div className="bg-card-background border border-primary rounded-2xl p-6">
         {filteredCompanies?.length === 0 ? (
-          <div className="bg-card-background border border-primary rounded-2xl p-8 text-center">
+          <div className="p-8 text-center">
             <Building2 className="mx-auto text-gray-400 mb-4" size={48} />
             <h3 className="text-xl font-bold text-white mb-2">No companies found</h3>
             <p className="text-gray-400 mb-4">
@@ -215,74 +202,89 @@ export default function CompaniesPage() {
             )}
           </div>
         ) : (
-          filteredCompanies?.map((company) => (
-            <div
-              key={company.id}
-              className="bg-card-background border border-primary rounded-2xl p-6 hover:border-primary/80 transition-all"
-            >
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <Building2 className="text-primary" size={24} />
-                    <h3 className="text-xl font-bold text-white">{company.name}</h3>
-                    <span className={`px-3 py-1 flex items-center gap-1 rounded-full text-xs font-semibold ${getStatusColor(company.status)}`}>
-                      {getStatusIcon(company.status)}
-                      <span className="ml-1">{getStatusText(company.status)}</span>
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-                    <div>
-                      <p className="text-gray-400">Category</p>
-                      <p className="text-white font-medium">{company.category}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-400">Registration #</p>
-                      <p className="text-white font-medium">{company.registrationNumber}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-400">Tax ID</p>
-                      <p className="text-white font-medium">{company.taxId}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-400">Registered</p>
-                      <p className="text-white font-medium">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="text-left text-gray-400 text-sm border-b border-primary/50">
+                  <th className="pb-3">Company Name</th>
+                  <th className="pb-3">Status</th>
+                  <th className="pb-3">Category</th>
+                  <th className="pb-3">Registration #</th>
+                  <th className="pb-3">Tax ID</th>
+                  <th className="pb-3">Registered</th>
+                  <th className="pb-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="text-white">
+                {filteredCompanies?.map((company) => (
+                  <tr key={company.id} className="border-b border-primary/10 hover:bg-primary/5">
+                    <td className="py-4">
+                      <div className="flex items-center gap-2">
+                        <Building2 className="text-primary" size={18} />
+                        <div>
+                          <p className="font-medium">{company.name}</p>
+                          {company?.status === "revision" && (
+                            <div className="flex items-center gap-1 mt-1">
+                              <AlertCircle className="text-yellow" size={12} />
+                              <span className="text-yellow text-xs">
+                                Revision (Attempt {company.revisionCount}/3)
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="py-4">
+                      <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(company.status)}`}>
+                        {company.status === "approved" ? (
+                          <CheckCircle className="text-green" size={12} />
+                        ) : company.status === "rejected" ? (
+                          <XCircle className="text-red-500" size={12} />
+                        ) : company.status === "revision" ? (
+                          <AlertCircle className="text-yellow" size={12} />
+                        ) : (
+                          <Clock className="text-gray-400" size={12} />
+                        )}
+                        <span>{getStatusText(company.status)}</span>
+                      </span>
+                    </td>
+                    <td className="py-4">
+                      <p className="text-sm">{company.category}</p>
+                    </td>
+                    <td className="py-4">
+                      <p className="text-sm font-medium">{company.registrationNumber}</p>
+                    </td>
+                    <td className="py-4">
+                      <p className="text-sm font-medium">{company.taxId}</p>
+                    </td>
+                    <td className="py-4">
+                      <p className="text-sm text-gray-300">
                         {new Date(company?.createdAt).toLocaleDateString()}
                       </p>
-                    </div>
-                  </div>
-
-                  {company?.status === "revision" && (
-                    <div className="mt-3 bg-yellow/10 border border-yellow-500 rounded-lg p-3">
+                    </td>
+                    <td className="py-4">
                       <div className="flex items-center gap-2">
-                        <AlertCircle className="text-yellow" size={16} />
-                        <span className="text-yellow text-sm">
-                          Revision required (Attempt {company.revisionCount}/3)
-                        </span>
+                        <Link
+                          to={`/company/companies/${company.id}`}
+                          className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+                          title="View Details"
+                        >
+                          <Eye size={16} />
+                        </Link>
+                        <Link
+                          to={`/company/companies/${company.id}/edit`}
+                          className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+                          title="Edit Company"
+                        >
+                          <Edit size={16} />
+                        </Link>
                       </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <Link
-                    to={`/company/companies/${company.id}`}
-                    className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
-                    title="View Details"
-                  >
-                    <Eye size={20} />
-                  </Link>
-                  <Link
-                    to={`/company/companies/${company.id}/edit`}
-                    className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
-                    title="Edit Company"
-                  >
-                    <Edit size={20} />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          ))
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 

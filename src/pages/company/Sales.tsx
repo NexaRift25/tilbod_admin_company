@@ -354,50 +354,65 @@ export default function SalesPage() {
       <div className="bg-card-background border border-primary rounded-2xl p-6">
         <h3 className="text-lg font-bold text-white mb-4">Payment History</h3>
 
-        <div className="space-y-4">
-          {payments.map((payment) => (
-            <div
-              key={payment.id}
-              className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-background rounded-lg border border-primary/50 hover:border-primary transition-all gap-4"
-            >
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <Receipt className="text-primary" size={20} />
-                  <h4 className="font-bold text-white">{payment.period}</h4>
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getPaymentStatusColor(payment.status)}`}>
-                    {payment.status}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
-                  <div>
-                    <p className="text-gray-400">Total Sales</p>
-                    <p className="text-white font-medium">{payment.totalSales.toLocaleString()} kr.</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-400">Commission</p>
-                    <p className="text-white font-medium">{payment.commission.toLocaleString()} kr.</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-400">Net Amount</p>
-                    <p className="text-white font-medium">{payment.netAmount.toLocaleString()} kr.</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <div className="text-right text-sm">
-                  <p className="text-gray-400">Due: {payment.dueDate}</p>
-                  {payment.paidDate && (
-                    <p className="text-green">Paid: {payment.paidDate}</p>
-                  )}
-                </div>
-                <button className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all">
-                  <Download size={16} />
-                </button>
-              </div>
-            </div>
-          ))}
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="text-left text-gray-400 text-sm border-b border-primary/50">
+                <th className="pb-3">Period</th>
+                <th className="pb-3">Total Sales</th>
+                <th className="pb-3">Commission</th>
+                <th className="pb-3">Net Amount</th>
+                <th className="pb-3">Status</th>
+                <th className="pb-3">Due Date</th>
+                <th className="pb-3">Paid Date</th>
+                <th className="pb-3">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="text-white">
+              {payments.map((payment) => (
+                <tr key={payment.id} className="border-b border-primary/10 hover:bg-primary/5">
+                  <td className="py-4">
+                    <div className="flex items-center gap-2">
+                      <Receipt className="text-primary" size={18} />
+                      <span className="font-medium">{payment.period}</span>
+                    </div>
+                  </td>
+                  <td className="py-4">
+                    <p className="font-bold">{payment.totalSales.toLocaleString()} kr.</p>
+                  </td>
+                  <td className="py-4">
+                    <p className="text-gray-300">{payment.commission.toLocaleString()} kr.</p>
+                  </td>
+                  <td className="py-4">
+                    <p className="font-bold text-green">{payment.netAmount.toLocaleString()} kr.</p>
+                  </td>
+                  <td className="py-4">
+                    <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${getPaymentStatusColor(payment.status)}`}>
+                      {payment.status === "paid" && <CheckCircle size={12} />}
+                      {payment.status === "pending" && <AlertCircle size={12} />}
+                      {payment.status === "overdue" && <AlertCircle size={12} />}
+                      <span className="capitalize">{payment.status}</span>
+                    </span>
+                  </td>
+                  <td className="py-4">
+                    <p className="text-sm">{payment.dueDate}</p>
+                  </td>
+                  <td className="py-4">
+                    {payment.paidDate ? (
+                      <p className="text-sm text-green">{payment.paidDate}</p>
+                    ) : (
+                      <p className="text-sm text-gray-500">—</p>
+                    )}
+                  </td>
+                  <td className="py-4">
+                    <button className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all">
+                      <Download size={16} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
 
