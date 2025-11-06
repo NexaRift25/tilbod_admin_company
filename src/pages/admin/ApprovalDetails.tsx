@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   Building2,
@@ -143,12 +143,16 @@ const mockApprovalItems: Record<string, ApprovalItemDetails> = {
 
 export default function AdminApprovalDetailsPage() {
   const { id, type } = useParams<{ id: string; type: string }>();
+  const navigate = useNavigate();
   const [item, setItem] = useState<ApprovalItemDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [selectedReason, setSelectedReason] = useState<string>("");
   const [rejectionNotes, setRejectionNotes] = useState("");
   const [isRejecting, setIsRejecting] = useState(false);
+  const [showRevisionModal, setShowRevisionModal] = useState(false);
+  const [revisionComment, setRevisionComment] = useState("");
+  const [isRequestingRevision, setIsRequestingRevision] = useState(false);
 
   // Force re-render every second for real-time countdown updates
   const [, setCurrentTime] = useState(new Date());
@@ -297,16 +301,17 @@ export default function AdminApprovalDetailsPage() {
                 to="/admin/approval-queue"
                 className="flex items-center justify-center w-12 h-12 border border-red-500/50 bg-card-background/50 backdrop-blur-sm rounded-lg hover:bg-red-500/20 transition-all hover:scale-105"
               >
-                <ArrowLeft className="text-red-500" size={20} />
+                <ArrowLeft className="text-white
+                -500" size={20} />
               </Link>
               <div className="flex-1">
                 <div className="flex flex-wrap items-center gap-3 mb-3">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-red-500/20 rounded-xl flex items-center justify-center">
                       {item.type === "company" ? (
-                        <Building2 className="text-red-500" size={24} />
+                        <Building2 className="text-white" size={24} />
                       ) : (
-                        <Tag className="text-red-500" size={24} />
+                        <Tag className="text-white" size={24} />
                       )}
                     </div>
                     <div>
@@ -720,11 +725,20 @@ export default function AdminApprovalDetailsPage() {
           <div className="bg-card-background border border-primary rounded-2xl p-6">
             <h3 className="text-lg font-bold text-white mb-4">Actions</h3>
             <div className="space-y-3">
-              <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green text-white font-semibold rounded-lg hover:bg-green/90 transition-all">
+              <button 
+                onClick={() => navigate(`/admin/approval-queue/${type}/${id}/commission`)}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green text-white font-semibold rounded-lg hover:bg-green/90 transition-all"
+              >
                 <CheckCircle size={18} />
                 Approve
               </button>
-              <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all">
+              <button 
+                onClick={() => {
+                  setRevisionComment("");
+                  setShowRevisionModal(true);
+                }}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all"
+              >
                 <AlertCircle size={18} />
                 Request Revision
               </button>
@@ -885,6 +899,107 @@ export default function AdminApprovalDetailsPage() {
                 <h4 className="text-yellow font-bold mb-1 text-sm sm:text-base">Important</h4>
                 <p className="text-xs sm:text-sm text-gray-300 break-words">
                   The {type === 'company' ? 'company' : 'offer'} will be rejected and an email notification will be sent to the submitter with the rejection reason.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Revision Modal */}
+      <Modal
+        isOpen={showRevisionModal}
+        onClose={() => {
+          setShowRevisionModal(false);
+          setRevisionComment("");
+        }}
+        title={`Request Revision - ${type === 'company' ? 'Company' : 'Offer'}`}
+        size="lg"
+        footer={
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3">
+            <button
+              onClick={() => {
+                setShowRevisionModal(false);
+                setRevisionComment("");
+              }}
+              className="px-4 sm:px-6 py-2.5 sm:py-2 text-gray-400 hover:text-white hover:bg-primary/10 rounded-lg transition-all text-sm sm:text-base min-h-[44px] sm:min-h-[40px]"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={async () => {
+                if (!revisionComment.trim()) return;
+                setIsRequestingRevision(true);
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                // Here you would normally call the API to request revision
+                console.log("Requesting revision", {
+                  id,
+                  type,
+                  comment: revisionComment,
+                });
+                setIsRequestingRevision(false);
+                setShowRevisionModal(false);
+                setRevisionComment("");
+                alert(`${type === 'company' ? 'Company' : 'Offer'} revision requested successfully. The submitter will be notified.`);
+              }}
+              disabled={!revisionComment.trim() || isRequestingRevision}
+              className="px-4 sm:px-6 py-2.5 sm:py-2 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base min-h-[44px] sm:min-h-[40px]"
+            >
+              {isRequestingRevision ? "Requesting..." : "Request Revision"}
+            </button>
+          </div>
+        }
+      >
+        <div className="space-y-4 sm:space-y-6">
+          {item && (
+            <div className="bg-background/50 border border-primary/30 rounded-lg p-3 sm:p-4">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                  {item.type === "company" ? (
+                    <Building2 className="text-primary flex-shrink-0" size={18} />
+                  ) : (
+                    <Tag className="text-primary flex-shrink-0" size={18} />
+                  )}
+                  <h4 className="text-white font-semibold text-sm sm:text-base break-words">{item.name}</h4>
+                </div>
+                {item.companyName && (
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2">
+                    <span className="text-gray-400 text-xs sm:text-sm">Company</span>
+                    <span className="text-white font-medium text-xs sm:text-sm break-words">{item.companyName}</span>
+                  </div>
+                )}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2">
+                  <span className="text-gray-400 text-xs sm:text-sm">Submitted By</span>
+                  <span className="text-white font-medium text-xs sm:text-sm break-words">{item.submittedBy}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div>
+            <label className="text-gray-400 text-sm sm:text-base mb-2 block">
+              Revision Comments <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              value={revisionComment}
+              onChange={(e) => setRevisionComment(e.target.value)}
+              placeholder="Please provide detailed comments about what needs to be revised. Be specific about the changes required..."
+              rows={6}
+              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-background border border-primary/50 rounded-lg text-white text-sm sm:text-base placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary resize-none min-h-[150px]"
+            />
+            <p className="text-gray-500 text-xs mt-2">
+              {revisionComment.length} characters
+            </p>
+          </div>
+
+          <div className="bg-blue-500/10 border border-blue-500 rounded-lg p-3 sm:p-4">
+            <div className="flex items-start gap-2 sm:gap-3">
+              <AlertCircle className="text-blue-500 flex-shrink-0 mt-0.5" size={18} />
+              <div className="flex-1 min-w-0">
+                <h4 className="text-blue-500 font-bold mb-1 text-sm sm:text-base">Important</h4>
+                <p className="text-xs sm:text-sm text-gray-300 break-words">
+                  The {type === 'company' ? 'company' : 'offer'} will be sent back for revision. An email notification will be sent to {item?.submittedBy} with your comments. They will be able to make the requested changes and resubmit.
                 </p>
               </div>
             </div>

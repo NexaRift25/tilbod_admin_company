@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Clock,
   AlertTriangle,
+  AlertCircle,
   CheckCircle,
   Eye,
   Building2,
@@ -32,6 +33,7 @@ interface ApprovalItem {
 }
 
 export default function ApprovalsPage() {
+  const navigate = useNavigate();
   const [approvals] = useState<ApprovalItem[]>([
     {
       id: "1",
@@ -210,6 +212,10 @@ export default function ApprovalsPage() {
   const [selectedReason, setSelectedReason] = useState<string>("");
   const [rejectionNotes, setRejectionNotes] = useState("");
   const [isRejecting, setIsRejecting] = useState(false);
+  const [showRevisionModal, setShowRevisionModal] = useState(false);
+  const [revisingItem, setRevisingItem] = useState<ApprovalItem | null>(null);
+  const [revisionComment, setRevisionComment] = useState("");
+  const [isRequestingRevision, setIsRequestingRevision] = useState(false);
 
   // Force re-render every second for real-time countdown updates
   const [, setCurrentTime] = useState(new Date());
@@ -498,7 +504,10 @@ export default function ApprovalsPage() {
                   >
                     <Eye size={20} />
                   </Link>
-                  <button className="px-4 py-2 bg-green text-white font-semibold rounded-lg hover:bg-green transition-all whitespace-nowrap">
+                  <button 
+                    onClick={() => navigate(`/admin/approval-queue/${item.type}/${item.id}/commission`)}
+                    className="px-4 py-2 bg-green text-white font-semibold rounded-lg hover:bg-green transition-all whitespace-nowrap"
+                  >
                     Approve
                   </button>
                   <button 
@@ -512,7 +521,14 @@ export default function ApprovalsPage() {
                   >
                     Reject
                   </button>
-                  <button className="px-4 py-2 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all whitespace-nowrap">
+                  <button 
+                    onClick={() => {
+                      setRevisingItem(item);
+                      setRevisionComment("");
+                      setShowRevisionModal(true);
+                    }}
+                    className="px-4 py-2 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all whitespace-nowrap"
+                  >
                     Revision
                   </button>
                 </div>
@@ -693,6 +709,110 @@ export default function ApprovalsPage() {
                 <h4 className="text-yellow font-bold mb-1 text-sm sm:text-base">Important</h4>
                 <p className="text-xs sm:text-sm text-gray-300 break-words">
                   The {rejectingItem?.type === 'company' ? 'company' : 'offer'} will be rejected and an email notification will be sent to {rejectingItem?.submittedBy} with the rejection reason.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Revision Modal */}
+      <Modal
+        isOpen={showRevisionModal}
+        onClose={() => {
+          setShowRevisionModal(false);
+          setRevisingItem(null);
+          setRevisionComment("");
+        }}
+        title={revisingItem ? `Request Revision - ${revisingItem.type === 'company' ? 'Company' : 'Offer'}` : "Request Revision"}
+        size="lg"
+        footer={
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3">
+            <button
+              onClick={() => {
+                setShowRevisionModal(false);
+                setRevisingItem(null);
+                setRevisionComment("");
+              }}
+              className="px-4 sm:px-6 py-2.5 sm:py-2 text-gray-400 hover:text-white hover:bg-primary/10 rounded-lg transition-all text-sm sm:text-base min-h-[44px] sm:min-h-[40px]"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={async () => {
+                if (!revisionComment.trim() || !revisingItem) return;
+                setIsRequestingRevision(true);
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                // Here you would normally call the API to request revision
+                console.log("Requesting revision", {
+                  id: revisingItem.id,
+                  type: revisingItem.type,
+                  comment: revisionComment,
+                });
+                setIsRequestingRevision(false);
+                setShowRevisionModal(false);
+                setRevisingItem(null);
+                setRevisionComment("");
+                alert(`${revisingItem.type === 'company' ? 'Company' : 'Offer'} revision requested successfully. The submitter will be notified.`);
+              }}
+              disabled={!revisionComment.trim() || isRequestingRevision || !revisingItem}
+              className="px-4 sm:px-6 py-2.5 sm:py-2 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base min-h-[44px] sm:min-h-[40px]"
+            >
+              {isRequestingRevision ? "Requesting..." : "Request Revision"}
+            </button>
+          </div>
+        }
+      >
+        <div className="space-y-4 sm:space-y-6">
+          {revisingItem && (
+            <div className="bg-background/50 border border-primary/30 rounded-lg p-3 sm:p-4">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                  {revisingItem.type === "company" ? (
+                    <Building2 className="text-primary flex-shrink-0" size={18} />
+                  ) : (
+                    <Tag className="text-primary flex-shrink-0" size={18} />
+                  )}
+                  <h4 className="text-white font-semibold text-sm sm:text-base break-words">{revisingItem.name}</h4>
+                </div>
+                {revisingItem.companyName && (
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2">
+                    <span className="text-gray-400 text-xs sm:text-sm">Company</span>
+                    <span className="text-white font-medium text-xs sm:text-sm break-words">{revisingItem.companyName}</span>
+                  </div>
+                )}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2">
+                  <span className="text-gray-400 text-xs sm:text-sm">Submitted By</span>
+                  <span className="text-white font-medium text-xs sm:text-sm break-words">{revisingItem.submittedBy}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div>
+            <label className="text-gray-400 text-sm sm:text-base mb-2 block">
+              Revision Comments <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              value={revisionComment}
+              onChange={(e) => setRevisionComment(e.target.value)}
+              placeholder="Please provide detailed comments about what needs to be revised. Be specific about the changes required..."
+              rows={6}
+              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-background border border-primary/50 rounded-lg text-white text-sm sm:text-base placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary resize-none min-h-[150px]"
+            />
+            <p className="text-gray-500 text-xs mt-2">
+              {revisionComment.length} characters
+            </p>
+          </div>
+
+          <div className="bg-blue-500/10 border border-blue-500 rounded-lg p-3 sm:p-4">
+            <div className="flex items-start gap-2 sm:gap-3">
+              <AlertCircle className="text-blue-500 flex-shrink-0 mt-0.5" size={18} />
+              <div className="flex-1 min-w-0">
+                <h4 className="text-blue-500 font-bold mb-1 text-sm sm:text-base">Important</h4>
+                <p className="text-xs sm:text-sm text-gray-300 break-words">
+                  The {revisingItem?.type === 'company' ? 'company' : 'offer'} will be sent back for revision. An email notification will be sent to {revisingItem?.submittedBy} with your comments. They will be able to make the requested changes and resubmit.
                 </p>
               </div>
             </div>
