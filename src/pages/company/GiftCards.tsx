@@ -1,0 +1,271 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  Gift,
+  ArrowLeft,
+  Eye,
+  Search,
+  Filter,
+  DollarSign,
+  Users,
+} from "lucide-react";
+
+interface GiftCard {
+  id: string;
+  title: string;
+  description: string;
+  value: number;
+  discountPercentage?: number;
+  status: "approved" | "pending" | "rejected";
+  approvedAt: string;
+  totalPurchases: number;
+  totalRevenue: number;
+  validFrom: string;
+  validUntil: string;
+}
+
+export default function GiftCardsPage() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("approved");
+
+  const [giftCards] = useState<GiftCard[]>([
+    {
+      id: "1",
+      title: "Spa & Wellness Gift Card",
+      description: "Full day spa experience with treatments and relaxation",
+      value: 15000,
+      discountPercentage: 20,
+      status: "approved",
+      approvedAt: "2025-01-10",
+      totalPurchases: 45,
+      totalRevenue: 675000,
+      validFrom: "2025-01-15",
+      validUntil: "2025-12-31",
+    },
+    {
+      id: "2",
+      title: "Restaurant Dining Gift Card",
+      description: "Fine dining experience for two",
+      value: 10000,
+      discountPercentage: 15,
+      status: "approved",
+      approvedAt: "2025-01-08",
+      totalPurchases: 32,
+      totalRevenue: 320000,
+      validFrom: "2025-01-10",
+      validUntil: "2025-11-30",
+    },
+    {
+      id: "3",
+      title: "Adventure Tours Gift Card",
+      description: "Experience Iceland's natural wonders",
+      value: 25000,
+      discountPercentage: 25,
+      status: "approved",
+      approvedAt: "2025-01-05",
+      totalPurchases: 18,
+      totalRevenue: 450000,
+      validFrom: "2025-01-12",
+      validUntil: "2025-12-31",
+    },
+    {
+      id: "4",
+      title: "Hotel Stay Gift Card",
+      description: "Luxury hotel accommodation package",
+      value: 50000,
+      discountPercentage: 30,
+      status: "approved",
+      approvedAt: "2025-01-03",
+      totalPurchases: 12,
+      totalRevenue: 600000,
+      validFrom: "2025-01-15",
+      validUntil: "2026-01-15",
+    },
+  ]);
+
+  const filteredGiftCards = giftCards.filter(card => {
+    const matchesSearch = card.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         card.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === "all" || card.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  const stats = {
+    total: giftCards.length,
+    totalPurchases: giftCards.reduce((sum, card) => sum + card.totalPurchases, 0),
+    totalRevenue: giftCards.reduce((sum, card) => sum + card.totalRevenue, 0),
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <Link
+            to="/company/dashboard"
+            className="p-2 hover:bg-primary/10 rounded-lg transition-all"
+          >
+            <ArrowLeft className="text-primary" size={20} />
+          </Link>
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">
+              All Gift Cards
+            </h1>
+            <p className="text-gray-400 text-sm">
+              View and manage your approved gift cards
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-card-background border border-primary rounded-2xl p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">Total Gift Cards</p>
+              <p className="text-white text-2xl font-bold">{stats.total}</p>
+            </div>
+            <Gift className="text-primary" size={24} />
+          </div>
+        </div>
+
+        <div className="bg-card-background border border-green rounded-2xl p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">Total Purchases</p>
+              <p className="text-white text-2xl font-bold">{stats.totalPurchases}</p>
+            </div>
+            <Users className="text-green" size={24} />
+          </div>
+        </div>
+
+        <div className="bg-card-background border border-blue-500 rounded-2xl p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">Total Revenue</p>
+              <p className="text-white text-2xl font-bold">{stats.totalRevenue.toLocaleString()} kr.</p>
+            </div>
+            <DollarSign className="text-blue-500" size={24} />
+          </div>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="bg-card-background border border-primary rounded-2xl p-4">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex-1">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <input
+                type="text"
+                placeholder="Search gift cards..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary"
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Filter size={20} className="text-gray-400" />
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-3 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+            >
+              <option value="approved">Approved Only</option>
+              <option value="all">All Status</option>
+              <option value="pending">Pending</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Gift Cards List */}
+      <div className="bg-card-background border border-primary rounded-2xl p-6">
+        {filteredGiftCards.length === 0 ? (
+          <div className="p-8 text-center">
+            <Gift className="mx-auto text-gray-400 mb-4" size={48} />
+            <h3 className="text-xl font-bold text-white mb-2">No gift cards found</h3>
+            <p className="text-gray-400">
+              {searchTerm || statusFilter !== "approved"
+                ? "Try adjusting your search or filter criteria"
+                : "You don't have any approved gift cards yet"}
+            </p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="text-left text-gray-400 text-sm border-b border-primary/50">
+                  <th className="pb-3">Gift Card</th>
+                  <th className="pb-3">Value</th>
+                  <th className="pb-3">Discount</th>
+                  <th className="pb-3">Purchases</th>
+                  <th className="pb-3">Revenue</th>
+                  <th className="pb-3">Valid Period</th>
+                  <th className="pb-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="text-white">
+                {filteredGiftCards.map((card) => (
+                  <tr key={card.id} className="border-b border-primary/10 hover:bg-primary/5">
+                    <td className="py-4">
+                      <div className="flex items-center gap-2">
+                        <Gift className="text-primary" size={18} />
+                        <div>
+                          <p className="font-medium">{card.title}</p>
+                          <p className="text-sm text-gray-400 max-w-xs truncate" title={card.description}>
+                            {card.description}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="py-4">
+                      <p className="text-sm font-bold">{card.value.toLocaleString()} kr.</p>
+                    </td>
+                    <td className="py-4">
+                      {card.discountPercentage ? (
+                        <span className="text-sm text-green font-semibold">{card.discountPercentage}% OFF</span>
+                      ) : (
+                        <span className="text-sm text-gray-500">—</span>
+                      )}
+                    </td>
+                    <td className="py-4">
+                      <div className="flex items-center gap-1">
+                        <Users size={14} className="text-gray-400" />
+                        <p className="text-sm font-medium">{card.totalPurchases}</p>
+                      </div>
+                    </td>
+                    <td className="py-4">
+                      <p className="text-sm font-bold text-green">{card.totalRevenue.toLocaleString()} kr.</p>
+                    </td>
+                    <td className="py-4">
+                      <div className="text-sm">
+                        <p className="text-gray-300">
+                          {new Date(card.validFrom).toLocaleDateString()} - {new Date(card.validUntil).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </td>
+                    <td className="py-4">
+                      <Link
+                        to={`/company/gift-cards/${card.id}`}
+                        className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+                        title="View Details"
+                      >
+                        <Eye size={16} />
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+

@@ -7,6 +7,7 @@ import {
   Store,
   Tag,
   CreditCard,
+  Gift,
   BarChart3,
   User,
 } from "lucide-react";
@@ -44,6 +45,11 @@ export default function CompanyLayout() {
       name: "Sales & Payments",
       href: "/company/sales",
       icon: CreditCard,
+    },
+    {
+      name: "All Gift Cards",
+      href: "/company/gift-cards",
+      icon: Gift,
     },
     {
       name: "Analytics",

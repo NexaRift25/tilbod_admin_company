@@ -13,6 +13,8 @@ import CompanyDetailsPage from './pages/company/CompanyDetails';
 import ProfilePage from './pages/company/Profile';
 import AnalyticsPage from './pages/company/Analytics';
 import SalesPage from './pages/company/Sales';
+import GiftCardsPage from './pages/company/GiftCards';
+import GiftCardDetailsPage from './pages/company/GiftCardDetails';
 import OffersPage from './pages/company/Offers';
 import CreateOfferPage from './pages/company/CreateOffer';
 import EditOfferPage from './pages/company/EditOffer';
@@ -72,6 +74,8 @@ function App() {
             <Route path="offers/:id" element={<OfferDetailsPage />} />
             <Route path="offers/:id/edit" element={<EditOfferPage />} />
             <Route path="sales" element={<SalesPage />} />
+            <Route path="gift-cards" element={<GiftCardsPage />} />
+            <Route path="gift-cards/:id" element={<GiftCardDetailsPage />} />
             <Route path="analytics" element={<AnalyticsPage />} />
             <Route path="profile" element={<ProfilePage />} />
             <Route path="pending-approvals" element={<PendingApprovalsPage />} />
