@@ -21,6 +21,7 @@ import { Logo, MobileLogo } from "@/components/ui/Header";
 import Navigation, { NavItem } from "@/components/ui/Navigation";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/contexts/AuthContext";
+import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 
 export default function AdminLayout() {
   const { logout } = useAuth();
@@ -113,6 +114,9 @@ export default function AdminLayout() {
 
             {/* Mobile Icons */}
             <div className="flex items-center gap-2 sm:gap-3">
+              {/* Language Switcher */}
+              <LanguageSwitcher />
+
               {/* Home Icon */}
               <Link
                 to="/"
@@ -151,6 +155,7 @@ export default function AdminLayout() {
                   <Logo />
                 </Link>
                 <div className="flex items-center gap-4">
+                  <LanguageSwitcher />
                   <Link
                     to="/"
                     className="text-primary transition-colors p-2"

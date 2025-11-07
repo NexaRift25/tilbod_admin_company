@@ -16,6 +16,7 @@ import { Logo, MobileLogo } from "@/components/ui/Header";
 import Navigation, { NavItem } from "@/components/ui/Navigation";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/contexts/AuthContext";
+import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 
 export default function CompanyLayout() {
   const { logout } = useAuth();
@@ -78,6 +79,9 @@ export default function CompanyLayout() {
 
             {/* Mobile Icons */}
             <div className="flex items-center gap-2 sm:gap-3">
+              {/* Language Switcher */}
+              <LanguageSwitcher />
+
               {/* Home Icon */}
               <Link
                 to="/"
@@ -116,6 +120,7 @@ export default function CompanyLayout() {
                   <Logo />
                 </Link>
                 <div className="flex items-center gap-4">
+                  <LanguageSwitcher />
                   <Link
                     to="/"
                     className="text-primary transition-colors p-2"

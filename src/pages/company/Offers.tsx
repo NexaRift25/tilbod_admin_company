@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Tag,
   Plus,
@@ -40,6 +41,7 @@ interface Offer {
 }
 
 export default function OffersPage() {
+  const { t } = useTranslation();
   const [offers] = useState<Offer[]>([
     // Active offers (3)
     {
@@ -322,9 +324,9 @@ export default function OffersPage() {
     const end = new Date(endDate);
     const now = new Date();
     const diff = end.getTime() - now.getTime();
-    if (diff <= 0) return "Expired";
+    if (diff <= 0) return t("offerDetails.expired");
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    return `${days} days left`;
+    return t("offerDetails.daysLeft", { days });
   };
 
   // Transform offer data for ActiveOfferCard
@@ -433,10 +435,10 @@ export default function OffersPage() {
           </Link>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white">
-              My Offers
+              {t("offers.title")}
             </h1>
             <p className="text-gray-400 text-sm">
-              Manage your promotional offers and track performance
+              {t("offers.subtitle")}
             </p>
           </div>
         </div>
@@ -446,7 +448,7 @@ export default function OffersPage() {
           className="flex items-center gap-2 px-4 py-2 bg-primary text-dark font-semibold rounded-full hover:bg-primary/90 transition-all"
         >
           <Plus size={20} />
-          Create Offer
+          {t("offers.createOffer")}
         </Link>
       </div>
 
@@ -455,7 +457,7 @@ export default function OffersPage() {
         <div className="bg-card-background border border-primary rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Total Offers</p>
+              <p className="text-gray-400 text-sm">{t("offers.totalOffers")}</p>
               <p className="text-white text-2xl font-bold">{stats.total}</p>
             </div>
             <Tag className="text-primary" size={24} />
@@ -465,7 +467,7 @@ export default function OffersPage() {
         <div className="bg-card-background border border-green rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Active</p>
+              <p className="text-gray-400 text-sm">{t("offers.active")}</p>
               <p className="text-white text-2xl font-bold">{stats.active}</p>
             </div>
             <CheckCircle className="text-green" size={24} />
@@ -475,7 +477,7 @@ export default function OffersPage() {
         <div className="bg-card-background border border-yellow-500 rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Pending</p>
+              <p className="text-gray-400 text-sm">{t("offers.pending")}</p>
               <p className="text-white text-2xl font-bold">{stats.pending}</p>
             </div>
             <Clock className="text-yellow" size={24} />
@@ -485,7 +487,7 @@ export default function OffersPage() {
         <div className="bg-card-background border border-blue-500 rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Total Views</p>
+              <p className="text-gray-400 text-sm">{t("offers.totalViews")}</p>
               <p className="text-white text-2xl font-bold">{stats.totalViews.toLocaleString()}</p>
             </div>
             <Eye className="text-blue-500" size={24} />
@@ -495,7 +497,7 @@ export default function OffersPage() {
         <div className="bg-card-background border border-purple-500 rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Purchases</p>
+              <p className="text-gray-400 text-sm">{t("offers.purchases")}</p>
               <p className="text-white text-2xl font-bold">{stats.totalPurchases}</p>
             </div>
             <Users className="text-purple-500" size={24} />
@@ -505,7 +507,7 @@ export default function OffersPage() {
         <div className="bg-card-background border border-orange-500 rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Revenue</p>
+              <p className="text-gray-400 text-sm">{t("offers.revenue")}</p>
               <p className="text-white text-2xl font-bold">{(stats.totalRevenue / 1000).toFixed(0)}k kr.</p>
             </div>
             <DollarSign className="text-orange-500" size={24} />
@@ -524,7 +526,7 @@ export default function OffersPage() {
                 : "bg-background text-gray-300 hover:bg-primary/20"
             }`}
           >
-            Active
+            {t("offers.active")}
           </button>
           <button
             onClick={() => setActiveTab("inactive")}
@@ -534,7 +536,7 @@ export default function OffersPage() {
                 : "bg-background text-gray-300 hover:bg-primary/20"
             }`}
           >
-            Inactive
+            {t("offers.inactive")}
           </button>
           <button
             onClick={() => setActiveTab("pending")}
@@ -544,7 +546,7 @@ export default function OffersPage() {
                 : "bg-background text-gray-300 hover:bg-primary/20"
             }`}
           >
-            Pending
+            {t("offers.pending")}
           </button>
           <button
             onClick={() => setActiveTab("rejected")}
@@ -554,7 +556,7 @@ export default function OffersPage() {
                 : "bg-background text-gray-300 hover:bg-primary/20"
             }`}
           >
-            Rejected
+            {t("offers.rejected")}
           </button>
         </div>
       </div>
@@ -567,7 +569,7 @@ export default function OffersPage() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
               <input
                 type="text"
-                placeholder="Search offers..."
+                placeholder={t("offers.searchPlaceholder")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary"
@@ -582,11 +584,11 @@ export default function OffersPage() {
               onChange={(e) => setTypeFilter(e.target.value)}
               className="px-3 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
             >
-              <option value="all">All Types</option>
-              <option value="active">Active Offer</option>
-              <option value="weekdays">Weekdays Offer</option>
-              <option value="happy_hour">Happy Hour</option>
-              <option value="gift_card">Gift Card</option>
+              <option value="all">{t("offers.allTypes")}</option>
+              <option value="active">{t("offerTypes.active")}</option>
+              <option value="weekdays">{t("offerTypes.weekdays")}</option>
+              <option value="happy_hour">{t("offerTypes.happyHour")}</option>
+              <option value="gift_card">{t("offerTypes.giftCard")}</option>
             </select>
           </div>
         </div>
@@ -597,11 +599,11 @@ export default function OffersPage() {
         {filteredOffers.length === 0 ? (
           <div className="text-center py-8">
             <Tag className="mx-auto text-gray-400 mb-4" size={48} />
-            <h3 className="text-xl font-bold text-white mb-2">No offers found</h3>
+            <h3 className="text-xl font-bold text-white mb-2">{t("offers.noOffers")}</h3>
             <p className="text-gray-400 mb-4">
               {searchTerm || typeFilter !== "all"
-                ? "Try adjusting your search or filter criteria"
-                : `You don't have any ${activeTab} offers yet`
+                ? t("offers.tryAdjustingFilters")
+                : t("offers.noOffersForTab", { tab: t(`offers.${activeTab}`) })
               }
             </p>
             {!searchTerm && typeFilter === "all" && activeTab === "active" && (
@@ -610,7 +612,7 @@ export default function OffersPage() {
                 className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-dark font-semibold rounded-full hover:bg-primary/90 transition-all"
               >
                 <Plus size={20} />
-                Create Your First Offer
+                {t("offers.createFirstOffer")}
               </Link>
             )}
           </div>
@@ -624,14 +626,14 @@ export default function OffersPage() {
                   <Link
                     to={`/company/offers/${offer.id}`}
                     className="p-2 bg-black/50 backdrop-blur-sm text-white rounded-lg hover:bg-primary/50 transition-all"
-                    title="View Offer Details"
+                    title={t("offers.viewOfferDetails")}
                   >
                     <Eye size={16} />
                   </Link>
                   <Link
                     to={`/company/offers/${offer.id}/edit`}
                     className="p-2 bg-black/50 backdrop-blur-sm text-white rounded-lg hover:bg-primary/50 transition-all"
-                    title="Edit Offer"
+                    title={t("offers.editOffer")}
                   >
                     <Edit size={16} />
                   </Link>
@@ -646,7 +648,11 @@ export default function OffersPage() {
       {filteredOffers.length > 0 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-gray-400">
-            Showing {startIndex + 1}-{Math.min(endIndex, filteredOffers.length)} of {filteredOffers.length} offers
+            {t("offers.showing", { 
+              start: startIndex + 1, 
+              end: Math.min(endIndex, filteredOffers.length), 
+              total: filteredOffers.length 
+            })}
           </p>
           <Pagination
             currentPage={currentPage}

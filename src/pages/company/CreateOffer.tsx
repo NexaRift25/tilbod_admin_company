@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Tag,
   Calendar,
@@ -38,36 +39,7 @@ interface OfferFormData {
   offerLink: string;
 }
 
-const offerTypes = [
-  {
-    id: "active",
-    name: "Active Offer",
-    description: "Daily promotional deals available year-round",
-    icon: Tag,
-    color: "bg-yellow/10 text-yellow border-yellow"
-  },
-  {
-    id: "weekdays",
-    name: "Weekdays Offer",
-    description: "Special deals for restaurants and activities",
-    icon: Calendar,
-    color: "bg-pink/10 text-pink border-pink"
-  },
-  {
-    id: "happy_hour",
-    name: "Happy Hour Offer",
-    description: "Time-based promotions for bars & restaurants",
-    icon: Clock,
-    color: "bg-green/10 text-green border-green"
-  },
-  {
-    id: "gift_card",
-    name: "Gift Card",
-    description: "Prepaid value cards for hotels & services",
-    icon: DollarSign,
-    color: "bg-orange-500/10 text-orange-500 border-orange-500"
-  }
-];
+// offerTypes will be created inside component to use translations
 
 // Fallback categories if no product categories are stored
 const fallbackCategories = [
@@ -83,18 +55,50 @@ const fallbackCategories = [
   "Professional Services"
 ];
 
-const weekdays = [
-  { id: "monday", name: "Monday" },
-  { id: "tuesday", name: "Tuesday" },
-  { id: "wednesday", name: "Wednesday" },
-  { id: "thursday", name: "Thursday" },
-  { id: "friday", name: "Friday" },
-  { id: "saturday", name: "Saturday" },
-  { id: "sunday", name: "Sunday" }
-];
-
 export default function CreateOfferPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  
+  const offerTypes = [
+    {
+      id: "active",
+      name: t("createOffer.activeOffer"),
+      description: t("createOffer.activeOfferDescription"),
+      icon: Tag,
+      color: "bg-yellow/10 text-yellow border-yellow"
+    },
+    {
+      id: "weekdays",
+      name: t("createOffer.weekdaysOffer"),
+      description: t("createOffer.weekdaysOfferDescription"),
+      icon: Calendar,
+      color: "bg-pink/10 text-pink border-pink"
+    },
+    {
+      id: "happy_hour",
+      name: t("createOffer.happyHourOffer"),
+      description: t("createOffer.happyHourOfferDescription"),
+      icon: Clock,
+      color: "bg-green/10 text-green border-green"
+    },
+    {
+      id: "gift_card",
+      name: t("createOffer.giftCard"),
+      description: t("createOffer.giftCardDescription"),
+      icon: DollarSign,
+      color: "bg-orange-500/10 text-orange-500 border-orange-500"
+    }
+  ];
+
+  const weekdays = [
+    { id: "monday", name: t("weekdays.monday") },
+    { id: "tuesday", name: t("weekdays.tuesday") },
+    { id: "wednesday", name: t("weekdays.wednesday") },
+    { id: "thursday", name: t("weekdays.thursday") },
+    { id: "friday", name: t("weekdays.friday") },
+    { id: "saturday", name: t("weekdays.saturday") },
+    { id: "sunday", name: t("weekdays.sunday") }
+  ];
   const [selectedType, setSelectedType] = useState<OfferType>("active");
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -157,21 +161,21 @@ export default function CreateOfferPage() {
 
   // Calculate time left for preview
   const calculateTimeLeft = (endDate: string) => {
-    if (!endDate) return "Ends soon";
+    if (!endDate) return t("createOffer.endsSoon");
     const end = new Date(endDate + "T23:59:59");
     const now = new Date();
     const diff = end.getTime() - now.getTime();
     
-    if (diff <= 0) return "Ended";
+    if (diff <= 0) return t("createOffer.ended");
     
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     
-    if (days > 0) return `${days} day${days > 1 ? 's' : ''} left`;
-    if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} left`;
-    if (minutes > 0) return `${minutes} min left`;
-    return "Ends soon";
+    if (days > 0) return days === 1 ? t("createOffer.dayLeft", { count: days }) : t("createOffer.daysLeft", { count: days });
+    if (hours > 0) return hours === 1 ? t("createOffer.hourLeft", { count: hours }) : t("createOffer.hoursLeft", { count: hours });
+    if (minutes > 0) return t("createOffer.minLeft", { count: minutes });
+    return t("createOffer.endsSoon");
   };
 
   // Transform form data for ActiveOfferCard preview
@@ -179,18 +183,18 @@ export default function CreateOfferPage() {
     return {
       id: 0,
       offerType: "active",
-      title: formData.title || "Your offer title",
-      discount: formData.discountPercentage ? `${formData.discountPercentage}% OFF` : "Special Offer",
-      description: formData.description || "Your offer description will appear here",
+      title: formData.title || t("createOffer.yourOfferTitle"),
+      discount: formData.discountPercentage ? `${formData.discountPercentage}% OFF` : t("createOffer.specialOffer"),
+      description: formData.description || t("createOffer.yourOfferDescription"),
       image: previewImageUrl || formData.image || "/placeholder-image.jpg",
-      category: formData.category || "Category",
+      category: formData.category || t("common.category"),
       timeLeft: calculateTimeLeft(formData.endDate),
       location: "",
       price: formData.originalPrice || null,
       discountPrice: formData.discountPrice || null,
       link: formData.offerLink || "#"
     };
-  }, [formData, previewImageUrl]);
+  }, [formData, previewImageUrl, t]);
 
   // Transform form data for WeeklyOfferCard preview
   const previewWeeklyOffer = useMemo(() => {
@@ -209,22 +213,22 @@ export default function CreateOfferPage() {
     return {
       id: 0,
       offerType: "weekdays",
-      title: formData.title || "Your weekly offer title",
-      discount: formData.discountPercentage ? `${formData.discountPercentage}% Discount` : "Discount Available",
-      description: formData.description || "Your weekly offer description",
+      title: formData.title || t("createOffer.yourWeeklyOfferTitle"),
+      discount: formData.discountPercentage ? `${formData.discountPercentage}% Discount` : t("createOffer.discountAvailable"),
+      description: formData.description || t("createOffer.yourWeeklyOfferDescription"),
       image: previewImageUrl || formData.image || "/placeholder-image.jpg",
-      badge: formData.category || "Weekly Special",
-      location: formData.weekdayAddress || "Location",
-      time: formData.startTime && formData.endTime ? `${formData.startTime} - ${formData.endTime}` : "Available all day",
+      badge: formData.category || t("createOffer.weeklySpecial"),
+      location: formData.weekdayAddress || t("createOffer.locationLabel"),
+      time: formData.startTime && formData.endTime ? `${formData.startTime} - ${formData.endTime}` : t("createOffer.availableAllDay"),
       availableDays: availableDays.length > 0 ? availableDays : ["Mon", "Tue", "Wed", "Thu", "Fri"],
       link: formData.offerLink || "#"
     };
-  }, [formData, previewImageUrl]);
+  }, [formData, previewImageUrl, t]);
 
   // Transform form data for HappyHourOfferCard preview
   const previewHappyHourOffer = useMemo(() => {
     const calculateStatus = () => {
-      if (!formData.startTime || !formData.endTime) return "Closed";
+      if (!formData.startTime || !formData.endTime) return t("createOffer.closed");
       const now = new Date();
       const hours = now.getHours();
       const minutes = now.getMinutes();
@@ -236,9 +240,9 @@ export default function CreateOfferPage() {
       const endDecimal = endHour + endMin / 60;
       
       if (currentTime >= startDecimal && currentTime < endDecimal) {
-        return "Open now";
+        return t("createOffer.openNow");
       }
-      return "Closed";
+      return t("createOffer.closed");
     };
 
     const formatTimeRange = () => {
@@ -258,33 +262,33 @@ export default function CreateOfferPage() {
     return {
       id: 0,
       offerType: "happy_hour",
-      title: formData.title || "Your happy hour title",
+      title: formData.title || t("createOffer.yourOfferTitle"),
       time: formatTimeRange(),
-      description: formData.description || "Your happy hour description",
+      description: formData.description || t("createOffer.yourOfferDescription"),
       image: previewImageUrl || formData.image || "/placeholder-image.jpg",
       status: calculateStatus(),
-      location: formData.location || "Location",
-      pricing: formData.discountPrice ? `${formData.discountPrice} kr.` : "Special pricing",
+      location: formData.location || t("createOffer.locationLabel"),
+      pricing: formData.discountPrice ? `${formData.discountPrice} kr.` : t("createOffer.specialOffer"),
       availableDays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
       link: formData.offerLink || "#"
     };
-  }, [formData, previewImageUrl]);
+  }, [formData, previewImageUrl, t]);
 
   // Transform form data for GiftOfferCard preview
   const previewGiftOffer = useMemo(() => {
     return {
       id: 0,
       offerType: "gift_card",
-      title: formData.title || "Your gift card title",
+      title: formData.title || t("createOffer.yourOfferTitle"),
       price: formData.discountPrice || "0",
-      description: formData.description || "Your gift card description",
+      description: formData.description || t("createOffer.yourOfferDescription"),
       image: previewImageUrl || formData.image || "/placeholder-image.jpg",
-      category: formData.category || "Category",
+      category: formData.category || t("common.category"),
       timeLeft: calculateTimeLeft(formData.endDate),
       purchaseCount: 0,
       link: "#"
     };
-  }, [formData, previewImageUrl]);
+  }, [formData, previewImageUrl, t]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -386,17 +390,17 @@ export default function CreateOfferPage() {
         </Link>
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-white">
-            Create New Offer
+            {t("createOffer.title")}
           </h1>
           <p className="text-gray-400 text-sm">
-            Choose offer type and set up your promotion
+            {t("createOffer.subtitle")}
           </p>
         </div>
       </div>
 
       {/* Offer Type Selection */}
       <div className="bg-card-background border border-primary rounded-2xl p-6">
-        <h3 className="text-lg font-bold text-white mb-4">Choose Offer Type</h3>
+        <h3 className="text-lg font-bold text-white mb-4">{t("createOffer.selectType")}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {offerTypes.map((type) => {
             const Icon = type.icon;
@@ -436,7 +440,7 @@ export default function CreateOfferPage() {
         <div className="flex items-center gap-3 mb-6">
           {renderSelectedIcon()}
           <h3 className="text-xl font-bold text-white">
-            Create {selectedOfferType.name}
+            {t("createOffer.createOfferType", { type: selectedOfferType.name })}
           </h3>
         </div>
 
@@ -445,7 +449,7 @@ export default function CreateOfferPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
               <label className="text-gray-400 text-sm mb-2 block">
-                Offer Title *
+                {t("createOffer.titleLabel")} *
               </label>
               <input
                 type="text"
@@ -455,14 +459,14 @@ export default function CreateOfferPage() {
                 className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                   errors.title ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
                 }`}
-                placeholder="Enter offer title"
+                placeholder={t("createOffer.titlePlaceholder")}
               />
               {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title}</p>}
             </div>
 
             <div className="md:col-span-2">
               <label className="text-gray-400 text-sm mb-2 block">
-                Product Category *
+                {t("createOffer.productCategory")} *
               </label>
               <div className="relative">
                 <div className="relative">
@@ -482,7 +486,7 @@ export default function CreateOfferPage() {
                     }}
                     onBlur={() => setTimeout(() => setShowCategoryDropdown(false), 200)}
                     onFocus={() => setShowCategoryDropdown(true)}
-                    placeholder="Search or type product category..."
+                    placeholder={t("createOffer.productCategoryPlaceholder")}
                     className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                       errors.category ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
                     }`}
@@ -518,20 +522,20 @@ export default function CreateOfferPage() {
                         </button>
                       ))
                       .length === 0 && (
-                        <div className="px-4 py-2 text-gray-400 text-sm">No matching categories</div>
+                        <div className="px-4 py-2 text-gray-400 text-sm">{t("createOffer.noMatchingCategories")}</div>
                       )}
                   </div>
                 )}
               </div>
               {errors.category && <p className="text-red-500 text-xs mt-1">{errors.category}</p>}
               <p className="text-gray-500 text-xs mt-1">
-                Type or search to find a product category (e.g., Clothing, Jewelry)
+                {t("createOffer.productCategoryHint")}
               </p>
             </div>
 
             <div className="md:col-span-2">
               <label className="text-gray-400 text-sm mb-2 block">
-                Description *
+                {t("common.description")} *
               </label>
               <textarea
                 name="description"
@@ -541,7 +545,7 @@ export default function CreateOfferPage() {
                 className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all resize-none ${
                   errors.description ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
                 }`}
-                placeholder="Describe your offer in detail..."
+                placeholder={t("createOffer.descriptionPlaceholder")}
               />
               {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description}</p>}
             </div>
@@ -549,11 +553,11 @@ export default function CreateOfferPage() {
 
           {/* Pricing */}
           <div>
-            <h4 className="text-lg font-bold text-white mb-4">Pricing Information</h4>
+            <h4 className="text-lg font-bold text-white mb-4">{t("createOffer.pricingInformation")}</h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <label className="text-gray-400 text-sm mb-2 block">
-                  Original Price (kr.) *
+                  {t("createOffer.originalPriceLabel")} *
                 </label>
                 <input
                   type="number"
@@ -570,7 +574,7 @@ export default function CreateOfferPage() {
 
               <div>
                 <label className="text-gray-400 text-sm mb-2 block">
-                  Discounted Price (kr.) *
+                  {t("createOffer.discountedPriceLabel")} *
                 </label>
                 <input
                   type="number"
@@ -587,7 +591,7 @@ export default function CreateOfferPage() {
 
               <div>
                 <label className="text-gray-400 text-sm mb-2 block">
-                  Discount %
+                  {t("createOffer.discountPercentLabel")}
                 </label>
                 <input
                   type="number"
@@ -605,11 +609,11 @@ export default function CreateOfferPage() {
           {/* Date & Time (varies by offer type) */}
           {selectedType !== "happy_hour" && (
             <div>
-              <h4 className="text-lg font-bold text-white mb-4">Offer Duration</h4>
+              <h4 className="text-lg font-bold text-white mb-4">{t("createOffer.dates")}</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="text-gray-400 text-sm mb-2 block">
-                    Start Date *
+                    {t("createOffer.startDate")} *
                   </label>
                   <input
                     type="date"
@@ -625,7 +629,7 @@ export default function CreateOfferPage() {
 
                 <div>
                   <label className="text-gray-400 text-sm mb-2 block">
-                    End Date *
+                    {t("createOffer.endDate")} *
                   </label>
                   <input
                     type="date"
@@ -646,7 +650,7 @@ export default function CreateOfferPage() {
           {selectedType === "weekdays" && (
             <div className="space-y-6">
               <div>
-                <h4 className="text-lg font-bold text-white mb-4">Select Weekdays</h4>
+                <h4 className="text-lg font-bold text-white mb-4">{t("createOffer.selectWeekdays")}</h4>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {weekdays.map(day => (
                     <button
@@ -667,11 +671,11 @@ export default function CreateOfferPage() {
               </div>
 
               <div>
-                <h4 className="text-lg font-bold text-white mb-4">Time Range</h4>
+                <h4 className="text-lg font-bold text-white mb-4">{t("createOffer.timeRange")}</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="text-gray-400 text-sm mb-2 block">
-                      Start Time *
+                      {t("createOffer.startTimeLabel")} *
                     </label>
                     <input
                       type="time"
@@ -687,7 +691,7 @@ export default function CreateOfferPage() {
 
                   <div>
                     <label className="text-gray-400 text-sm mb-2 block">
-                      End Time *
+                      {t("createOffer.endTimeLabel")} *
                     </label>
                     <input
                       type="time"
@@ -704,10 +708,10 @@ export default function CreateOfferPage() {
               </div>
 
               <div>
-                <h4 className="text-lg font-bold text-white mb-4">Location</h4>
+                <h4 className="text-lg font-bold text-white mb-4">{t("createOffer.locationLabel")}</h4>
                 <div>
                   <label className="text-gray-400 text-sm mb-2 block">
-                    Restaurant/Address *
+                    {t("createOffer.weekdayAddressLabel")} *
                   </label>
                   <input
                     type="text"
@@ -717,7 +721,7 @@ export default function CreateOfferPage() {
                     className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                       errors.weekdayAddress ? "border-red-500 focus:border-red-500" : "border-pink/30 focus:border-pink"
                     }`}
-                    placeholder="Enter restaurant address or location"
+                    placeholder={t("createOffer.weekdayAddressPlaceholder")}
                   />
                   {errors.weekdayAddress && <p className="text-red-500 text-xs mt-1">{errors.weekdayAddress}</p>}
                 </div>
@@ -728,11 +732,11 @@ export default function CreateOfferPage() {
           {/* Happy Hour Specific Fields */}
           {selectedType === "happy_hour" && (
             <div>
-              <h4 className="text-lg font-bold text-white mb-4">Happy Hour Details</h4>
+              <h4 className="text-lg font-bold text-white mb-4">{t("offerDetails.happyHourDetails")}</h4>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
                   <label className="text-gray-400 text-sm mb-2 block">
-                    Start Time *
+                    {t("createOffer.startTimeLabel")} *
                   </label>
                   <input
                     type="time"
@@ -748,7 +752,7 @@ export default function CreateOfferPage() {
 
                 <div>
                   <label className="text-gray-400 text-sm mb-2 block">
-                    End Time *
+                    {t("createOffer.endTimeLabel")} *
                   </label>
                   <input
                     type="time"
@@ -764,7 +768,7 @@ export default function CreateOfferPage() {
 
                 <div>
                   <label className="text-gray-400 text-sm mb-2 block">
-                    Location *
+                    {t("createOffer.locationLabel")} *
                   </label>
                   <input
                     type="text"
@@ -774,7 +778,7 @@ export default function CreateOfferPage() {
                     className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                       errors.location ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
                     }`}
-                    placeholder="Bar/Restaurant name"
+                    placeholder={t("createOffer.locationPlaceholder")}
                   />
                   {errors.location && <p className="text-red-500 text-xs mt-1">{errors.location}</p>}
                 </div>
@@ -786,7 +790,7 @@ export default function CreateOfferPage() {
           {selectedType !== "gift_card" && (
             <div>
               <label className="text-gray-400 text-sm mb-2 block">
-                Offer Website Link
+                {t("createOffer.offerLinkLabel")}
               </label>
               <input
                 type="url"
@@ -794,16 +798,16 @@ export default function CreateOfferPage() {
                 value={formData.offerLink}
                 onChange={handleInputChange}
                 className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all"
-                placeholder="https://your-website.com/offer"
+                placeholder={t("createOffer.offerLinkPlaceholder")}
               />
-              <p className="text-gray-500 text-xs mt-1">Link to your original offer or website</p>
+              <p className="text-gray-500 text-xs mt-1">{t("createOffer.optional")}</p>
             </div>
           )}
 
           {/* Terms & Conditions */}
           <div>
             <label className="text-gray-400 text-sm mb-2 block">
-              Terms & Conditions (Optional)
+              {t("createOffer.termsLabel")} ({t("createOffer.optional")})
             </label>
             <textarea
               name="terms"
@@ -811,14 +815,14 @@ export default function CreateOfferPage() {
               onChange={handleInputChange}
               rows={3}
               className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all resize-none"
-              placeholder="Any specific terms or conditions for this offer..."
+              placeholder={t("createOffer.termsPlaceholder")}
             />
           </div>
 
           {/* Image Upload */}
           <div>
             <label className="text-gray-400 text-sm mb-2 block">
-              Upload Offer Image (Optional)
+              {t("createOffer.offerImage")} ({t("createOffer.optional")})
             </label>
             <label className="flex flex-col items-center justify-center gap-2 px-4 py-6 bg-background border border-primary/30 rounded-lg cursor-pointer hover:border-primary transition-all">
               <input
@@ -831,7 +835,7 @@ export default function CreateOfferPage() {
                 <img src={previewImageUrl} alt="Preview" className="w-full h-48 object-cover rounded-lg" />
               ) : (
                 <>
-                  <span className="text-gray-400 text-sm">Click to upload or drag and drop</span>
+                  <span className="text-gray-400 text-sm">{t("createOffer.uploadImage")}</span>
                   <span className="text-gray-500 text-xs">PNG, JPG or SVG (max. 2MB)</span>
                 </>
               )}
@@ -850,7 +854,7 @@ export default function CreateOfferPage() {
               ) : (
                 <>
                   <Plus size={20} />
-                  Create Offer
+                  {t("createOffer.create")}
                 </>
               )}
             </button>
@@ -862,10 +866,10 @@ export default function CreateOfferPage() {
         <div className="bg-card-background border border-primary rounded-2xl p-6 lg:p-8 max-h-[800px] overflow-y-auto scrollbar-custom">
           <div className="flex items-center gap-2 mb-4">
             <Eye className="text-primary" size={20} />
-            <h2 className="text-xl font-bold text-white">Preview</h2>
+            <h2 className="text-xl font-bold text-white">{t("createOffer.previewTitle")}</h2>
           </div>
           <p className="text-gray-400 text-sm mb-6">
-            See how your offer card will look to customers
+            {t("createOffer.previewDescription")}
           </p>
           <div className="flex justify-center">
             <div className="w-full max-w-sm">

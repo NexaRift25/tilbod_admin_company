@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Search, Filter, AlertCircle, Eye } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface PendingItem {
   id: number;
@@ -12,6 +13,7 @@ interface PendingItem {
 }
 
 export default function PendingApprovalsPage() {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "revision">("all");
 
@@ -75,10 +77,10 @@ export default function PendingApprovalsPage() {
         </Link>
         <div>
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">
-            Pending Approvals
+            {t("pendingApprovals.title")}
           </h1>
           <p className="text-sm sm:text-base text-gray-400">
-            View and manage all your pending items awaiting approval
+            {t("pendingApprovals.subtitle")}
           </p>
         </div>
       </div>
@@ -91,7 +93,7 @@ export default function PendingApprovalsPage() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
             <input
               type="text"
-              placeholder="Search by name..."
+              placeholder={t("pendingApprovals.searchPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 bg-background border border-primary rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
@@ -110,7 +112,7 @@ export default function PendingApprovalsPage() {
                     : "bg-background border border-primary text-gray-400 hover:text-white"
                 }`}
               >
-                All
+                {t("pendingApprovals.all")}
               </button>
               <button
                 onClick={() => setStatusFilter("pending")}
@@ -120,7 +122,7 @@ export default function PendingApprovalsPage() {
                     : "bg-background border border-primary text-gray-400 hover:text-white"
                 }`}
               >
-                Pending
+                {t("pendingApprovals.pending")}
               </button>
               <button
                 onClick={() => setStatusFilter("revision")}
@@ -130,7 +132,7 @@ export default function PendingApprovalsPage() {
                     : "bg-background border border-primary text-gray-400 hover:text-white"
                 }`}
               >
-                Revision
+                {t("pendingApprovals.revision")}
               </button>
             </div>
           </div>
@@ -138,7 +140,7 @@ export default function PendingApprovalsPage() {
 
         {/* Results Count */}
         <div className="mt-4 text-sm text-gray-400">
-          Showing {filteredItems.length} of {allPendingItems.length} items
+          {t("pendingApprovals.showing", { count: filteredItems.length, total: allPendingItems.length })}
         </div>
       </div>
 
@@ -153,17 +155,21 @@ export default function PendingApprovalsPage() {
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-primary text-xs font-semibold">{item.type}</span>
+                    <span className="text-primary text-xs font-semibold">
+                      {item.type === "Company" ? t("common.company") : t("offerTypes.offer")}
+                    </span>
                     {item.revisionCount && (
                       <span className="bg-yellow/10 text-yellow px-2 py-0.5 rounded text-xs">
-                        Revision {item.revisionCount}/3
+                        {t("pendingApprovals.revisionBadge", { count: item.revisionCount })}
                       </span>
                     )}
                   </div>
                   <h3 className="text-white font-semibold mb-1 text-sm sm:text-base truncate">
                     {item.name}
                   </h3>
-                  <p className="text-gray-400 text-xs sm:text-sm">Submitted {item.submittedAt}</p>
+                  <p className="text-gray-400 text-xs sm:text-sm">
+                    {t("pendingApprovals.submitted", { time: item.submittedAt })}
+                  </p>
                 </div>
                 <div className="flex items-center justify-between sm:justify-end gap-4">
                   <span
@@ -173,12 +179,12 @@ export default function PendingApprovalsPage() {
                         : "bg-orange-500/10 text-orange-500"
                     }`}
                   >
-                    {item.status === "pending" ? "Under Review" : "Needs Revision"}
+                    {item.status === "pending" ? t("pendingApprovals.underReview") : t("pendingApprovals.needsRevision")}
                   </span>
                   <Link
                     to={`/company/pending-approvals/${item.type.toLowerCase()}/${item.id}`}
                     className="flex items-center justify-center w-10 h-10 border border-primary rounded-lg hover:bg-primary/10 transition-colors"
-                    title="View Details"
+                    title={t("pendingApprovals.viewDetails")}
                   >
                     <Eye className="text-primary" size={18} />
                   </Link>
@@ -188,7 +194,7 @@ export default function PendingApprovalsPage() {
           ) : (
             <div className="p-4 sm:p-6 bg-background rounded-lg border border-primary/30 text-center">
               <p className="text-sm sm:text-base text-gray-400">
-                No items found matching your search criteria.
+                {t("pendingApprovals.noItemsFound")}
               </p>
             </div>
           )}
@@ -201,9 +207,9 @@ export default function PendingApprovalsPage() {
           <div className="flex items-start gap-3">
             <AlertCircle className="text-orange-500 flex-shrink-0 mt-0.5" size={20} />
             <div>
-              <h3 className="text-orange-500 font-bold mb-1">Revision Required</h3>
+              <h3 className="text-orange-500 font-bold mb-1">{t("pendingApprovals.revisionRequired")}</h3>
               <p className="text-sm text-gray-300">
-                You have items that need revision. You have up to 3 attempts to update companies and 2 attempts for offers.
+                {t("pendingApprovals.revisionNotice")}
               </p>
             </div>
           </div>

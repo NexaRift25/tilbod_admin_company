@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   ArrowLeft,
   Clock,
@@ -149,6 +150,7 @@ const mockOffers: OfferDetails[] = [
 
 export default function AdminOfferDetailsPage() {
   const { id } = useParams<{ id: string }>();
+  const { t } = useTranslation();
   const [offer, setOffer] = useState<OfferDetails | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -203,31 +205,16 @@ export default function AdminOfferDetailsPage() {
   };
 
   const getStatusText = (status: string) => {
-    switch (status) {
-      case "approved":
-        return "Approved";
-      case "active":
-        return "Active";
-      case "rejected":
-        return "Rejected";
-      case "revision":
-        return "Needs Revision";
-      case "pending":
-        return "Pending Review";
-      case "expired":
-        return "Expired";
-      default:
-        return "Unknown";
-    }
+    return t(`status.${status}`, { defaultValue: t("status.unknown") });
   };
 
   const calculateTimeLeft = (endDate: string) => {
     const end = new Date(endDate);
     const now = new Date();
     const diff = end.getTime() - now.getTime();
-    if (diff <= 0) return "Expired";
+    if (diff <= 0) return t("offerDetails.expired");
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    return `${days} days left`;
+    return t("offerDetails.daysLeft", { days });
   };
 
   // Transform offer data for ActiveOfferCard
@@ -375,25 +362,25 @@ export default function AdminOfferDetailsPage() {
           </Link>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-              Offer Not Found
+              {t("offerDetails.offerNotFound")}
             </h1>
           </div>
         </div>
         <div className="bg-card-background border border-primary rounded-2xl p-6 text-center">
-          <p className="text-gray-400">The requested offer could not be found.</p>
+          <p className="text-gray-400">{t("offerDetails.offerNotFoundMessage")}</p>
         </div>
       </div>
     );
   }
 
   const weekdayMap: Record<string, string> = {
-    "monday": "Monday",
-    "tuesday": "Tuesday",
-    "wednesday": "Wednesday",
-    "thursday": "Thursday",
-    "friday": "Friday",
-    "saturday": "Saturday",
-    "sunday": "Sunday"
+    "monday": t("weekdays.monday"),
+    "tuesday": t("weekdays.tuesday"),
+    "wednesday": t("weekdays.wednesday"),
+    "thursday": t("weekdays.thursday"),
+    "friday": t("weekdays.friday"),
+    "saturday": t("weekdays.saturday"),
+    "sunday": t("weekdays.sunday")
   };
 
   return (
@@ -409,21 +396,21 @@ export default function AdminOfferDetailsPage() {
           </Link>
           <div className="flex-1 min-w-0">
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-1 sm:mb-2 truncate">
-              Offer Details
+              {t("offerDetails.title")}
             </h1>
             <p className="text-gray-400 text-xs sm:text-sm">
-              View complete information about this offer
+              {t("offerDetails.subtitle")}
             </p>
           </div>
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:flex-shrink-0">
           <button className="flex items-center justify-center gap-2 px-4 py-2 bg-green/10 border border-green text-green font-semibold rounded-lg hover:bg-green/20 transition-all text-sm sm:text-base">
             <CheckCircle size={18} />
-            <span>Approve</span>
+            <span>{t("offerDetails.approve")}</span>
           </button>
           <button className="flex items-center justify-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500 text-red-500 font-semibold rounded-lg hover:bg-red-500/20 transition-all text-sm sm:text-base">
             <XCircle size={18} />
-            <span>Reject</span>
+            <span>{t("offerDetails.reject")}</span>
           </button>
         </div>
       </div>
@@ -436,15 +423,15 @@ export default function AdminOfferDetailsPage() {
           <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
             <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
               <Building2 className="text-primary" size={20} />
-              Company Information
+              {t("offerDetails.companyInformation")}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="bg-background rounded-lg p-3 sm:p-4">
-                <p className="text-gray-400 text-xs sm:text-sm mb-1">Company Name</p>
+                <p className="text-gray-400 text-xs sm:text-sm mb-1">{t("offerDetails.companyName")}</p>
                 <p className="text-white text-base sm:text-lg font-semibold break-words">{offer.companyName}</p>
               </div>
               <div className="bg-background rounded-lg p-3 sm:p-4">
-                <p className="text-gray-400 text-xs sm:text-sm mb-1">Category</p>
+                <p className="text-gray-400 text-xs sm:text-sm mb-1">{t("common.category")}</p>
                 <p className="text-white text-base sm:text-lg font-semibold break-words">{offer.category}</p>
               </div>
             </div>
@@ -454,19 +441,19 @@ export default function AdminOfferDetailsPage() {
           <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
             <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
               <DollarSign className="text-primary" size={20} />
-              Pricing Information
+              {t("offerDetails.pricingInformation")}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="bg-background rounded-lg p-3 sm:p-4">
-                <p className="text-gray-400 text-xs sm:text-sm mb-1">Original Price</p>
+                <p className="text-gray-400 text-xs sm:text-sm mb-1">{t("offerDetails.originalPrice")}</p>
                 <p className="text-white text-lg sm:text-xl font-bold">{offer.originalPrice.toLocaleString()} kr.</p>
               </div>
               <div className="bg-background rounded-lg p-3 sm:p-4">
-                <p className="text-gray-400 text-xs sm:text-sm mb-1">Discounted Price</p>
+                <p className="text-gray-400 text-xs sm:text-sm mb-1">{t("offerDetails.discountedPrice")}</p>
                 <p className="text-green text-lg sm:text-xl font-bold">{offer.discountPrice.toLocaleString()} kr.</p>
               </div>
               <div className="bg-background rounded-lg p-3 sm:p-4">
-                <p className="text-gray-400 text-xs sm:text-sm mb-1">Discount</p>
+                <p className="text-gray-400 text-xs sm:text-sm mb-1">{t("offerDetails.discount")}</p>
                 <p className="text-primary text-lg sm:text-xl font-bold">{offer.discountPercentage}% OFF</p>
               </div>
             </div>
@@ -476,11 +463,11 @@ export default function AdminOfferDetailsPage() {
           <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
             <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
               <Calendar className="text-primary" size={20} />
-              Offer Duration
+              {t("offerDetails.offerDuration")}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="bg-background rounded-lg p-3 sm:p-4">
-                <p className="text-gray-400 text-xs sm:text-sm mb-1">Start Date</p>
+                <p className="text-gray-400 text-xs sm:text-sm mb-1">{t("offerDetails.startDate")}</p>
                 <p className="text-white text-sm sm:text-base lg:text-lg font-semibold">
                   {new Date(offer.startDate).toLocaleDateString('en-US', { 
                     year: 'numeric', 
@@ -490,7 +477,7 @@ export default function AdminOfferDetailsPage() {
                 </p>
               </div>
               <div className="bg-background rounded-lg p-3 sm:p-4">
-                <p className="text-gray-400 text-xs sm:text-sm mb-1">End Date</p>
+                <p className="text-gray-400 text-xs sm:text-sm mb-1">{t("offerDetails.endDate")}</p>
                 <p className="text-white text-sm sm:text-base lg:text-lg font-semibold">
                   {new Date(offer.endDate).toLocaleDateString('en-US', { 
                     year: 'numeric', 
@@ -508,16 +495,16 @@ export default function AdminOfferDetailsPage() {
             <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
               <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
                 <Clock className="text-primary" size={20} />
-                Weekdays Details
+                {t("offerDetails.weekdaysDetails")}
               </h3>
               <div className="space-y-4">
                 {offer.weekdays && offer.weekdays.length > 0 && (
                   <div>
-                    <p className="text-gray-400 text-sm mb-2">Available Days</p>
+                    <p className="text-gray-400 text-sm mb-2">{t("offerDetails.availableDays")}</p>
                     <div className="flex flex-wrap gap-2">
                       {offer.weekdays.map(day => (
                         <span key={day} className="px-3 py-1 bg-green/10 text-green border border-green rounded-lg text-sm">
-                          {weekdayMap[day] || day}
+                          {t(`weekdays.${day.toLowerCase()}`) || weekdayMap[day] || day}
                         </span>
                       ))}
                     </div>
@@ -525,7 +512,7 @@ export default function AdminOfferDetailsPage() {
                 )}
                 {offer.startTime && offer.endTime && (
                   <div>
-                    <p className="text-gray-400 text-sm mb-2">Time Range</p>
+                    <p className="text-gray-400 text-sm mb-2">{t("offerDetails.timeRange")}</p>
                     <p className="text-white text-lg font-semibold">{offer.startTime} - {offer.endTime}</p>
                   </div>
                 )}
@@ -533,7 +520,7 @@ export default function AdminOfferDetailsPage() {
                   <div>
                     <p className="text-gray-400 text-sm mb-2 flex items-center gap-2">
                       <MapPin size={16} />
-                      Location
+                      {t("offerDetails.location")}
                     </p>
                     <p className="text-white text-lg font-semibold">{offer.weekdayAddress}</p>
                   </div>
@@ -546,12 +533,12 @@ export default function AdminOfferDetailsPage() {
             <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
               <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
                 <Clock className="text-primary" size={20} />
-                Happy Hour Details
+                {t("offerDetails.happyHourDetails")}
               </h3>
               <div className="space-y-4">
                 {offer.startTime && offer.endTime && (
                   <div>
-                    <p className="text-gray-400 text-sm mb-2">Time Range</p>
+                    <p className="text-gray-400 text-sm mb-2">{t("offerDetails.timeRange")}</p>
                     <p className="text-white text-lg font-semibold">{offer.startTime} - {offer.endTime}</p>
                   </div>
                 )}
@@ -559,7 +546,7 @@ export default function AdminOfferDetailsPage() {
                   <div>
                     <p className="text-gray-400 text-sm mb-2 flex items-center gap-2">
                       <MapPin size={16} />
-                      Location
+                      {t("offerDetails.location")}
                     </p>
                     <p className="text-white text-lg font-semibold">{offer.location}</p>
                   </div>
@@ -573,18 +560,18 @@ export default function AdminOfferDetailsPage() {
             <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
               <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
                 <FileText className="text-primary" size={20} />
-                Additional Information
+                {t("offerDetails.additionalInformation")}
               </h3>
               <div className="space-y-4">
                 {offer.terms && (
                   <div>
-                    <p className="text-gray-400 text-sm mb-2">Terms & Conditions</p>
+                    <p className="text-gray-400 text-sm mb-2">{t("offerDetails.termsConditions")}</p>
                     <p className="text-gray-300">{offer.terms}</p>
                   </div>
                 )}
                 {offer.offerLink && (
                   <div>
-                    <p className="text-gray-400 text-sm mb-2">Offer Link</p>
+                    <p className="text-gray-400 text-sm mb-2">{t("offerDetails.offerLink")}</p>
                     <a 
                       href={offer.offerLink} 
                       target="_blank" 
@@ -606,7 +593,7 @@ export default function AdminOfferDetailsPage() {
           <div className=" bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
             <div className="mb-4">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-4">
-                <h3 className="text-base sm:text-lg font-bold text-white">Offer Preview</h3>
+                <h3 className="text-base sm:text-lg font-bold text-white">{t("offerDetails.offerPreview")}</h3>
                 <div className="flex items-center gap-2">
                   <span className={`px-2 sm:px-3 py-1 flex items-center gap-1 rounded-full text-xs font-semibold border ${getStatusColor(offer.status)}`}>
                     {getStatusIcon(offer.status)}
@@ -625,24 +612,24 @@ export default function AdminOfferDetailsPage() {
           
           {/* Status Card */}
           <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
-            <h3 className="text-base sm:text-lg font-bold text-white mb-4">Status</h3>
+            <h3 className="text-base sm:text-lg font-bold text-white mb-4">{t("common.status")}</h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-gray-400">Current Status</span>
+                <span className="text-gray-400">{t("offerDetails.currentStatus")}</span>
                 <span className={`px-3 py-1 flex items-center gap-1 rounded-full text-xs font-semibold border ${getStatusColor(offer.status)}`}>
                   {getStatusIcon(offer.status)}
                   {getStatusText(offer.status)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-400">Created</span>
+                <span className="text-gray-400">{t("offerDetails.created")}</span>
                 <span className="text-white font-semibold">
                   {new Date(offer.createdAt).toLocaleDateString()}
                 </span>
               </div>
               {offer.revisionCount !== undefined && offer.revisionCount > 0 && (
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Revision Attempt</span>
+                  <span className="text-gray-400">{t("offerDetails.revisionAttempt")}</span>
                   <span className="text-yellow font-semibold">
                     {offer.revisionCount}/2
                   </span>
@@ -655,34 +642,34 @@ export default function AdminOfferDetailsPage() {
           <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
             <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
               <TrendingUp className="text-primary" size={20} />
-              Performance
+              {t("offerDetails.performance")}
             </h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Eye className="text-gray-400" size={18} />
-                  <span className="text-gray-400">Views</span>
+                  <span className="text-gray-400">{t("offerDetails.views")}</span>
                 </div>
                 <span className="text-white font-bold">{offer.views.toLocaleString()}</span>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Users className="text-gray-400" size={18} />
-                  <span className="text-gray-400">Purchases</span>
+                  <span className="text-gray-400">{t("offerDetails.purchases")}</span>
                 </div>
                 <span className="text-white font-bold">{offer.purchases}</span>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <DollarSign className="text-gray-400" size={18} />
-                  <span className="text-gray-400">Revenue</span>
+                  <span className="text-gray-400">{t("offerDetails.revenue")}</span>
                 </div>
                 <span className="text-green font-bold">{offer.revenue.toLocaleString()} kr.</span>
               </div>
               {offer.purchases > 0 && offer.views > 0 && (
                 <div className="pt-3 border-t border-primary/30">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-400">Conversion Rate</span>
+                    <span className="text-gray-400">{t("offerDetails.conversionRate")}</span>
                     <span className="text-primary font-bold">
                       {((offer.purchases / offer.views) * 100).toFixed(1)}%
                     </span>
@@ -694,14 +681,14 @@ export default function AdminOfferDetailsPage() {
 
           {/* Extension Info */}
           <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
-            <h3 className="text-base sm:text-lg font-bold text-white mb-4">Extensions</h3>
+            <h3 className="text-base sm:text-lg font-bold text-white mb-4">{t("offerDetails.extensions")}</h3>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-gray-400">Used</span>
+                <span className="text-gray-400">{t("offerDetails.used")}</span>
                 <span className="text-white font-semibold">{offer.extensionCount}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-400">Maximum</span>
+                <span className="text-gray-400">{t("offerDetails.maximum")}</span>
                 <span className="text-white font-semibold">4</span>
               </div>
             </div>
@@ -713,9 +700,12 @@ export default function AdminOfferDetailsPage() {
               <div className="flex items-start gap-3">
                 <AlertCircle className="text-yellow flex-shrink-0 mt-0.5" size={20} />
                 <div>
-                  <h4 className="text-yellow font-bold mb-1">Revision Required</h4>
+                  <h4 className="text-yellow font-bold mb-1">{t("offerDetails.revisionRequired")}</h4>
                   <p className="text-sm text-gray-300">
-                    This offer needs revision. {offer.revisionCount && `Attempt ${offer.revisionCount}/2.`} Please review and request changes from the company.
+                    {offer.revisionCount 
+                      ? t("offerDetails.revisionMessage", { count: offer.revisionCount })
+                      : t("offerDetails.revisionMessageNoCount")
+                    }
                   </p>
                 </div>
               </div>
