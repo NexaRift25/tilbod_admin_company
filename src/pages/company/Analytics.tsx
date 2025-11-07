@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   BarChart3,
@@ -12,6 +12,7 @@ import {
   Download,
   Users
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface AnalyticsData {
   period: string;
@@ -22,6 +23,7 @@ interface AnalyticsData {
 }
 
 export default function AnalyticsPage() {
+  const { t } = useTranslation();
   const [timeRange, setTimeRange] = useState("30");
 
   // Mock analytics data
@@ -33,12 +35,27 @@ export default function AnalyticsPage() {
     { period: "Jan 29-31", views: 198, purchases: 9, revenue: 315000, conversionRate: 4.5 },
   ];
 
-  const currentMonthStats = {
-    totalViews: analyticsData.reduce((sum, item) => sum + item.views, 0),
-    totalPurchases: analyticsData.reduce((sum, item) => sum + item.purchases, 0),
-    totalRevenue: analyticsData.reduce((sum, item) => sum + item.revenue, 0),
-    avgConversionRate: Math.round(analyticsData.reduce((sum, item) => sum + item.conversionRate, 0) / analyticsData.length * 10) / 10,
-  };
+  const currentMonthStats = useMemo(
+    () => ({
+      totalViews: analyticsData.reduce((sum, item) => sum + item.views, 0),
+      totalPurchases: analyticsData.reduce((sum, item) => sum + item.purchases, 0),
+      totalRevenue: analyticsData.reduce((sum, item) => sum + item.revenue, 0),
+      avgConversionRate:
+        Math.round(
+          (analyticsData.reduce((sum, item) => sum + item.conversionRate, 0) / analyticsData.length) * 10
+        ) / 10,
+    }),
+    [analyticsData]
+  );
+  const timeRangeOptions = useMemo(
+    () => [
+      { value: "7", label: t("companyAnalytics.filters.timeRange.7") },
+      { value: "30", label: t("companyAnalytics.filters.timeRange.30") },
+      { value: "90", label: t("companyAnalytics.filters.timeRange.90") },
+      { value: "365", label: t("companyAnalytics.filters.timeRange.365") },
+    ],
+    [t]
+  );
 
   const offerPerformance = [
     { name: "Weekend Getaway Package", views: 245, purchases: 12, revenue: 420000, conversionRate: 4.9 },
@@ -64,10 +81,10 @@ export default function AnalyticsPage() {
           </Link>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white">
-              Analytics
+              {t("companyAnalytics.title")}
             </h1>
             <p className="text-gray-400 text-sm">
-              Track your offers' performance and insights
+              {t("companyAnalytics.subtitle")}
             </p>
           </div>
         </div>
@@ -78,10 +95,11 @@ export default function AnalyticsPage() {
             onChange={(e) => setTimeRange(e.target.value)}
             className="px-3 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
           >
-            <option value="7">Last 7 days</option>
-            <option value="30">Last 30 days</option>
-            <option value="90">Last 90 days</option>
-            <option value="365">Last year</option>
+            {timeRangeOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
           <button className="p-2 hover:bg-primary/10 rounded-lg transition-all">
             <Download className="text-primary" size={20} />
@@ -94,11 +112,11 @@ export default function AnalyticsPage() {
         <div className="bg-card-background border border-primary rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Total Views</p>
+              <p className="text-gray-400 text-sm">{t("companyAnalytics.metrics.totalViews")}</p>
               <p className="text-white text-2xl font-bold">{currentMonthStats.totalViews.toLocaleString()}</p>
               <div className="flex items-center gap-1 mt-1">
                 <TrendingUp className="text-green" size={14} />
-                <span className="text-green text-xs">+12%</span>
+                <span className="text-green text-xs">{t("companyAnalytics.metrics.trendUp", { value: 12 })}</span>
               </div>
             </div>
             <Eye className="text-primary" size={24} />
@@ -108,11 +126,11 @@ export default function AnalyticsPage() {
         <div className="bg-card-background border border-green rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Total Purchases</p>
+              <p className="text-gray-400 text-sm">{t("companyAnalytics.metrics.totalPurchases")}</p>
               <p className="text-white text-2xl font-bold">{currentMonthStats.totalPurchases}</p>
               <div className="flex items-center gap-1 mt-1">
                 <TrendingUp className="text-green" size={14} />
-                <span className="text-green text-xs">+18%</span>
+                <span className="text-green text-xs">{t("companyAnalytics.metrics.trendUp", { value: 18 })}</span>
               </div>
             </div>
             <ShoppingBag className="text-green" size={24} />
@@ -122,11 +140,11 @@ export default function AnalyticsPage() {
         <div className="bg-card-background border border-blue-500 rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Total Revenue</p>
+              <p className="text-gray-400 text-sm">{t("companyAnalytics.metrics.totalRevenue")}</p>
               <p className="text-white text-2xl font-bold">{currentMonthStats.totalRevenue.toLocaleString()} kr.</p>
               <div className="flex items-center gap-1 mt-1">
                 <TrendingUp className="text-green" size={14} />
-                <span className="text-green text-xs">+24%</span>
+                <span className="text-green text-xs">{t("companyAnalytics.metrics.trendUp", { value: 24 })}</span>
               </div>
             </div>
             <DollarSign className="text-blue-500" size={24} />
@@ -136,11 +154,11 @@ export default function AnalyticsPage() {
         <div className="bg-card-background border border-purple-500 rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Avg Conversion</p>
+              <p className="text-gray-400 text-sm">{t("companyAnalytics.metrics.avgConversion")}</p>
               <p className="text-white text-2xl font-bold">{currentMonthStats.avgConversionRate}%</p>
               <div className="flex items-center gap-1 mt-1">
                 <TrendingDown className="text-red-500" size={14} />
-                <span className="text-red-500 text-xs">-2%</span>
+                <span className="text-red-500 text-xs">{t("companyAnalytics.metrics.trendDown", { value: 2 })}</span>
               </div>
             </div>
             <BarChart3 className="text-purple-500" size={24} />
@@ -150,7 +168,7 @@ export default function AnalyticsPage() {
 
       {/* Revenue Bar Chart - Responsive */}
       <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
-        <h3 className="text-base sm:text-lg font-bold text-white mb-4 sm:mb-6">Revenue Trend</h3>
+        <h3 className="text-base sm:text-lg font-bold text-white mb-4 sm:mb-6">{t("companyAnalytics.sections.revenueTrend")}</h3>
 
         <div className="space-y-4 sm:space-y-6">
           {analyticsData.map((data, index) => {
@@ -176,7 +194,9 @@ export default function AnalyticsPage() {
                     className={`${barColor} h-full rounded-full transition-all duration-700 flex items-center justify-end pr-2 sm:pr-3 shadow-lg group-hover:shadow-xl`}
                     style={{ width: `${barWidth}%` }}
                   >
-                    <span className="text-[10px] sm:text-xs font-bold text-white">{data.purchases} sales</span>
+                    <span className="text-[10px] sm:text-xs font-bold text-white">
+                      {t("companyAnalytics.labels.salesCount", { count: data.purchases })}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -187,7 +207,7 @@ export default function AnalyticsPage() {
 
       {/* Smooth Curve Line Chart - Revenue & Purchases Trend */}
       <div className="bg-card-background border border-primary rounded-2xl p-6">
-        <h3 className="text-lg font-bold text-white mb-6">Revenue & Purchase Trends</h3>
+        <h3 className="text-lg font-bold text-white mb-6">{t("companyAnalytics.sections.revenuePurchases")}</h3>
 
         <div className="relative w-full h-72 sm:h-80">
           <svg className="w-full h-full" viewBox="0 0 500 300" preserveAspectRatio="xMidYMid meet">
@@ -284,11 +304,11 @@ export default function AnalyticsPage() {
         <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 mt-6 pt-4 border-t border-primary/50">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-            <span className="text-xs sm:text-sm text-gray-400">Revenue (kr)</span>
+            <span className="text-xs sm:text-sm text-gray-400">{t("companyAnalytics.legend.revenue")}</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-green rounded-full"></div>
-            <span className="text-xs sm:text-sm text-gray-400">Purchases</span>
+            <span className="text-xs sm:text-sm text-gray-400">{t("companyAnalytics.legend.purchases")}</span>
           </div>
         </div>
       </div>
@@ -296,7 +316,7 @@ export default function AnalyticsPage() {
       {/* Top Performing Offers with Medal Design - Responsive */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
-          <h3 className="text-base sm:text-lg font-bold text-white mb-4 sm:mb-6">Top Performing Offers</h3>
+          <h3 className="text-base sm:text-lg font-bold text-white mb-4 sm:mb-6">{t("companyAnalytics.sections.topOffers")}</h3>
 
           <div className="space-y-3 sm:space-y-4">
             {topPerformingOffers.map((offer, index) => {
@@ -320,13 +340,20 @@ export default function AnalyticsPage() {
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="font-bold text-white text-sm sm:text-base truncate">{offer.name}</p>
-                        <p className="text-xs sm:text-sm text-gray-400">{offer.purchases} purchases • {offer.views} views</p>
+                    <p className="text-xs sm:text-sm text-gray-400">
+                      {t("companyAnalytics.labels.offerSummary", {
+                        purchases: offer.purchases,
+                        views: offer.views,
+                      })}
+                    </p>
                       </div>
                     </div>
 
                     <div className="text-left sm:text-right pl-13 sm:pl-0">
                       <p className="text-white font-bold text-base sm:text-lg">{offer.revenue.toLocaleString()} kr.</p>
-                      <p className="text-green text-xs sm:text-sm font-semibold">{offer.conversionRate}% conversion</p>
+                      <p className="text-green text-xs sm:text-sm font-semibold">
+                        {t("companyAnalytics.labels.conversionRate", { value: offer.conversionRate })}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -337,7 +364,7 @@ export default function AnalyticsPage() {
 
         {/* Circular Progress Charts - Responsive */}
         <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
-          <h3 className="text-base sm:text-lg font-bold text-white mb-4 sm:mb-6">Conversion Rate by Offer Type</h3>
+          <h3 className="text-base sm:text-lg font-bold text-white mb-4 sm:mb-6">{t("companyAnalytics.sections.conversionByType")}</h3>
 
           <div className="grid grid-cols-2 gap-4 sm:gap-6">
             {offerPerformance.map((offer, index) => {
@@ -384,7 +411,9 @@ export default function AnalyticsPage() {
                   <p className="text-white text-xs sm:text-sm font-medium mt-2 sm:mt-3 text-center">{offer.name.split(' ')[0]}</p>
                   <div className="flex items-center gap-2 mt-1">
                     <div className={`w-2 h-2 ${bgColors[index % bgColors.length]} rounded-full`}></div>
-                    <span className="text-gray-400 text-xs">{offer.purchases} sales</span>
+                    <span className="text-gray-400 text-xs">
+                      {t("companyAnalytics.labels.salesCount", { count: offer.purchases })}
+                    </span>
                   </div>
                 </div>
               );
@@ -395,26 +424,54 @@ export default function AnalyticsPage() {
 
       {/* Purchase Funnel Chart - Fixed Progress Bars */}
       <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
-        <h3 className="text-base sm:text-lg font-bold text-white mb-4 sm:mb-6">Sales Funnel</h3>
+        <h3 className="text-base sm:text-lg font-bold text-white mb-4 sm:mb-6">{t("companyAnalytics.sections.salesFunnel")}</h3>
 
         <div className="space-y-3 sm:space-y-4">
           {[
-            { stage: 'Total Views', count: currentMonthStats.totalViews, percentage: 100, color: 'bg-blue-500' },
-            { stage: 'Clicked Offers', count: Math.round(currentMonthStats.totalViews * 0.4), percentage: 40, color: 'bg-green' },
-            { stage: 'Added to Cart', count: Math.round(currentMonthStats.totalViews * 0.15), percentage: 15, color: 'bg-purple-500' },
-            { stage: 'Completed Purchase', count: currentMonthStats.totalPurchases, percentage: Math.round((currentMonthStats.totalPurchases / currentMonthStats.totalViews) * 100), color: 'bg-orange-500' }
+            {
+              key: "views",
+              count: currentMonthStats.totalViews,
+              percentage: 100,
+              color: "bg-blue-500",
+            },
+            {
+              key: "clicks",
+              count: Math.round(currentMonthStats.totalViews * 0.4),
+              percentage: 40,
+              color: "bg-green",
+            },
+            {
+              key: "cart",
+              count: Math.round(currentMonthStats.totalViews * 0.15),
+              percentage: 15,
+              color: "bg-purple-500",
+            },
+            {
+              key: "purchases",
+              count: currentMonthStats.totalPurchases,
+              percentage: Math.round(
+                (currentMonthStats.totalPurchases / currentMonthStats.totalViews) * 100
+              ),
+              color: "bg-orange-500",
+            },
           ].map((stage, index) => (
-            <div key={stage.stage} className="space-y-2">
+            <div key={stage.key} className="space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                   <div className={`w-7 h-7 sm:w-8 sm:h-8 ${stage.color} rounded-lg flex items-center justify-center flex-shrink-0`}>
                     <span className="text-white font-bold text-xs sm:text-sm">{index + 1}</span>
                   </div>
-                  <span className="font-medium text-white text-sm sm:text-base truncate">{stage.stage}</span>
+                  <span className="font-medium text-white text-sm sm:text-base truncate">
+                    {t(`companyAnalytics.funnel.stages.${stage.key}`)}
+                  </span>
                 </div>
                 <div className="text-right flex-shrink-0 ml-2">
-                  <span className="font-bold text-white text-sm sm:text-base">{stage.count.toLocaleString()}</span>
-                  <span className="text-gray-400 text-xs sm:text-sm ml-1 sm:ml-2">({stage.percentage}%)</span>
+                  <span className="font-bold text-white text-sm sm:text-base">
+                    {stage.count.toLocaleString()}
+                  </span>
+                  <span className="text-gray-400 text-xs sm:text-sm ml-1 sm:ml-2">
+                    ({stage.percentage}%)
+                  </span>
                 </div>
               </div>
               <div className="flex items-center gap-2 sm:gap-3">
@@ -435,7 +492,7 @@ export default function AnalyticsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Revenue Distribution Donut */}
         <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
-          <h3 className="text-base sm:text-lg font-bold text-white mb-4 sm:mb-6">Revenue Distribution</h3>
+          <h3 className="text-base sm:text-lg font-bold text-white mb-4 sm:mb-6">{t("companyAnalytics.sections.revenueDistribution")}</h3>
 
           <div className="flex flex-col items-center">
             <div className="relative w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56">
@@ -489,23 +546,29 @@ export default function AnalyticsPage() {
               {/* Center Text */}
               <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <span className="text-lg sm:text-2xl md:text-3xl font-bold text-white">{(currentMonthStats.totalRevenue / 1000).toFixed(0)}k</span>
-                <span className="text-[10px] sm:text-xs md:text-sm text-gray-400 font-medium">Revenue</span>
+                <span className="text-[10px] sm:text-xs md:text-sm text-gray-400 font-medium">
+                  {t("companyAnalytics.labels.revenue")}
+                </span>
               </div>
             </div>
 
             {/* Legend */}
             <div className="grid grid-cols-2 gap-2 sm:gap-3 mt-4 sm:mt-6 w-full">
               {[
-                { name: 'Active Offers', amount: 420000, color: 'bg-blue-500', percentage: 72 },
-                { name: 'Gift Cards', amount: 127500, color: 'bg-orange-500', percentage: 22 },
-                { name: 'Happy Hour', amount: 18000, color: 'bg-purple-500', percentage: 3 },
-                { name: 'Weekdays', amount: 16000, color: 'bg-green', percentage: 3 }
+                { key: "active", amount: 420000, color: "bg-blue-500", percentage: 72 },
+                { key: "giftCard", amount: 127500, color: "bg-orange-500", percentage: 22 },
+                { key: "happyHour", amount: 18000, color: "bg-purple-500", percentage: 3 },
+                { key: "weekdays", amount: 16000, color: "bg-green", percentage: 3 }
               ].map((item) => (
-                <div key={item.name} className="flex items-center gap-2">
+                <div key={item.key} className="flex items-center gap-2">
                   <div className={`w-3 h-3 ${item.color} rounded-full flex-shrink-0`}></div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs text-white font-medium truncate">{item.name}</p>
-                    <p className="text-xs text-gray-400">{item.percentage}% • {item.amount.toLocaleString()} kr</p>
+                    <p className="text-xs text-white font-medium truncate">
+                      {t(`companyAnalytics.revenueDistribution.${item.key}`)}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      {item.percentage}% • {item.amount.toLocaleString()} kr
+                    </p>
                   </div>
                 </div>
               ))}
@@ -515,7 +578,7 @@ export default function AnalyticsPage() {
 
         {/* Category Performance Pie Chart */}
         <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
-          <h3 className="text-base sm:text-lg font-bold text-white mb-4 sm:mb-6">Performance by Category</h3>
+          <h3 className="text-base sm:text-lg font-bold text-white mb-4 sm:mb-6">{t("companyAnalytics.sections.categoryPerformance")}</h3>
 
           <div className="flex flex-col items-center">
             <div className="relative w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56">
@@ -570,23 +633,32 @@ export default function AnalyticsPage() {
               {/* Center Text */}
               <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <span className="text-lg sm:text-2xl md:text-3xl font-bold text-white">{currentMonthStats.totalPurchases}</span>
-                <span className="text-[10px] sm:text-xs md:text-sm text-gray-400 font-medium">Sales</span>
+                <span className="text-[10px] sm:text-xs md:text-sm text-gray-400 font-medium">
+                  {t("companyAnalytics.labels.sales")}
+                </span>
               </div>
             </div>
 
             {/* Legend */}
             <div className="grid grid-cols-2 gap-2 sm:gap-3 mt-4 sm:mt-6 w-full">
               {[
-                { name: 'Hotels', purchases: 12, color: 'bg-blue-500', percentage: 16 },
-                { name: 'Dining', purchases: 26, color: 'bg-green', percentage: 34 },
-                { name: 'Wellness', purchases: 15, color: 'bg-purple-500', percentage: 20 },
-                { name: 'Activities', purchases: 23, color: 'bg-orange-500', percentage: 30 }
+                { key: "hotels", purchases: 12, color: "bg-blue-500", percentage: 16 },
+                { key: "dining", purchases: 26, color: "bg-green", percentage: 34 },
+                { key: "wellness", purchases: 15, color: "bg-purple-500", percentage: 20 },
+                { key: "activities", purchases: 23, color: "bg-orange-500", percentage: 30 }
               ].map((item) => (
-                <div key={item.name} className="flex items-center gap-2">
+                <div key={item.key} className="flex items-center gap-2">
                   <div className={`w-3 h-3 ${item.color} rounded-full flex-shrink-0`}></div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs text-white font-medium truncate">{item.name}</p>
-                    <p className="text-xs text-gray-400">{item.percentage}% • {item.purchases} sales</p>
+                    <p className="text-xs text-white font-medium truncate">
+                      {t(`companyAnalytics.categoryPerformance.${item.key}`)}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      {t("companyAnalytics.labels.salesPercentage", {
+                        percentage: item.percentage,
+                        count: item.purchases,
+                      })}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -597,7 +669,7 @@ export default function AnalyticsPage() {
 
       {/* Weekly Activity Heatmap - Responsive */}
       <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
-        <h3 className="text-lg font-bold text-white mb-4 sm:mb-6">Weekly Activity Heatmap</h3>
+        <h3 className="text-lg font-bold text-white mb-4 sm:mb-6">{t("companyAnalytics.sections.activityHeatmap")}</h3>
 
         <div className="overflow-x-auto scrollbar-hide">
           <div className="min-w-[600px] space-y-2 sm:space-y-3">
@@ -645,27 +717,27 @@ export default function AnalyticsPage() {
         </div>
 
         <div className="flex items-center justify-center gap-3 sm:gap-4 mt-4 sm:mt-6 pt-4 border-t border-primary/50">
-          <span className="text-xs text-gray-400">Less Active</span>
+          <span className="text-xs text-gray-400">{t("companyAnalytics.legend.lessActive")}</span>
           <div className="flex gap-1">
             <div className="w-3 h-3 sm:w-4 sm:h-4 bg-gray-600 opacity-10 rounded"></div>
             <div className="w-3 h-3 sm:w-4 sm:h-4 bg-blue-600 opacity-30 rounded"></div>
             <div className="w-3 h-3 sm:w-4 sm:h-4 bg-green opacity-60 rounded"></div>
             <div className="w-3 h-3 sm:w-4 sm:h-4 bg-orange-600 opacity-100 rounded"></div>
           </div>
-          <span className="text-xs text-gray-400">More Active</span>
+          <span className="text-xs text-gray-400">{t("companyAnalytics.legend.moreActive")}</span>
         </div>
       </div>
 
       {/* Radial Progress - Monthly Goals */}
       <div className="bg-card-background border border-primary rounded-2xl p-6">
-        <h3 className="text-lg font-bold text-white mb-6">Monthly Goals Progress</h3>
+        <h3 className="text-lg font-bold text-white mb-6">{t("companyAnalytics.sections.monthlyGoals")}</h3>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {[
-            { label: 'Revenue Goal', current: 581500, target: 800000, color: 'stroke-blue-500', bgColor: 'text-blue-500' },
-            { label: 'Sales Target', current: 76, target: 100, color: 'stroke-green-500', bgColor: 'text-green' },
-            { label: 'New Customers', current: 145, target: 200, color: 'stroke-purple-500', bgColor: 'text-purple-500' },
-            { label: 'Avg Conversion', current: 5.5, target: 8, color: 'stroke-orange-500', bgColor: 'text-orange-500' }
+            { key: 'revenue', current: 581500, target: 800000, color: 'stroke-blue-500', bgColor: 'text-blue-500' },
+            { key: 'sales', current: 76, target: 100, color: 'stroke-green-500', bgColor: 'text-green' },
+            { key: 'customers', current: 145, target: 200, color: 'stroke-purple-500', bgColor: 'text-purple-500' },
+            { key: 'conversion', current: 5.5, target: 8, color: 'stroke-orange-500', bgColor: 'text-orange-500' }
           ].map((goal) => {
             const percentage = (goal.current / goal.target) * 100;
             const radius = 45;
@@ -673,7 +745,7 @@ export default function AnalyticsPage() {
             const progress = (percentage / 100) * circumference;
 
             return (
-              <div key={goal.label} className="flex flex-col items-center">
+              <div key={goal.key} className="flex flex-col items-center">
                 <div className="relative w-32 h-32 sm:w-36 sm:h-36">
                   <svg className="w-full h-full transform -rotate-90">
                     {/* Background Circle */}
@@ -709,7 +781,9 @@ export default function AnalyticsPage() {
                     <span className="text-xs text-gray-400">{goal.current.toLocaleString()}/{goal.target.toLocaleString()}</span>
                   </div>
                 </div>
-                <p className="text-xs sm:text-sm font-medium text-white text-center mt-3">{goal.label}</p>
+                <p className="text-xs sm:text-sm font-medium text-white text-center mt-3">
+                  {t(`companyAnalytics.goals.${goal.key}`)}
+                </p>
               </div>
             );
           })}
@@ -718,39 +792,41 @@ export default function AnalyticsPage() {
 
       {/* Offer Type Performance Comparison - Responsive */}
       <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
-        <h3 className="text-base sm:text-lg font-bold text-white mb-4 sm:mb-6">Performance by Offer Type</h3>
+        <h3 className="text-base sm:text-lg font-bold text-white mb-4 sm:mb-6">{t("companyAnalytics.sections.offerTypePerformance")}</h3>
 
         <div className="space-y-4 sm:space-y-6">
           {[
-            { name: 'Active Offers', views: 245, purchases: 12, revenue: 420000, color: 'bg-blue-500', borderColor: 'border-blue-500', shadowColor: 'shadow-blue-500/20' },
-            { name: 'Weekday Specials', views: 156, purchases: 8, revenue: 16000, color: 'bg-green', borderColor: 'border-green', shadowColor: 'shadow-green-500/20' },
-            { name: 'Happy Hour', views: 312, purchases: 18, revenue: 18000, color: 'bg-purple-500', borderColor: 'border-purple-500', shadowColor: 'shadow-purple-500/20' },
-            { name: 'Gift Cards', views: 89, purchases: 15, revenue: 127500, color: 'bg-orange-500', borderColor: 'border-orange-500', shadowColor: 'shadow-orange-500/20' }
+            { key: 'active', views: 245, purchases: 12, revenue: 420000, color: 'bg-blue-500', borderColor: 'border-blue-500', shadowColor: 'shadow-blue-500/20' },
+            { key: 'weekdays', views: 156, purchases: 8, revenue: 16000, color: 'bg-green', borderColor: 'border-green', shadowColor: 'shadow-green-500/20' },
+            { key: 'happyHour', views: 312, purchases: 18, revenue: 18000, color: 'bg-purple-500', borderColor: 'border-purple-500', shadowColor: 'shadow-purple-500/20' },
+            { key: 'giftCards', views: 89, purchases: 15, revenue: 127500, color: 'bg-orange-500', borderColor: 'border-orange-500', shadowColor: 'shadow-orange-500/20' }
           ].map((type) => {
             const maxRevenue = 420000;
             const revenuePercentage = (type.revenue / maxRevenue) * 100;
             
             return (
-              <div key={type.name} className={`border-l-4 ${type.borderColor} pl-3 sm:pl-4 py-2 hover:bg-background/50 transition-all rounded-r-lg ${type.shadowColor}`}>
+              <div key={type.key} className={`border-l-4 ${type.borderColor} pl-3 sm:pl-4 py-2 hover:bg-background/50 transition-all rounded-r-lg ${type.shadowColor}`}>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 mb-3">
                   <div className="flex items-center gap-2 sm:gap-3">
                     <div className={`w-2 h-2 sm:w-3 sm:h-3 ${type.color} rounded-full flex-shrink-0`}></div>
-                    <span className="font-semibold text-white text-sm sm:text-base">{type.name}</span>
+                    <span className="font-semibold text-white text-sm sm:text-base">
+                      {t(`companyAnalytics.offerTypePerformance.${type.key}`)}
+                    </span>
                   </div>
                   <span className="text-white font-bold text-sm sm:text-base">{type.revenue.toLocaleString()} kr.</span>
                 </div>
                 
                 <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-2">
                   <div className="bg-background rounded-lg p-2">
-                    <p className="text-[10px] sm:text-xs text-gray-400">Views</p>
+                    <p className="text-[10px] sm:text-xs text-gray-400">{t("companyAnalytics.labels.views")}</p>
                     <p className="text-white font-bold text-sm sm:text-base">{type.views}</p>
                   </div>
                   <div className="bg-background rounded-lg p-2">
-                    <p className="text-[10px] sm:text-xs text-gray-400">Purchases</p>
+                    <p className="text-[10px] sm:text-xs text-gray-400">{t("companyAnalytics.labels.purchases")}</p>
                     <p className="text-white font-bold text-sm sm:text-base">{type.purchases}</p>
                   </div>
                   <div className="bg-background rounded-lg p-2">
-                    <p className="text-[10px] sm:text-xs text-gray-400">Conversion</p>
+                    <p className="text-[10px] sm:text-xs text-gray-400">{t("companyAnalytics.labels.conversion")}</p>
                     <p className="text-white font-bold text-sm sm:text-base">{((type.purchases / type.views) * 100).toFixed(1)}%</p>
                   </div>
                 </div>
@@ -769,16 +845,20 @@ export default function AnalyticsPage() {
 
       {/* Insights - Responsive */}
       <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
-        <h3 className="text-base sm:text-lg font-bold text-white mb-4">Key Insights</h3>
+        <h3 className="text-base sm:text-lg font-bold text-white mb-4">{t("companyAnalytics.sections.keyInsights")}</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6">
           <div className="space-y-3 sm:space-y-4">
             <div className="flex items-start gap-3 p-3 sm:p-4 bg-green/10 rounded-lg border border-green/30 hover:bg-green/20 transition-all">
               <TrendingUp className="text-green flex-shrink-0 mt-0.5" size={18} />
               <div>
-                <h4 className="text-green font-bold mb-1 text-sm sm:text-base">Strong Performance</h4>
+                <h4 className="text-green font-bold mb-1 text-sm sm:text-base">
+                  {t("companyAnalytics.insights.performance.title")}
+                </h4>
                 <p className="text-xs sm:text-sm text-gray-300">
-                  Your offers are performing well with a {currentMonthStats.avgConversionRate}% conversion rate, above the industry average.
+                  {t("companyAnalytics.insights.performance.description", {
+                    conversion: currentMonthStats.avgConversionRate,
+                  })}
                 </p>
               </div>
             </div>
@@ -786,9 +866,14 @@ export default function AnalyticsPage() {
             <div className="flex items-start gap-3 p-3 sm:p-4 bg-blue-500/10 rounded-lg border border-blue-500/30 hover:bg-blue-500/20 transition-all">
               <BarChart3 className="text-blue-500 flex-shrink-0 mt-0.5" size={18} />
               <div>
-                <h4 className="text-blue-500 font-bold mb-1 text-sm sm:text-base">Top Performer</h4>
+                <h4 className="text-blue-500 font-bold mb-1 text-sm sm:text-base">
+                  {t("companyAnalytics.insights.topPerformer.title")}
+                </h4>
                 <p className="text-xs sm:text-sm text-gray-300">
-                  Spa & Wellness Gift Card has the highest conversion rate at 16.9%.
+                  {t("companyAnalytics.insights.topPerformer.description", {
+                    offer: t("companyAnalytics.sampleOffers.spaGiftCard"),
+                    conversion: 16.9,
+                  })}
                 </p>
               </div>
             </div>
@@ -798,9 +883,11 @@ export default function AnalyticsPage() {
             <div className="flex items-start gap-3 p-3 sm:p-4 bg-yellow/10 rounded-lg border border-yellow/30 hover:bg-yellow/20 transition-all">
               <Calendar className="text-yellow flex-shrink-0 mt-0.5" size={18} />
               <div>
-                <h4 className="text-yellow font-bold mb-1 text-sm sm:text-base">Peak Days</h4>
+                <h4 className="text-yellow font-bold mb-1 text-sm sm:text-base">
+                  {t("companyAnalytics.insights.peakDays.title")}
+                </h4>
                 <p className="text-xs sm:text-sm text-gray-300">
-                  Highest engagement occurs on Tuesdays and Wednesdays. Consider scheduling more offers during these days.
+                  {t("companyAnalytics.insights.peakDays.description")}
                 </p>
               </div>
             </div>
@@ -808,9 +895,11 @@ export default function AnalyticsPage() {
             <div className="flex items-start gap-3 p-3 sm:p-4 bg-purple-500/10 rounded-lg border border-purple-500/30 hover:bg-purple-500/20 transition-all">
               <Users className="text-purple-500 flex-shrink-0 mt-0.5" size={18} />
               <div>
-                <h4 className="text-purple-500 font-bold mb-1 text-sm sm:text-base">Customer Behavior</h4>
+                <h4 className="text-purple-500 font-bold mb-1 text-sm sm:text-base">
+                  {t("companyAnalytics.insights.customerBehavior.title")}
+                </h4>
                 <p className="text-xs sm:text-sm text-gray-300">
-                  Most customers browse in the evening (6-9 PM). Happy Hour offers perform best during this time.
+                  {t("companyAnalytics.insights.customerBehavior.description")}
                 </p>
               </div>
             </div>

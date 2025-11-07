@@ -131,6 +131,119 @@
       "copy": "Copy OTP"
     }
   },
+  "companyAnalytics": {
+    "title": "Analytics",
+    "subtitle": "Track your offers' performance and insights",
+    "filters": {
+      "timeRange": {
+        "7": "Last 7 days",
+        "30": "Last 30 days",
+        "90": "Last 90 days",
+        "365": "Last year"
+      }
+    },
+    "metrics": {
+      "totalViews": "Total Views",
+      "totalPurchases": "Total Purchases",
+      "totalRevenue": "Total Revenue",
+      "avgConversion": "Avg Conversion",
+      "trendUp": "+{{value}}%",
+      "trendDown": "-{{value}}%"
+    },
+    "sections": {
+      "revenueTrend": "Revenue Trend",
+      "revenuePurchases": "Revenue & Purchase Trends",
+      "topOffers": "Top Performing Offers",
+      "conversionByType": "Conversion Rate by Offer Type",
+      "salesFunnel": "Sales Funnel",
+      "revenueDistribution": "Revenue Distribution",
+      "categoryPerformance": "Performance by Category",
+      "activityHeatmap": "Weekly Activity Heatmap",
+      "monthlyGoals": "Monthly Goals Progress",
+      "offerTypePerformance": "Performance by Offer Type",
+      "keyInsights": "Key Insights"
+    },
+    "labels": {
+      "salesCount": "{{count}} sales",
+      "offerSummary": "{{purchases}} purchases • {{views}} views",
+      "conversionRate": "{{value}}% conversion",
+      "revenue": "Revenue",
+      "sales": "Sales",
+      "salesPercentage": "{{percentage}}% • {{count}} sales",
+      "views": "Views",
+      "purchases": "Purchases",
+      "conversion": "Conversion",
+      "heatmapTooltip": "{{day}} {{hour}}:00 — Activity: {{activity}}%"
+    },
+    "legend": {
+      "revenue": "Revenue (kr)",
+      "purchases": "Purchases",
+      "lessActive": "Less Active",
+      "moreActive": "More Active"
+    },
+    "funnel": {
+      "stages": {
+        "views": "Total Views",
+        "clicks": "Clicked Offers",
+        "cart": "Added to Cart",
+        "purchases": "Completed Purchase"
+      }
+    },
+    "revenueDistribution": {
+      "active": "Active Offers",
+      "giftCard": "Gift Cards",
+      "happyHour": "Happy Hour",
+      "weekdays": "Weekday Specials"
+    },
+    "categoryPerformance": {
+      "hotels": "Hotels",
+      "dining": "Dining",
+      "wellness": "Wellness",
+      "activities": "Activities"
+    },
+    "offerTypePerformance": {
+      "active": "Active Offers",
+      "weekdays": "Weekday Specials",
+      "happyHour": "Happy Hour",
+      "giftCards": "Gift Cards"
+    },
+    "goals": {
+      "revenue": "Revenue Goal",
+      "sales": "Sales Target",
+      "customers": "New Customers",
+      "conversion": "Avg Conversion"
+    },
+    "weekdays": {
+      "monday": "Mon",
+      "tuesday": "Tue",
+      "wednesday": "Wed",
+      "thursday": "Thu",
+      "friday": "Fri",
+      "saturday": "Sat",
+      "sunday": "Sun"
+    },
+    "insights": {
+      "performance": {
+        "title": "Strong Performance",
+        "description": "Your offers are performing well with a {{conversion}}% conversion rate, above the industry average."
+      },
+      "topPerformer": {
+        "title": "Top Performer",
+        "description": "{{offer}} has the highest conversion rate at {{conversion}}%."
+      },
+      "peakDays": {
+        "title": "Peak Days",
+        "description": "Highest engagement occurs on Tuesdays and Wednesdays. Consider scheduling more offers during these days."
+      },
+      "customerBehavior": {
+        "title": "Customer Behavior",
+        "description": "Most customers browse in the evening (6-9 PM). Happy Hour offers perform best during this time."
+      }
+    },
+    "sampleOffers": {
+      "spaGiftCard": "Spa & Wellness Gift Card"
+    }
+  },
   "offerDetails": {
     "title": "Offer Details",
     "subtitle": "View complete information about this offer",

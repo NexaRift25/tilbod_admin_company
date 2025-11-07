@@ -131,6 +131,119 @@
       "copy": "Afrita OTP"
     }
   },
+  "companyAnalytics": {
+    "title": "Greiningar",
+    "subtitle": "Fylgstu með árangri tilboðanna þinna og innsýn",
+    "filters": {
+      "timeRange": {
+        "7": "Síðustu 7 dagar",
+        "30": "Síðustu 30 dagar",
+        "90": "Síðustu 90 dagar",
+        "365": "Síðasta ár"
+      }
+    },
+    "metrics": {
+      "totalViews": "Heildarskoðanir",
+      "totalPurchases": "Heildarkaup",
+      "totalRevenue": "Heildartekjur",
+      "avgConversion": "Meðal umbreyting",
+      "trendUp": "+{{value}}%",
+      "trendDown": "-{{value}}%"
+    },
+    "sections": {
+      "revenueTrend": "Tekjuþróun",
+      "revenuePurchases": "Tekju- og kaupþróun",
+      "topOffers": "Vinsælustu tilboðin",
+      "conversionByType": "Umbreytingarhlutfall eftir tegund",
+      "salesFunnel": "Sölutrekt",
+      "revenueDistribution": "Skipting tekna",
+      "categoryPerformance": "Frammistaða eftir flokkum",
+      "activityHeatmap": "Hitakort vikunnar",
+      "monthlyGoals": "Framvinda mánaðarlegra markmiða",
+      "offerTypePerformance": "Frammistaða eftir tilboðaflokkum",
+      "keyInsights": "Helstu innsýn"
+    },
+    "labels": {
+      "salesCount": "{{count}} sölur",
+      "offerSummary": "{{purchases}} kaup • {{views}} skoðanir",
+      "conversionRate": "{{value}}% umbreyting",
+      "revenue": "Tekjur",
+      "sales": "Sölur",
+      "salesPercentage": "{{percentage}}% • {{count}} sölur",
+      "views": "Skoðanir",
+      "purchases": "Kaup",
+      "conversion": "Umbreyting",
+      "heatmapTooltip": "{{day}} kl. {{hour}}:00 — virkni: {{activity}}%"
+    },
+    "legend": {
+      "revenue": "Tekjur (kr)",
+      "purchases": "Kaup",
+      "lessActive": "Minni virkni",
+      "moreActive": "Meiri virkni"
+    },
+    "funnel": {
+      "stages": {
+        "views": "Heildarskoðanir",
+        "clicks": "Smellt á tilboð",
+        "cart": "Bætt í körfu",
+        "purchases": "Lauk kaupunum"
+      }
+    },
+    "revenueDistribution": {
+      "active": "Virk tilboð",
+      "giftCard": "Gjafabréf",
+      "happyHour": "Happy hour",
+      "weekdays": "Vikudagstilboð"
+    },
+    "categoryPerformance": {
+      "hotels": "Hótel",
+      "dining": "Veitingar",
+      "wellness": "Heilsulindir",
+      "activities": "Afþreying"
+    },
+    "offerTypePerformance": {
+      "active": "Virk tilboð",
+      "weekdays": "Vikudagstilboð",
+      "happyHour": "Happy hour",
+      "giftCards": "Gjafabréf"
+    },
+    "goals": {
+      "revenue": "Tekjumarkmið",
+      "sales": "Sölumarkmið",
+      "customers": "Nýir viðskiptavinir",
+      "conversion": "Meðal umbreyting"
+    },
+    "weekdays": {
+      "monday": "Mán",
+      "tuesday": "Þri",
+      "wednesday": "Mið",
+      "thursday": "Fim",
+      "friday": "Fös",
+      "saturday": "Lau",
+      "sunday": "Sun"
+    },
+    "insights": {
+      "performance": {
+        "title": "Góð frammistaða",
+        "description": "Tilboðin þín standa sig vel með {{conversion}}% umbreytingu, yfir meðaltali."
+      },
+      "topPerformer": {
+        "title": "Besti árangur",
+        "description": "{{offer}} er með hæsta umbreytingarhlutfallið, {{conversion}}%."
+      },
+      "peakDays": {
+        "title": "Hámarksdagar",
+        "description": "Mest virkni er á þriðjudögum og miðvikudögum. Íhugaðu að setja fleiri tilboð þá daga."
+      },
+      "customerBehavior": {
+        "title": "Hegðun viðskiptavina",
+        "description": "Flestir viðskiptavinir skoða á kvöldin (18–21). Happy hour tilboð virka best á þeim tíma."
+      }
+    },
+    "sampleOffers": {
+      "spaGiftCard": "Spa og vellíðanar gjafabréf"
+    }
+  },
   "offerDetails": {
     "title": "Upplýsingar um tilboð",
     "subtitle": "Skoða allar upplýsingar um þetta tilboð",
