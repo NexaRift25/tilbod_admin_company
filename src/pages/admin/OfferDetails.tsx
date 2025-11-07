@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   ArrowLeft,
-  Tag,
   Clock,
   DollarSign,
   Calendar,
@@ -16,6 +15,10 @@ import {
   XCircle,
   Building2
 } from "lucide-react";
+import ActiveOfferCard from "@/components/offerCards/active-offer-card";
+import HappyHourOfferCard from "@/components/offerCards/happyHour";
+import GiftOfferCard from "@/components/offerCards/giftOfferCard";
+import WeeklyOfferCard from "@/components/offerCards/weeklyOfferCard";
 
 interface OfferDetails {
   id: string;
@@ -218,36 +221,6 @@ export default function AdminOfferDetailsPage() {
     }
   };
 
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case "active":
-        return "bg-blue-500/10 text-blue-500 border-blue-500";
-      case "weekdays":
-        return "bg-green/10 text-green border-green";
-      case "happy_hour":
-        return "bg-purple-500/10 text-purple-500 border-purple-500";
-      case "gift_card":
-        return "bg-orange-500/10 text-orange-500 border-orange-500";
-      default:
-        return "bg-gray-500/10 text-gray-400 border-gray-500";
-    }
-  };
-
-  const getTypeText = (type: string) => {
-    switch (type) {
-      case "active":
-        return "Active Offer";
-      case "weekdays":
-        return "Weekdays Offer";
-      case "happy_hour":
-        return "Happy Hour";
-      case "gift_card":
-        return "Gift Card";
-      default:
-        return "Offer";
-    }
-  };
-
   const calculateTimeLeft = (endDate: string) => {
     const end = new Date(endDate);
     const now = new Date();
@@ -255,6 +228,122 @@ export default function AdminOfferDetailsPage() {
     if (diff <= 0) return "Expired";
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     return `${days} days left`;
+  };
+
+  // Transform offer data for ActiveOfferCard
+  const transformToActiveOffer = (offer: OfferDetails) => {
+    return {
+      id: parseInt(offer.id),
+      offerType: offer.type,
+      title: offer.title,
+      discount: `${offer.discountPercentage}% Discount`,
+      description: offer.description || `${offer.title} - ${offer.category}`,
+      image: offer.image || "/placeholder-image.jpg",
+      category: offer.category,
+      timeLeft: calculateTimeLeft(offer.endDate),
+      location: offer.location || "",
+      price: offer.originalPrice.toLocaleString(),
+      discountPrice: offer.discountPrice.toLocaleString(),
+      link: offer.offerLink || `/admin/offers/${offer.id}`
+    };
+  };
+
+  // Transform offer data for WeeklyOfferCard
+  const transformToWeeklyOffer = (offer: OfferDetails) => {
+    const weekdays = offer.weekdays || [];
+    const dayAbbreviations = weekdays.map(day => {
+      const dayMap: Record<string, string> = {
+        "monday": "Mon",
+        "tuesday": "Tue",
+        "wednesday": "Wed",
+        "thursday": "Thu",
+        "friday": "Fri",
+        "saturday": "Sat",
+        "sunday": "Sun"
+      };
+      return dayMap[day.toLowerCase()] || day.substring(0, 3);
+    });
+
+    return {
+      id: parseInt(offer.id),
+      offerType: offer.type,
+      title: offer.title,
+      discount: `${offer.discountPercentage}% Discount`,
+      description: offer.description || `${offer.title} - ${offer.category}`,
+      image: offer.image || "/placeholder-image.jpg",
+      badge: offer.category,
+      location: offer.location || offer.weekdayAddress || "",
+      time: offer.startTime && offer.endTime 
+        ? `${offer.startTime} - ${offer.endTime}` 
+        : "Available all day",
+      availableDays: dayAbbreviations.length > 0 ? dayAbbreviations : ["Mon", "Tue", "Wed", "Thu", "Fri"],
+      link: offer.offerLink || `/admin/offers/${offer.id}`
+    };
+  };
+
+  // Transform offer data for HappyHourOfferCard
+  const transformToHappyHourOffer = (offer: OfferDetails) => {
+    const weekdays = offer.weekdays || [];
+    const dayAbbreviations = weekdays.map(day => {
+      const dayMap: Record<string, string> = {
+        "monday": "Mon",
+        "tuesday": "Tue",
+        "wednesday": "Wed",
+        "thursday": "Thu",
+        "friday": "Fri",
+        "saturday": "Sat",
+        "sunday": "Sun"
+      };
+      return dayMap[day.toLowerCase()] || day.substring(0, 3);
+    });
+
+    return {
+      id: parseInt(offer.id),
+      offerType: offer.type,
+      title: offer.title,
+      time: offer.startTime && offer.endTime 
+        ? `${offer.startTime} - ${offer.endTime}` 
+        : "5:00 PM - 7:00 PM",
+      description: offer.description || `${offer.title} - ${offer.category}`,
+      image: offer.image || "/placeholder-image.jpg",
+      status: offer.status === "active" ? "Open now" : "Closed",
+      location: offer.location || "",
+      pricing: `${offer.discountPrice.toLocaleString()} kr.`,
+      availableDays: dayAbbreviations.length > 0 ? dayAbbreviations : ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      link: offer.offerLink || `/admin/offers/${offer.id}`
+    };
+  };
+
+  // Transform offer data for GiftOfferCard
+  const transformToGiftOffer = (offer: OfferDetails) => {
+    return {
+      id: parseInt(offer.id),
+      offerType: offer.type,
+      title: offer.title,
+      price: `${offer.discountPrice.toLocaleString()} kr.`,
+      description: offer.description || `${offer.title} - ${offer.category}`,
+      image: offer.image || "/placeholder-image.jpg",
+      category: offer.category,
+      timeLeft: calculateTimeLeft(offer.endDate),
+      purchaseCount: offer.purchases,
+      link: offer.offerLink || `/admin/offers/${offer.id}`
+    };
+  };
+
+  // Render appropriate card based on offer type
+  const renderOfferCard = (offer: OfferDetails) => {
+    switch (offer.type) {
+      case "active":
+        return <ActiveOfferCard offer={transformToActiveOffer(offer)} />;
+      case "weekdays":
+        return <WeeklyOfferCard offer={transformToWeeklyOffer(offer)} />;
+      case "happy_hour":
+        return <HappyHourOfferCard offer={transformToHappyHourOffer(offer)} />;
+      case "gift_card":
+        return <GiftOfferCard offer={transformToGiftOffer(offer)} />;
+      default:
+        return <ActiveOfferCard offer={transformToActiveOffer(offer)} />;
+    }
   };
 
   if (loading) {
@@ -310,128 +399,89 @@ export default function AdminOfferDetailsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-4 flex-1">
           <Link
             to="/admin/offers"
-            className="p-2 hover:bg-primary/10 rounded-lg transition-all"
+            className="p-2 hover:bg-primary/10 rounded-lg transition-all flex-shrink-0"
           >
             <ArrowLeft className="text-primary" size={20} />
           </Link>
-          <div className="flex-1">
-            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-1 sm:mb-2 truncate">
               Offer Details
             </h1>
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-400 text-xs sm:text-sm">
               View complete information about this offer
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button className="flex items-center gap-2 px-4 py-2 bg-green/10 border border-green text-green font-semibold rounded-lg hover:bg-green/20 transition-all">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:flex-shrink-0">
+          <button className="flex items-center justify-center gap-2 px-4 py-2 bg-green/10 border border-green text-green font-semibold rounded-lg hover:bg-green/20 transition-all text-sm sm:text-base">
             <CheckCircle size={18} />
-            Approve
+            <span>Approve</span>
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500 text-red-500 font-semibold rounded-lg hover:bg-red-500/20 transition-all">
+          <button className="flex items-center justify-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500 text-red-500 font-semibold rounded-lg hover:bg-red-500/20 transition-all text-sm sm:text-base">
             <XCircle size={18} />
-            Reject
+            <span>Reject</span>
           </button>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-3 gap-6">
         {/* Main Details */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Offer Header Card */}
-          <div className="bg-card-background border border-primary rounded-2xl p-6">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center border ${getTypeColor(offer.type)}`}>
-                    <Tag size={24} />
-                  </div>
-                  <div className="flex-1">
-                    <h2 className="text-2xl font-bold text-white mb-2">{offer.title}</h2>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getTypeColor(offer.type)}`}>
-                        {getTypeText(offer.type)}
-                      </span>
-                      <span className={`px-3 py-1 flex items-center gap-1 rounded-full text-xs font-semibold border ${getStatusColor(offer.status)}`}>
-                        {getStatusIcon(offer.status)}
-                        {getStatusText(offer.status)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                {offer.description && (
-                  <p className="text-gray-300 text-base leading-relaxed mb-4">
-                    {offer.description}
-                  </p>
-                )}
-                {offer.image && (
-                  <div className="mt-4 rounded-lg overflow-hidden">
-                    <img 
-                      src={offer.image} 
-                      alt={offer.title} 
-                      className="w-full h-64 object-cover"
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
+        <div className="2xl:col-span-2 col-span-2 space-y-6">
           {/* Company Information */}
-          <div className="bg-card-background border border-primary rounded-2xl p-6">
-            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
               <Building2 className="text-primary" size={20} />
               Company Information
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-background rounded-lg p-4">
-                <p className="text-gray-400 text-sm mb-1">Company Name</p>
-                <p className="text-white text-lg font-semibold">{offer.companyName}</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="bg-background rounded-lg p-3 sm:p-4">
+                <p className="text-gray-400 text-xs sm:text-sm mb-1">Company Name</p>
+                <p className="text-white text-base sm:text-lg font-semibold break-words">{offer.companyName}</p>
               </div>
-              <div className="bg-background rounded-lg p-4">
-                <p className="text-gray-400 text-sm mb-1">Category</p>
-                <p className="text-white text-lg font-semibold">{offer.category}</p>
+              <div className="bg-background rounded-lg p-3 sm:p-4">
+                <p className="text-gray-400 text-xs sm:text-sm mb-1">Category</p>
+                <p className="text-white text-base sm:text-lg font-semibold break-words">{offer.category}</p>
               </div>
             </div>
           </div>
 
           {/* Pricing Information */}
-          <div className="bg-card-background border border-primary rounded-2xl p-6">
-            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
               <DollarSign className="text-primary" size={20} />
               Pricing Information
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-background rounded-lg p-4">
-                <p className="text-gray-400 text-sm mb-1">Original Price</p>
-                <p className="text-white text-xl font-bold">{offer.originalPrice.toLocaleString()} kr.</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="bg-background rounded-lg p-3 sm:p-4">
+                <p className="text-gray-400 text-xs sm:text-sm mb-1">Original Price</p>
+                <p className="text-white text-lg sm:text-xl font-bold">{offer.originalPrice.toLocaleString()} kr.</p>
               </div>
-              <div className="bg-background rounded-lg p-4">
-                <p className="text-gray-400 text-sm mb-1">Discounted Price</p>
-                <p className="text-green text-xl font-bold">{offer.discountPrice.toLocaleString()} kr.</p>
+              <div className="bg-background rounded-lg p-3 sm:p-4">
+                <p className="text-gray-400 text-xs sm:text-sm mb-1">Discounted Price</p>
+                <p className="text-green text-lg sm:text-xl font-bold">{offer.discountPrice.toLocaleString()} kr.</p>
               </div>
-              <div className="bg-background rounded-lg p-4">
-                <p className="text-gray-400 text-sm mb-1">Discount</p>
-                <p className="text-primary text-xl font-bold">{offer.discountPercentage}% OFF</p>
+              <div className="bg-background rounded-lg p-3 sm:p-4">
+                <p className="text-gray-400 text-xs sm:text-sm mb-1">Discount</p>
+                <p className="text-primary text-lg sm:text-xl font-bold">{offer.discountPercentage}% OFF</p>
               </div>
             </div>
           </div>
 
           {/* Offer Duration */}
-          <div className="bg-card-background border border-primary rounded-2xl p-6">
-            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
               <Calendar className="text-primary" size={20} />
               Offer Duration
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-background rounded-lg p-4">
-                <p className="text-gray-400 text-sm mb-1">Start Date</p>
-                <p className="text-white text-lg font-semibold">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="bg-background rounded-lg p-3 sm:p-4">
+                <p className="text-gray-400 text-xs sm:text-sm mb-1">Start Date</p>
+                <p className="text-white text-sm sm:text-base lg:text-lg font-semibold">
                   {new Date(offer.startDate).toLocaleDateString('en-US', { 
                     year: 'numeric', 
                     month: 'long', 
@@ -439,24 +489,24 @@ export default function AdminOfferDetailsPage() {
                   })}
                 </p>
               </div>
-              <div className="bg-background rounded-lg p-4">
-                <p className="text-gray-400 text-sm mb-1">End Date</p>
-                <p className="text-white text-lg font-semibold">
+              <div className="bg-background rounded-lg p-3 sm:p-4">
+                <p className="text-gray-400 text-xs sm:text-sm mb-1">End Date</p>
+                <p className="text-white text-sm sm:text-base lg:text-lg font-semibold">
                   {new Date(offer.endDate).toLocaleDateString('en-US', { 
                     year: 'numeric', 
                     month: 'long', 
                     day: 'numeric' 
                   })}
                 </p>
-                <p className="text-primary text-sm mt-1">{calculateTimeLeft(offer.endDate)}</p>
+                <p className="text-primary text-xs sm:text-sm mt-1">{calculateTimeLeft(offer.endDate)}</p>
               </div>
             </div>
           </div>
 
           {/* Type-Specific Details */}
           {offer.type === "weekdays" && (
-            <div className="bg-card-background border border-primary rounded-2xl p-6">
-              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
                 <Clock className="text-primary" size={20} />
                 Weekdays Details
               </h3>
@@ -493,8 +543,8 @@ export default function AdminOfferDetailsPage() {
           )}
 
           {offer.type === "happy_hour" && (
-            <div className="bg-card-background border border-primary rounded-2xl p-6">
-              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
                 <Clock className="text-primary" size={20} />
                 Happy Hour Details
               </h3>
@@ -520,8 +570,8 @@ export default function AdminOfferDetailsPage() {
 
           {/* Additional Information */}
           {(offer.terms || offer.offerLink) && (
-            <div className="bg-card-background border border-primary rounded-2xl p-6">
-              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
                 <FileText className="text-primary" size={20} />
                 Additional Information
               </h3>
@@ -551,10 +601,31 @@ export default function AdminOfferDetailsPage() {
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-6">
+        <div className="lg:col-span-2   xl:col-span-1 space-y-6">
+          {/* Offer Card Preview */}
+          <div className=" bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
+            <div className="mb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-4">
+                <h3 className="text-base sm:text-lg font-bold text-white">Offer Preview</h3>
+                <div className="flex items-center gap-2">
+                  <span className={`px-2 sm:px-3 py-1 flex items-center gap-1 rounded-full text-xs font-semibold border ${getStatusColor(offer.status)}`}>
+                    {getStatusIcon(offer.status)}
+                    <span className="hidden sm:inline">{getStatusText(offer.status)}</span>
+                    <span className="sm:hidden">{getStatusText(offer.status).split(' ')[0]}</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-center overflow-x-auto">
+              <div className="w-full max-w-sm sm:max-w-md lg:max-w-full">
+                {renderOfferCard(offer)}
+              </div>
+            </div>
+          </div>
+          
           {/* Status Card */}
-          <div className="bg-card-background border border-primary rounded-2xl p-6">
-            <h3 className="text-lg font-bold text-white mb-4">Status</h3>
+          <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-bold text-white mb-4">Status</h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-gray-400">Current Status</span>
@@ -581,8 +652,8 @@ export default function AdminOfferDetailsPage() {
           </div>
 
           {/* Performance Metrics */}
-          <div className="bg-card-background border border-primary rounded-2xl p-6">
-            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
               <TrendingUp className="text-primary" size={20} />
               Performance
             </h3>
@@ -622,8 +693,8 @@ export default function AdminOfferDetailsPage() {
           </div>
 
           {/* Extension Info */}
-          <div className="bg-card-background border border-primary rounded-2xl p-6">
-            <h3 className="text-lg font-bold text-white mb-4">Extensions</h3>
+          <div className="bg-card-background border border-primary rounded-2xl p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-bold text-white mb-4">Extensions</h3>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-gray-400">Used</span>
@@ -638,7 +709,7 @@ export default function AdminOfferDetailsPage() {
 
           {/* Revision Notice */}
           {offer.status === "revision" && (
-            <div className="bg-yellow/10 border border-yellow rounded-2xl p-6">
+            <div className="bg-yellow/10 border border-yellow rounded-2xl p-4 sm:p-6">
               <div className="flex items-start gap-3">
                 <AlertCircle className="text-yellow flex-shrink-0 mt-0.5" size={20} />
                 <div>
