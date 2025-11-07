@@ -722,6 +722,162 @@
       "validation": "Vinsamlegast sláðu inn heiti vöruflokks"
     }
   },
+  "adminDiscountLabels": {
+    "common": {
+      "currency": "{{value}} kr.",
+      "percentage": "{{value}}%"
+    },
+    "header": {
+      "title": "Afsláttamerki",
+      "subtitle": "Búðu til og stjórnaðu afsláttamerkjum fyrir tilboð",
+      "createButton": "Búa til merki"
+    },
+    "stats": {
+      "total": "Heildarfjöldi merkja",
+      "active": "Virk",
+      "percentage": "Hlutfallsafsláttur",
+      "fixed": "Föst upphæð",
+      "totalUsage": "Heildarnotkun"
+    },
+    "filters": {
+      "searchPlaceholder": "Leita að afsláttamerkjum...",
+      "status": {
+        "all": "Allar stöður",
+        "active": "Virk",
+        "inactive": "Óvirk"
+      },
+      "type": {
+        "all": "Allar tegundir",
+        "percentage": "Hlutfallsafsláttur",
+        "fixed": "Föst upphæð"
+      }
+    },
+    "status": {
+      "active": "Virkt",
+      "inactive": "Óvirkt"
+    },
+    "types": {
+      "percentage": "Hlutfallsafsláttur",
+      "fixed": "Föst upphæð"
+    },
+    "offerTypes": {
+      "active": "Virk tilboð",
+      "weekdays": "Tilboð á virkum dögum",
+      "happyHour": "Happy hour",
+      "giftCard": "Gjafabréf"
+    },
+    "empty": {
+      "title": "Engin afsláttamerki fundust",
+      "searchAdjust": "Reyndu að breyta leitinni eða síunni",
+      "createFirst": "Búðu til fyrsta afsláttamerkið til að byrja"
+    },
+    "actions": {
+      "activate": "Virkja",
+      "deactivate": "Gera óvirkt",
+      "edit": "Breyta merki",
+      "delete": "Eyða merki"
+    },
+    "details": {
+      "applicableTo": "Á við um:",
+      "noneSelected": "Engar tilboðstegundir valdar",
+      "usageCount": "Notkun",
+      "type": "Tegund",
+      "lastUpdated": "Síðast uppfært"
+    },
+    "form": {
+      "nameLabel": "Heiti merkis",
+      "namePlaceholder": "t.d. Early Bird, Holiday Special",
+      "discountTypeLabel": "Tegund afsláttar",
+      "discountTypeOptions": {
+        "percentage": "Hlutfallsafsláttur (%)",
+        "fixed": "Föst upphæð (kr.)"
+      },
+      "discountValueLabel": "Upphæð afsláttar",
+      "discountValuePlaceholder": {
+        "percentage": "t.d. 10",
+        "fixed": "t.d. 5000"
+      },
+      "discountValueHintPercentage": "Sláðu inn hlutfall (0-100)",
+      "discountValueHintFixed": "Sláðu inn upphæð í kr.",
+      "descriptionLabel": "Lýsing",
+      "descriptionPlaceholder": "Lýstu hvenær og hvernig merkið er notað",
+      "applicableLabel": "Á við um eftirfarandi tilboð",
+      "applicableError": "Veldu að minnsta kosti eina tegund tilboðs",
+      "statusLabel": "Staða",
+      "statusOptions": {
+        "active": "Virkt",
+        "inactive": "Óvirkt"
+      }
+    },
+    "modal": {
+      "addTitle": "Búa til afsláttamerki",
+      "editTitle": "Breyta afsláttamerki",
+      "cancel": "Hætta við",
+      "saving": "Vista...",
+      "createButton": "Búa til merki",
+      "updateButton": "Uppfæra merki"
+    },
+    "delete": {
+      "title": "Eyða afsláttamerki",
+      "subtitle": "Ekki er hægt að afturkalla þessa aðgerð",
+      "message": "Ertu viss um að þú viljir eyða {{name}}? Merkið verður fjarlægt úr öllum tilboðum sem nota það.",
+      "cancel": "Hætta við",
+      "confirmButton": "Eyða merki"
+    },
+    "notifications": {
+      "nameRequired": "Vinsamlegast sláðu inn heiti merkis",
+      "valueRequired": "Vinsamlegast sláðu inn afsláttargildi sem er stærra en núll",
+      "applicableRequired": "Veldu að minnsta kosti eina tegund tilboðs"
+    }
+  },
+  "adminTargetedDiscounts": {
+    "header": {
+      "title": "Sértækir afslættir",
+      "subtitle": "Búðu til og stjórnaðu sértækum afsláttaherferðum",
+      "createButton": "Búa til afslátt"
+    },
+    "status": {
+      "active": "Virkt",
+      "inactive": "Óvirkt"
+    },
+    "defaults": {
+      "student": "Námsmannaafsláttur",
+      "senior": "Afsláttur fyrir eldri borgara",
+      "firstTime": "Fyrstu kaup afsláttur"
+    },
+    "empty": {
+      "title": "Engir sértækir afslættir hafa verið búnir til",
+      "description": "Smelltu á \"Búa til afslátt\" til að byrja"
+    },
+    "list": {
+      "createdOn": "Búið til {{date}}"
+    },
+    "actions": {
+      "activate": "Virkja",
+      "deactivate": "Gera óvirkt",
+      "delete": "Eyða"
+    },
+    "form": {
+      "nameLabel": "Heiti afsláttar",
+      "namePlaceholder": "t.d. Námsmannaafsláttur, Afsláttur eldri borgara",
+      "nameHint": "Sláðu inn lýsandi heiti fyrir þessa sértæku afsláttaherferð"
+    },
+    "modal": {
+      "addTitle": "Búa til sértækan afslátt",
+      "cancel": "Hætta við",
+      "creating": "Bý til...",
+      "createButton": "Búa til afslátt"
+    },
+    "delete": {
+      "title": "Eyða sértækum afslætti",
+      "message": "Ertu viss um að þú viljir eyða þessum sértæka afslætti? Þessa aðgerð er ekki hægt að afturkalla.",
+      "cancel": "Hætta við",
+      "confirmButton": "Eyða"
+    },
+    "notifications": {
+      "nameRequired": "Vinsamlegast sláðu inn heiti afsláttar"
+    }
+  },
   "adminCompanyDetails": {
     "notFound": {
       "title": "Fyrirtæki fannst ekki",
@@ -2461,6 +2617,177 @@
       "cityRequired": "Sveitarfélag er nauðsynlegt",
       "postalCodeRequired": "Póstnúmer er nauðsynlegt",
       "descriptionRequired": "Lýsing fyrirtækis er nauðsynleg"
+    }
+  },
+  "adminSettings": {
+    "header": {
+      "title": "Stillingar kerfisins",
+      "subtitle": "Stilltu hegðun kerfisins og samþættingar"
+    },
+    "buttons": {
+      "save": "Vista breytingar"
+    },
+    "messages": {
+      "saved": "Stillingum fyrir {{section}} hefur verið vistað!"
+    },
+    "sections": {
+      "general": {
+        "title": "Almennar stillingar",
+        "description": "Grunn stillingar kerfisins"
+      },
+      "security": {
+        "title": "Öryggi",
+        "description": "Öryggi og aðgangsstýringar"
+      },
+      "notifications": {
+        "title": "Tilkynningar",
+        "description": "Tölvupóstur og viðvaranir"
+      },
+      "payments": {
+        "title": "Greiðslur og þóknanir",
+        "description": "Þóknunarhlutföll og greiðslustillingar"
+      },
+      "integrations": {
+        "title": "Samþættingar",
+        "description": "Tengingar við þriðja aðila"
+      }
+    },
+    "activeDevices": {
+      "title": "Virk tæki",
+      "manageSessions": "Sýsla með virk innskráningar",
+      "currentSession": "Núverandi seta",
+      "secondarySession": "Farsímiseta",
+      "currentBadge": "Virk",
+      "deviceLabel": "Tæki",
+      "deviceTypes": {
+        "desktop": "Vafri á tölvu",
+        "mobile": "Vafri í farsíma"
+      },
+      "locations": {
+        "current": "Reykjavík, Ísland",
+        "secondary": "Kópavogur, Ísland"
+      },
+      "lastActive": {
+        "justNow": "Rétt í þessu",
+        "hoursAgo": "{{count}} klukkustundir síðan"
+      }
+    },
+    "general": {
+      "platformName": {
+        "label": "Heiti kerfis",
+        "placeholder": "Sláðu inn heiti kerfis"
+      },
+      "contactEmail": {
+        "label": "Tengiliðatölvupóstur",
+        "placeholder": "Sláðu inn tölvupóst"
+      },
+      "platformDescription": {
+        "label": "Lýsing kerfis",
+        "placeholder": "Lýstu vettvangnum stuttlega"
+      },
+      "supportPhone": {
+        "label": "Þjónustusími",
+        "placeholder": "Sláðu inn símanúmer"
+      },
+      "maintenance": {
+        "title": "Viðhaldsstilling",
+        "description": "Gera kerfið tímabundið óaðgengilegt"
+      },
+      "registration": {
+        "title": "Nýskráning notenda",
+        "description": "Leyfa nýjum notendum að skrá sig"
+      }
+    },
+    "security": {
+      "passwordMinLength": {
+        "label": "Lágmarks lengd lykilorðs"
+      },
+      "sessionTimeout": {
+        "label": "Setutími (mínútur)"
+      },
+      "maxLoginAttempts": {
+        "label": "Hámarks innskráningartilraunir"
+      },
+      "twoFactor": {
+        "title": "Tveggja þátta auðkenning",
+        "description": "Krefjast 2FA fyrir alla stjórnendur"
+      },
+      "auditLogging": {
+        "title": "Eftirlitsannálar",
+        "description": "Skrá allar aðgerðir stjórnenda"
+      },
+      "ipWhitelist": {
+        "label": "Hvítlisti IP (valkvætt)",
+        "placeholder": "Sláðu inn leyfðar IP-tölur, eina á línu"
+      }
+    },
+    "notifications": {
+      "email": {
+        "title": "Tölvupósttilkynningar",
+        "description": "Senda tölvupóstviðvaranir fyrir mikilvæga atburði"
+      },
+      "sms": {
+        "title": "SMS tilkynningar",
+        "description": "Senda SMS viðvaranir fyrir áríðandi mál"
+      },
+      "push": {
+        "title": "Push tilkynningar",
+        "description": "Vafra push tilkynningar fyrir rauntímaviðvaranir"
+      },
+      "approval": {
+        "title": "Samþykktarviðvaranir",
+        "description": "Tilkynna þegar nýjar samþykktir bíða"
+      },
+      "system": {
+        "title": "Kerfisviðvaranir",
+        "description": "Mikilvægar viðvaranir kerfisins"
+      }
+    },
+    "payments": {
+      "commissionActiveOffers": {
+        "label": "Þóknun virkra tilboða (kr./dag)"
+      },
+      "commissionWeekdaysOffers": {
+        "label": "Þóknun virkra daga (kr./viku)"
+      },
+      "commissionHappyHourOffers": {
+        "label": "Happy hour þóknun (kr./mánuð)"
+      },
+      "commissionGiftCards": {
+        "label": "Þóknun gjafakorta (%)"
+      },
+      "paymentProcessor": {
+        "label": "Greiðslumiðlari"
+      },
+      "minimumPayout": {
+        "label": "Lágmarks útborgun (kr.)"
+      },
+      "autoPayouts": {
+        "title": "Sjálfvirkar útborganir",
+        "description": "Afgreiða útborganir sjálfkrafa þegar lágmarki er náð"
+      }
+    },
+    "integrations": {
+      "googleAnalytics": {
+        "label": "Google Analytics auðkenni",
+        "placeholder": "G-XXXXXXXXXX"
+      },
+      "facebookPixel": {
+        "label": "Facebook Pixel auðkenni",
+        "placeholder": "XXXXXXXXXXXXXXX"
+      },
+      "emailProvider": {
+        "label": "Tölvupóstþjónusta"
+      },
+      "smsProvider": {
+        "label": "SMS þjónusta"
+      }
+    },
+    "systemActions": {
+      "title": "Kerfisaðgerðir",
+      "backupData": "Taka afrit",
+      "clearCache": "Hreinsa skyndiminni",
+      "resetApiKeys": "Endurstilla API-lykla"
     }
   }
 }

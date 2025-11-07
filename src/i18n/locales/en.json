@@ -722,6 +722,333 @@
       "validation": "Please enter a product category name"
     }
   },
+  "adminDiscountLabels": {
+    "common": {
+      "currency": "{{value}} kr.",
+      "percentage": "{{value}}%"
+    },
+    "header": {
+      "title": "Discount Labels",
+      "subtitle": "Create and manage discount labels for offers",
+      "createButton": "Create Label"
+    },
+    "stats": {
+      "total": "Total Labels",
+      "active": "Active",
+      "percentage": "Percentage",
+      "fixed": "Fixed Amount",
+      "totalUsage": "Total Usage"
+    },
+    "filters": {
+      "searchPlaceholder": "Search discount labels...",
+      "status": {
+        "all": "All Status",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "type": {
+        "all": "All Types",
+        "percentage": "Percentage",
+        "fixed": "Fixed Amount"
+      }
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "types": {
+      "percentage": "Percentage",
+      "fixed": "Fixed Amount"
+    },
+    "offerTypes": {
+      "active": "Active Offer",
+      "weekdays": "Weekday Offer",
+      "happyHour": "Happy Hour",
+      "giftCard": "Gift Card"
+    },
+    "empty": {
+      "title": "No discount labels found",
+      "searchAdjust": "Try adjusting your search or filter criteria",
+      "createFirst": "Create your first discount label to get started"
+    },
+    "actions": {
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "edit": "Edit Label",
+      "delete": "Delete Label"
+    },
+    "details": {
+      "applicableTo": "Applicable To:",
+      "noneSelected": "No offer types selected",
+      "usageCount": "Usage Count",
+      "type": "Type",
+      "lastUpdated": "Last Updated"
+    },
+    "form": {
+      "nameLabel": "Label Name",
+      "namePlaceholder": "e.g., Early Bird, Holiday Special",
+      "discountTypeLabel": "Discount Type",
+      "discountTypeOptions": {
+        "percentage": "Percentage (%)",
+        "fixed": "Fixed Amount (kr.)"
+      },
+      "discountValueLabel": "Discount Value",
+      "discountValuePlaceholder": {
+        "percentage": "e.g., 10",
+        "fixed": "e.g., 5000"
+      },
+      "discountValueHintPercentage": "Enter percentage (0-100)",
+      "discountValueHintFixed": "Enter amount in kr.",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Describe when this discount label should be used",
+      "applicableLabel": "Applicable To Offer Types",
+      "applicableError": "Please select at least one offer type",
+      "statusLabel": "Status",
+      "statusOptions": {
+        "active": "Active",
+        "inactive": "Inactive"
+      }
+    },
+    "modal": {
+      "addTitle": "Create Discount Label",
+      "editTitle": "Edit Discount Label",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "createButton": "Create Label",
+      "updateButton": "Update Label"
+    },
+    "delete": {
+      "title": "Delete Discount Label",
+      "subtitle": "This action cannot be undone",
+      "message": "Are you sure you want to delete {{name}}? This label will be removed from all offers using it.",
+      "cancel": "Cancel",
+      "confirmButton": "Delete Label"
+    },
+    "notifications": {
+      "nameRequired": "Please enter a label name",
+      "valueRequired": "Please enter a discount value greater than zero",
+      "applicableRequired": "Please select at least one offer type"
+    }
+  },
+  "adminTargetedDiscounts": {
+    "header": {
+      "title": "Targeted Discounts",
+      "subtitle": "Create and manage targeted discount campaigns",
+      "createButton": "Create Discount"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "defaults": {
+      "student": "Student Discount",
+      "senior": "Senior Citizen Discount",
+      "firstTime": "First Time Customer"
+    },
+    "empty": {
+      "title": "No targeted discounts created yet",
+      "description": "Click Create Discount to get started"
+    },
+    "list": {
+      "createdOn": "Created on {{date}}"
+    },
+    "actions": {
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "delete": "Delete"
+    },
+    "form": {
+      "nameLabel": "Discount Name",
+      "namePlaceholder": "e.g., Student Discount, Senior Citizen Discount",
+      "nameHint": "Enter a descriptive name for this targeted discount campaign"
+    },
+    "modal": {
+      "addTitle": "Create Targeted Discount",
+      "cancel": "Cancel",
+      "creating": "Creating...",
+      "createButton": "Create Discount"
+    },
+    "delete": {
+      "title": "Delete Targeted Discount",
+      "message": "Are you sure you want to delete this targeted discount? This action cannot be undone.",
+      "cancel": "Cancel",
+      "confirmButton": "Delete"
+    },
+    "notifications": {
+      "nameRequired": "Please enter a discount name"
+    }
+  },
+  "adminSettings": {
+    "header": {
+      "title": "Platform Settings",
+      "subtitle": "Configure platform behavior and integrations"
+    },
+    "buttons": {
+      "save": "Save Changes"
+    },
+    "messages": {
+      "saved": "{{section}} settings saved successfully!"
+    },
+    "sections": {
+      "general": {
+        "title": "General Settings",
+        "description": "Basic platform configuration"
+      },
+      "security": {
+        "title": "Security",
+        "description": "Security and access controls"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "description": "Email and alert preferences"
+      },
+      "payments": {
+        "title": "Payments & Commissions",
+        "description": "Commission rates and payment settings"
+      },
+      "integrations": {
+        "title": "Integrations",
+        "description": "Third-party service connections"
+      }
+    },
+    "activeDevices": {
+      "title": "Active Devices",
+      "manageSessions": "Manage active sessions",
+      "currentSession": "Current Session",
+      "secondarySession": "Mobile Session",
+      "currentBadge": "Current",
+      "deviceLabel": "Device",
+      "deviceTypes": {
+        "desktop": "Desktop Browser",
+        "mobile": "Mobile Browser"
+      },
+      "locations": {
+        "current": "Reykjavík, Iceland",
+        "secondary": "Kópavogur, Iceland"
+      },
+      "lastActive": {
+        "justNow": "Just now",
+        "hoursAgo": "{{count}} hours ago"
+      }
+    },
+    "general": {
+      "platformName": {
+        "label": "Platform Name",
+        "placeholder": "Enter platform name"
+      },
+      "contactEmail": {
+        "label": "Contact Email",
+        "placeholder": "Enter contact email"
+      },
+      "platformDescription": {
+        "label": "Platform Description",
+        "placeholder": "Describe the platform"
+      },
+      "supportPhone": {
+        "label": "Support Phone",
+        "placeholder": "Enter support phone number"
+      },
+      "maintenance": {
+        "title": "Maintenance Mode",
+        "description": "Temporarily disable platform access"
+      },
+      "registration": {
+        "title": "User Registration",
+        "description": "Allow new users to register"
+      }
+    },
+    "security": {
+      "passwordMinLength": {
+        "label": "Minimum Password Length"
+      },
+      "sessionTimeout": {
+        "label": "Session Timeout (minutes)"
+      },
+      "maxLoginAttempts": {
+        "label": "Max Login Attempts"
+      },
+      "twoFactor": {
+        "title": "Two-Factor Authentication",
+        "description": "Require 2FA for all admin accounts"
+      },
+      "auditLogging": {
+        "title": "Audit Logging",
+        "description": "Log all admin actions for security"
+      },
+      "ipWhitelist": {
+        "label": "IP Whitelist (Optional)",
+        "placeholder": "Enter allowed IP addresses, one per line"
+      }
+    },
+    "notifications": {
+      "email": {
+        "title": "Email Notifications",
+        "description": "Send email alerts for important events"
+      },
+      "sms": {
+        "title": "SMS Notifications",
+        "description": "Send SMS alerts for urgent matters"
+      },
+      "push": {
+        "title": "Push Notifications",
+        "description": "Browser push notifications for real-time alerts"
+      },
+      "approval": {
+        "title": "Approval Alerts",
+        "description": "Notify when new approvals are pending"
+      },
+      "system": {
+        "title": "System Alerts",
+        "description": "Critical system notifications"
+      }
+    },
+    "payments": {
+      "commissionActiveOffers": {
+        "label": "Active Offers Commission (kr./day)"
+      },
+      "commissionWeekdaysOffers": {
+        "label": "Weekdays Offers Commission (kr./week)"
+      },
+      "commissionHappyHourOffers": {
+        "label": "Happy Hour Commission (kr./month)"
+      },
+      "commissionGiftCards": {
+        "label": "Gift Cards Commission (%)"
+      },
+      "paymentProcessor": {
+        "label": "Payment Processor"
+      },
+      "minimumPayout": {
+        "label": "Minimum Payout Amount (kr.)"
+      },
+      "autoPayouts": {
+        "title": "Automatic Payouts",
+        "description": "Automatically process payouts when minimum is reached"
+      }
+    },
+    "integrations": {
+      "googleAnalytics": {
+        "label": "Google Analytics ID",
+        "placeholder": "G-XXXXXXXXXX"
+      },
+      "facebookPixel": {
+        "label": "Facebook Pixel ID",
+        "placeholder": "XXXXXXXXXXXXXXX"
+      },
+      "emailProvider": {
+        "label": "Email Provider"
+      },
+      "smsProvider": {
+        "label": "SMS Provider"
+      }
+    },
+    "systemActions": {
+      "title": "System Actions",
+      "backupData": "Backup Data",
+      "clearCache": "Clear Cache",
+      "resetApiKeys": "Reset API Keys"
+    }
+  },
   "adminCompanyDetails": {
     "notFound": {
       "title": "Company Not Found",
