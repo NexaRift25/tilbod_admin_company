@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, Link, useParams } from "react-router-dom";
 import {
   Building2,
@@ -11,6 +11,7 @@ import {
   XCircle,
   Globe,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface Company {
   id: string;
@@ -67,17 +68,17 @@ const mockCompanies: Company[] = [
   },
 ];
 
-const categories = [
-  "Food & Dining",
-  "Hotels & Accommodation",
-  "Wellness & Spa",
-  "Activities & Entertainment",
-  "Shopping & Retail",
-  "Beauty & Personal Care",
-  "Health & Fitness",
-  "Travel & Tourism",
-  "Education & Training",
-  "Professional Services"
+const categoryOptionsBase = [
+  { value: "Food & Dining", key: "foodDining" },
+  { value: "Hotels & Accommodation", key: "hotelsAccommodation" },
+  { value: "Wellness & Spa", key: "wellnessSpa" },
+  { value: "Activities & Entertainment", key: "activitiesEntertainment" },
+  { value: "Shopping & Retail", key: "shoppingRetail" },
+  { value: "Beauty & Personal Care", key: "beautyPersonalCare" },
+  { value: "Health & Fitness", key: "healthFitness" },
+  { value: "Travel & Tourism", key: "travelTourism" },
+  { value: "Education & Training", key: "educationTraining" },
+  { value: "Professional Services", key: "professionalServices" },
 ];
 
 export default function AdminEditCompanyPage() {
@@ -87,6 +88,7 @@ export default function AdminEditCompanyPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [company, setCompany] = useState<Company | null>(null);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -100,6 +102,22 @@ export default function AdminEditCompanyPage() {
     description: "",
     logo: "",
   });
+
+  const statusTranslationMap: Record<string, string> = {
+    approved: "adminCompanyDetails.status.approved",
+    rejected: "adminCompanyDetails.status.rejected",
+    revision: "adminCompanyDetails.status.revision",
+    pending: "adminCompanyDetails.status.pending",
+  };
+
+  const categoryOptions = useMemo(
+    () =>
+      categoryOptionsBase.map((category) => ({
+        value: category.value,
+        label: t(`adminEditCompany.categories.${category.key}`),
+      })),
+    [t]
+  );
 
   useEffect(() => {
     // Simulate API call
@@ -140,17 +158,19 @@ export default function AdminEditCompanyPage() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.name.trim()) newErrors.name = "Company name is required";
-    if (!formData.registrationNumber.trim()) newErrors.registrationNumber = "Registration number is required";
-    if (!formData.taxId.trim()) newErrors.taxId = "Tax ID is required";
-    if (!formData.category) newErrors.category = "Category is required";
-    if (!formData.email.trim()) newErrors.email = "Email is required";
+    if (!formData.name.trim()) newErrors.name = t("adminEditCompany.validation.nameRequired");
+    if (!formData.registrationNumber.trim())
+      newErrors.registrationNumber = t("adminEditCompany.validation.registrationRequired");
+    if (!formData.taxId.trim()) newErrors.taxId = t("adminEditCompany.validation.taxIdRequired");
+    if (!formData.category) newErrors.category = t("adminEditCompany.validation.categoryRequired");
+    if (!formData.email.trim()) newErrors.email = t("adminEditCompany.validation.emailRequired");
     if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email";
+      newErrors.email = t("adminEditCompany.validation.emailInvalid");
     }
-    if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
-    if (!formData.address.trim()) newErrors.address = "Address is required";
-    if (!formData.description.trim()) newErrors.description = "Company description is required";
+    if (!formData.phone.trim()) newErrors.phone = t("adminEditCompany.validation.phoneRequired");
+    if (!formData.address.trim()) newErrors.address = t("adminEditCompany.validation.addressRequired");
+    if (!formData.description.trim())
+      newErrors.description = t("adminEditCompany.validation.descriptionRequired");
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -171,11 +191,11 @@ export default function AdminEditCompanyPage() {
       // In real app, call API to update company
       console.log("Updating company:", id, formData);
       
-      alert("Company updated successfully!");
+      window.alert(t("adminEditCompany.notifications.success"));
       navigate("/admin/companies");
     } catch (error) {
       console.error("Failed to update company:", error);
-      alert("Failed to update company. Please try again.");
+      window.alert(t("adminEditCompany.notifications.error"));
     } finally {
       setIsLoading(false);
     }
@@ -205,10 +225,14 @@ export default function AdminEditCompanyPage() {
           >
             <ArrowLeft className="text-primary" size={20} />
           </Link>
-          <h1 className="text-2xl font-bold text-white">Company Not Found</h1>
+          <h1 className="text-2xl font-bold text-white">
+            {t("adminEditCompany.notFound.title")}
+          </h1>
         </div>
         <div className="bg-card-background border border-primary rounded-2xl p-8 text-center">
-          <p className="text-gray-400">The company you're looking for doesn't exist.</p>
+          <p className="text-gray-400">
+            {t("adminEditCompany.notFound.description")}
+          </p>
         </div>
       </div>
     );
@@ -240,18 +264,8 @@ export default function AdminEditCompanyPage() {
     }
   };
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case "approved":
-        return "Approved";
-      case "rejected":
-        return "Rejected";
-      case "revision":
-        return "Needs Revision";
-      default:
-        return "Pending Review";
-    }
-  };
+  const getStatusText = (status: string) =>
+    t(statusTranslationMap[status] ?? "adminCompanyDetails.status.pendingReview");
 
   return (
     <div className="space-y-6">
@@ -265,8 +279,12 @@ export default function AdminEditCompanyPage() {
             <ArrowLeft className="text-primary" size={20} />
           </Link>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white">Edit Company</h1>
-            <p className="text-gray-400 text-sm">Update company information</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">
+              {t("adminEditCompany.header.title")}
+            </h1>
+            <p className="text-gray-400 text-sm">
+              {t("adminEditCompany.header.subtitle")}
+            </p>
           </div>
         </div>
       </div>
@@ -276,10 +294,17 @@ export default function AdminEditCompanyPage() {
         <div className="flex items-center gap-3">
           {getStatusIcon(company.status)}
           <div>
-            <p className="font-semibold">Status: {getStatusText(company.status)}</p>
+            <p className="font-semibold">
+              {t("adminEditCompany.statusBanner.label", {
+                status: getStatusText(company.status),
+              })}
+            </p>
             {company.status === "revision" && (
               <p className="text-sm opacity-90 mt-1">
-                Revision attempt {company.revisionCount} of 3
+                {t("adminEditCompany.statusBanner.revisionAttempt", {
+                  count: company.revisionCount,
+                  total: 3,
+                })}
               </p>
             )}
           </div>
@@ -293,12 +318,13 @@ export default function AdminEditCompanyPage() {
           <div>
             <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
               <Building2 className="text-primary" size={20} />
-              Company Information
+              {t("adminEditCompany.sections.companyInfoTitle")}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="text-gray-400 text-sm mb-2 block">
-                  Company Name <span className="text-red-500">*</span>
+                  {t("adminEditCompany.form.companyNameLabel")}{" "}
+                  <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -308,14 +334,15 @@ export default function AdminEditCompanyPage() {
                   className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                     errors.name ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
                   }`}
-                  placeholder="Enter company name"
+                  placeholder={t("adminEditCompany.form.companyNamePlaceholder")}
                 />
                 {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
               </div>
 
               <div>
                 <label className="text-gray-400 text-sm mb-2 block">
-                  Category <span className="text-red-500">*</span>
+                  {t("adminEditCompany.form.categoryLabel")}{" "}
+                  <span className="text-red-500">*</span>
                 </label>
                 <select
                   name="category"
@@ -325,9 +352,11 @@ export default function AdminEditCompanyPage() {
                     errors.category ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
                   }`}
                 >
-                  <option value="">Select category</option>
-                  {categories.map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
+                  <option value="">{t("adminEditCompany.form.categoryPlaceholder")}</option>
+                  {categoryOptions.map((cat) => (
+                    <option key={cat.value} value={cat.value}>
+                      {cat.label}
+                    </option>
                   ))}
                 </select>
                 {errors.category && <p className="text-red-500 text-xs mt-1">{errors.category}</p>}
@@ -335,7 +364,8 @@ export default function AdminEditCompanyPage() {
 
               <div>
                 <label className="text-gray-400 text-sm mb-2 block">
-                  Registration Number <span className="text-red-500">*</span>
+                  {t("adminEditCompany.form.registrationLabel")}{" "}
+                  <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -345,14 +375,15 @@ export default function AdminEditCompanyPage() {
                   className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                     errors.registrationNumber ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
                   }`}
-                  placeholder="Enter registration number"
+                  placeholder={t("adminEditCompany.form.registrationPlaceholder")}
                 />
                 {errors.registrationNumber && <p className="text-red-500 text-xs mt-1">{errors.registrationNumber}</p>}
               </div>
 
               <div>
                 <label className="text-gray-400 text-sm mb-2 block">
-                  Tax ID <span className="text-red-500">*</span>
+                  {t("adminEditCompany.form.taxIdLabel")}{" "}
+                  <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -362,7 +393,7 @@ export default function AdminEditCompanyPage() {
                   className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                     errors.taxId ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
                   }`}
-                  placeholder="Enter tax ID"
+                  placeholder={t("adminEditCompany.form.taxIdPlaceholder")}
                 />
                 {errors.taxId && <p className="text-red-500 text-xs mt-1">{errors.taxId}</p>}
               </div>
@@ -373,12 +404,13 @@ export default function AdminEditCompanyPage() {
           <div>
             <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
               <Mail className="text-primary" size={20} />
-              Contact Information
+              {t("adminEditCompany.sections.contactInfoTitle")}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="text-gray-400 text-sm mb-2 block">
-                  Email <span className="text-red-500">*</span>
+                  {t("adminEditCompany.form.emailLabel")}{" "}
+                  <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="email"
@@ -388,14 +420,15 @@ export default function AdminEditCompanyPage() {
                   className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                     errors.email ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
                   }`}
-                  placeholder="company@example.com"
+                  placeholder={t("adminEditCompany.form.emailPlaceholder")}
                 />
                 {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
               </div>
 
               <div>
                 <label className="text-gray-400 text-sm mb-2 block">
-                  Phone <span className="text-red-500">*</span>
+                  {t("adminEditCompany.form.phoneLabel")}{" "}
+                  <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="tel"
@@ -405,14 +438,15 @@ export default function AdminEditCompanyPage() {
                   className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                     errors.phone ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
                   }`}
-                  placeholder="+354 555 1234"
+                  placeholder={t("adminEditCompany.form.phonePlaceholder")}
                 />
                 {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
               </div>
 
               <div className="md:col-span-2">
                 <label className="text-gray-400 text-sm mb-2 block">
-                  Address <span className="text-red-500">*</span>
+                  {t("adminEditCompany.form.addressLabel")}{" "}
+                  <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -422,7 +456,7 @@ export default function AdminEditCompanyPage() {
                   className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                     errors.address ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
                   }`}
-                  placeholder="Street address, City"
+                  placeholder={t("adminEditCompany.form.addressPlaceholder")}
                 />
                 {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
               </div>
@@ -430,7 +464,7 @@ export default function AdminEditCompanyPage() {
               <div className="md:col-span-2">
                 <label className="text-gray-400 text-sm mb-2 flex items-center gap-2">
                   <Globe size={16} />
-                  Website
+                  {t("adminEditCompany.form.websiteLabel")}
                 </label>
                 <input
                   type="url"
@@ -438,7 +472,7 @@ export default function AdminEditCompanyPage() {
                   value={formData.website}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all"
-                  placeholder="https://company.com"
+                  placeholder={t("adminEditCompany.form.websitePlaceholder")}
                 />
               </div>
             </div>
@@ -448,11 +482,12 @@ export default function AdminEditCompanyPage() {
           <div>
             <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
               <FileText className="text-primary" size={20} />
-              Description
+              {t("adminEditCompany.sections.descriptionTitle")}
             </h3>
             <div>
               <label className="text-gray-400 text-sm mb-2 block">
-                Company Description <span className="text-red-500">*</span>
+                {t("adminEditCompany.form.descriptionLabel")}{" "}
+                <span className="text-red-500">*</span>
               </label>
               <textarea
                 name="description"
@@ -462,7 +497,7 @@ export default function AdminEditCompanyPage() {
                 className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all resize-none ${
                   errors.description ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
                 }`}
-                placeholder="Describe your company..."
+                placeholder={t("adminEditCompany.form.descriptionPlaceholder")}
               />
               {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description}</p>}
             </div>
@@ -474,7 +509,7 @@ export default function AdminEditCompanyPage() {
               to="/admin/companies"
               className="px-6 py-2 text-gray-400 hover:text-white hover:bg-primary/10 rounded-lg transition-all"
             >
-              Cancel
+              {t("adminEditCompany.buttons.cancel")}
             </Link>
             <button
               type="submit"
@@ -484,12 +519,12 @@ export default function AdminEditCompanyPage() {
               {isLoading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-dark border-t-transparent rounded-full animate-spin" />
-                  Updating...
+                  {t("adminEditCompany.buttons.submitting")}
                 </>
               ) : (
                 <>
                   <Save size={18} />
-                  Update Company
+                  {t("adminEditCompany.buttons.submit")}
                 </>
               )}
             </button>

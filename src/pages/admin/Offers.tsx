@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   FileText,
@@ -17,6 +17,7 @@ import {
   Plus,
 } from "lucide-react";
 import Pagination from "@/components/ui/Pagination";
+import { useTranslation } from "react-i18next";
 
 interface Offer {
   id: string;
@@ -43,6 +44,11 @@ export default function AdminOffersPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language === "is" ? "is-IS" : "en-US";
+  const formatCurrency = (value: number) => value.toLocaleString(locale);
+  const formatDate = (value: string | number | Date) =>
+    new Date(value).toLocaleDateString(locale);
 
   // Mock data for admin offers management
   const [offers] = useState<Offer[]>([
@@ -120,6 +126,22 @@ export default function AdminOffersPage() {
     },
   ]);
 
+  const statusTranslationMap: Record<string, string> = {
+    pending: "adminOffers.status.pending",
+    approved: "adminOffers.status.approved",
+    active: "adminOffers.status.active",
+    expired: "adminOffers.status.expired",
+    rejected: "adminOffers.status.rejected",
+    revision: "adminOffers.status.revision",
+  };
+
+  const typeTranslationMap: Record<string, string> = {
+    active: "adminOffers.types.active",
+    weekdays: "adminOffers.types.weekdays",
+    happy_hour: "adminOffers.types.happyHour",
+    gift_card: "adminOffers.types.giftCard",
+  };
+
   const filteredOffers = offers.filter((offer) => {
     const matchesSearch =
       offer.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -147,14 +169,17 @@ export default function AdminOffersPage() {
     setCurrentPage(1);
   };
 
-  const stats = {
-    total: offers.length,
-    active: offers.filter((o) => o.status === "active").length,
-    pending: offers.filter((o) => o.status === "pending").length,
-    totalViews: offers.reduce((sum, o) => sum + o.views, 0),
-    totalPurchases: offers.reduce((sum, o) => sum + o.purchases, 0),
-    totalRevenue: offers.reduce((sum, o) => sum + o.revenue, 0),
-  };
+  const stats = useMemo(
+    () => ({
+      total: offers.length,
+      active: offers.filter((o) => o.status === "active").length,
+      pending: offers.filter((o) => o.status === "pending").length,
+      totalViews: offers.reduce((sum, o) => sum + o.views, 0),
+      totalPurchases: offers.reduce((sum, o) => sum + o.purchases, 0),
+      totalRevenue: offers.reduce((sum, o) => sum + o.revenue, 0),
+    }),
+    [offers]
+  );
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -182,18 +207,8 @@ export default function AdminOffersPage() {
     }
   };
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case "approved":
-        return "Approved";
-      case "rejected":
-        return "Rejected";
-      case "revision":
-        return "Needs Revision";
-      default:
-        return "Pending Review";
-    }
-  };
+  const getStatusText = (status: string) =>
+    t(statusTranslationMap[status] ?? "adminOffers.status.pendingReview");
 
   const getTypeColor = (type: string) => {
     switch (type) {
@@ -210,13 +225,70 @@ export default function AdminOffersPage() {
     }
   };
 
-  const offerStats = {
-    total: offers.length,
-    approved: offers.filter((o) => o.status === "approved").length,
-    pending: offers.filter((o) => o.status === "pending").length,
-    revision: offers.filter((o) => o.status === "revision").length,
-    rejected: offers.filter((o) => o.status === "rejected").length,
-  };
+  const offerStats = useMemo(
+    () => ({
+      total: offers.length,
+      approved: offers.filter((o) => o.status === "approved").length,
+      pending: offers.filter((o) => o.status === "pending").length,
+      revision: offers.filter((o) => o.status === "revision").length,
+      rejected: offers.filter((o) => o.status === "rejected").length,
+    }),
+    [offers]
+  );
+
+  const statusOptions = useMemo<{ value: string; label: string }[]>(
+    () => [
+      { value: "all", label: t("adminOffers.filters.status.all") },
+      { value: "pending", label: t("adminOffers.filters.status.pending") },
+      { value: "approved", label: t("adminOffers.filters.status.approved") },
+      { value: "revision", label: t("adminOffers.filters.status.revision") },
+      { value: "rejected", label: t("adminOffers.filters.status.rejected") },
+    ],
+    [t]
+  );
+
+  const giftCardStats = useMemo(() => {
+    const giftCardOffers = offers.filter((o) => o.type === "gift_card");
+    const purchases = giftCardOffers.reduce((sum, o) => sum + o.purchases, 0);
+    const views = giftCardOffers.reduce((sum, o) => sum + o.views, 0);
+    const conversion =
+      views > 0 ? `${((purchases / views) * 100).toFixed(1)}%` : "0%";
+    return {
+      count: giftCardOffers.length,
+      purchases,
+      views,
+      conversion,
+    };
+  }, [offers]);
+
+  const topCompany = useMemo(() => {
+    const companyStats = offers.reduce((acc, offer) => {
+      acc[offer.companyName] = (acc[offer.companyName] || 0) + offer.revenue;
+      return acc;
+    }, {} as Record<string, number>);
+    return Object.entries(companyStats).sort(
+      ([, a], [, b]) => (b as number) - (a as number)
+    )[0];
+  }, [offers]);
+
+  const typeDistributionText = useMemo(() => {
+    const typeCounts = offers.reduce((acc, offer) => {
+      acc[offer.type] = (acc[offer.type] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    const entries = Object.entries(typeCounts);
+    if (!entries.length) {
+      return t("adminOffers.insights.distribution.empty");
+    }
+    return entries
+      .map(([type, count]) =>
+        t("adminOffers.insights.distribution.item", {
+          count,
+          type: t(typeTranslationMap[type] ?? type),
+        })
+      )
+      .join(", ");
+  }, [offers, t]);
 
   return (
     <div className="space-y-6">
@@ -231,10 +303,10 @@ export default function AdminOffersPage() {
           </Link>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white">
-              Offer Management
+              {t("adminOffers.header.title")}
             </h1>
             <p className="text-gray-400 text-sm">
-              Review and manage all platform offers
+              {t("adminOffers.header.subtitle")}
             </p>
           </div>
         </div>
@@ -243,7 +315,7 @@ export default function AdminOffersPage() {
           className="flex items-center gap-2 px-6 py-3 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all"
         >
           <Plus size={18} />
-          Create Offer
+          {t("adminOffers.header.createButton")}
         </Link>
       </div>
 
@@ -252,7 +324,9 @@ export default function AdminOffersPage() {
         <div className="bg-card-background border border-primary rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Total</p>
+              <p className="text-gray-400 text-sm">
+                {t("adminOffers.stats.total")}
+              </p>
               <p className="text-white text-2xl font-bold">
                 {offerStats.total}
               </p>
@@ -264,7 +338,9 @@ export default function AdminOffersPage() {
         <div className="bg-card-background border border-green rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Approved</p>
+              <p className="text-gray-400 text-sm">
+                {t("adminOffers.stats.approved")}
+              </p>
               <p className="text-white text-2xl font-bold">
                 {offerStats.approved}
               </p>
@@ -276,7 +352,9 @@ export default function AdminOffersPage() {
         <div className="bg-card-background border border-gray-500 rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Pending</p>
+              <p className="text-gray-400 text-sm">
+                {t("adminOffers.stats.pending")}
+              </p>
               <p className="text-white text-2xl font-bold">
                 {offerStats.pending}
               </p>
@@ -288,7 +366,9 @@ export default function AdminOffersPage() {
         <div className="bg-card-background border border-yellow-500 rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Revision</p>
+              <p className="text-gray-400 text-sm">
+                {t("adminOffers.stats.revision")}
+              </p>
               <p className="text-white text-2xl font-bold">
                 {offerStats.revision}
               </p>
@@ -300,7 +380,9 @@ export default function AdminOffersPage() {
         <div className="bg-card-background border border-red-500 rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Rejected</p>
+              <p className="text-gray-400 text-sm">
+                {t("adminOffers.stats.rejected")}
+              </p>
               <p className="text-white text-2xl font-bold">
                 {offerStats.rejected}
               </p>
@@ -321,7 +403,7 @@ export default function AdminOffersPage() {
               />
               <input
                 type="text"
-                placeholder="Search offers..."
+                placeholder={t("adminOffers.filters.searchPlaceholder")}
                 value={searchTerm}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary"
@@ -336,11 +418,11 @@ export default function AdminOffersPage() {
               onChange={(e) => handleFilterChange(e.target.value)}
               className="px-3 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
             >
-              <option value="all">All Status</option>
-              <option value="pending">Pending</option>
-              <option value="approved">Approved</option>
-              <option value="revision">Needs Revision</option>
-              <option value="rejected">Rejected</option>
+              {statusOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -352,10 +434,10 @@ export default function AdminOffersPage() {
           <div className="bg-card-background border border-primary rounded-2xl p-8 text-center">
             <FileText className="mx-auto text-gray-400 mb-4" size={48} />
             <h3 className="text-xl font-bold text-white mb-2">
-              No offers found
+              {t("adminOffers.emptyState.title")}
             </h3>
             <p className="text-gray-400">
-              Try adjusting your search or filter criteria
+              {t("adminOffers.emptyState.description")}
             </p>
           </div>
         ) : (
@@ -377,7 +459,7 @@ export default function AdminOffersPage() {
                       )}`}
                     >
                       <Tag size={12} className="inline mr-1" />
-                      {offer.type}
+                      {t(typeTranslationMap[offer.type] ?? offer.type)}
                     </span>
                     <span
                       className={`px-3 py-1 flex items-center gap-1 rounded-full text-xs font-semibold ${getStatusColor(
@@ -393,36 +475,59 @@ export default function AdminOffersPage() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm mb-4">
                     <div>
-                      <p className="text-gray-400">Company</p>
+                      <p className="text-gray-400">
+                        {t("adminOffers.cards.company")}
+                      </p>
                       <p className="text-white font-medium">{offer.companyName}</p>
                     </div>
                     <div>
-                      <p className="text-gray-400">Price</p>
-                      <p className="text-white font-medium">{offer.discountPrice.toLocaleString()} kr.</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-400">Discount</p>
-                      <p className="text-white font-medium">{offer.discountPercentage}%</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-400">Performance</p>
+                      <p className="text-gray-400">
+                        {t("adminOffers.cards.price")}
+                      </p>
                       <p className="text-white font-medium">
-                        {offer.views} views, {offer.purchases} purchases
+                        {t("adminOffers.values.currency", {
+                          amount: formatCurrency(offer.discountPrice),
+                        })}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-gray-400">
+                        {t("adminOffers.cards.discount")}
+                      </p>
+                      <p className="text-white font-medium">
+                        {t("adminOffers.values.percentage", {
+                          value: offer.discountPercentage,
+                        })}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-gray-400">
+                        {t("adminOffers.cards.performance")}
+                      </p>
+                      <p className="text-white font-medium">
+                        {t("adminOffers.cards.performanceMetrics", {
+                          views: offer.views,
+                          purchases: offer.purchases,
+                        })}
                       </p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                     <div>
-                      <p className="text-gray-400">Created</p>
+                      <p className="text-gray-400">
+                        {t("adminOffers.cards.created")}
+                      </p>
                       <p className="text-white font-medium">
-                        {new Date(offer.createdAt).toLocaleDateString()}
+                        {formatDate(offer.createdAt)}
                       </p>
                     </div>
                     <div>
-                      <p className="text-gray-400">Valid Until</p>
+                      <p className="text-gray-400">
+                        {t("adminOffers.cards.validUntil")}
+                      </p>
                       <p className="text-white font-medium">
-                        {new Date(offer.endDate).toLocaleDateString()}
+                        {formatDate(offer.endDate)}
                       </p>
                     </div>
                   </div>
@@ -432,7 +537,10 @@ export default function AdminOffersPage() {
                       <div className="flex items-center gap-2">
                         <AlertCircle className="text-yellow" size={16} />
                         <span className="text-yellow text-sm">
-                          Revision required (Attempt {offer.revisionCount}/2)
+                          {t("adminOffers.cards.revisionNotice", {
+                            count: offer.revisionCount ?? 0,
+                            total: 2,
+                          })}
                         </span>
                       </div>
                     </div>
@@ -443,7 +551,7 @@ export default function AdminOffersPage() {
                   <Link
                     to={`/admin/offers/${offer.id}`}
                     className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
-                    title="View Offer Details"
+                    title={t("adminOffers.actions.view")}
                   >
                     <Eye size={20} />
                   </Link>
@@ -475,7 +583,9 @@ export default function AdminOffersPage() {
 
       {/* Platform Insights */}
       <div className="bg-card-background border border-primary rounded-2xl p-6">
-        <h3 className="text-lg font-bold text-white mb-4">Platform Insights</h3>
+        <h3 className="text-lg font-bold text-white mb-4">
+          {t("adminOffers.insights.title")}
+        </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
@@ -486,17 +596,13 @@ export default function AdminOffersPage() {
               />
               <div>
                 <h4 className="text-green font-bold mb-1">
-                  Offer Performance
+                  {t("adminOffers.insights.performance.title")}
                 </h4>
                 <p className="text-sm text-gray-300">
-                  Gift cards have the highest conversion rate at{" "}
-                  {offers
-                    .filter((o) => o.type === "gift_card")
-                    .reduce((sum, o) => sum + o.purchases, 0) > 0
-                    ? "16.9%"
-                    : "0%"}{" "}
-                  across {offers.filter((o) => o.type === "gift_card").length}{" "}
-                  active offers.
+                  {t("adminOffers.insights.performance.description", {
+                    conversion: giftCardStats.conversion,
+                    count: giftCardStats.count,
+                  })}
                 </p>
               </div>
             </div>
@@ -507,23 +613,16 @@ export default function AdminOffersPage() {
                 size={20}
               />
               <div>
-                <h4 className="text-blue-500 font-bold mb-1">Top Companies</h4>
+                <h4 className="text-blue-500 font-bold mb-1">
+                  {t("adminOffers.insights.topCompanies.title")}
+                </h4>
                 <p className="text-sm text-gray-300">
-                  {(() => {
-                    const companyStats = offers.reduce((acc, offer) => {
-                      acc[offer.companyName] =
-                        (acc[offer.companyName] || 0) + offer.revenue;
-                      return acc;
-                    }, {} as Record<string, number>);
-                    const topCompany = Object.entries(companyStats).sort(
-                      ([, a], [, b]) => (b as number) - (a as number)
-                    )[0];
-                    return topCompany
-                      ? `${
-                          topCompany[0]
-                        } leads with ${(topCompany[1] as number).toLocaleString()} kr. in revenue.`
-                      : "No data available.";
-                  })()}
+                  {topCompany
+                    ? t("adminOffers.insights.topCompanies.description", {
+                        company: topCompany[0],
+                        revenue: formatCurrency(topCompany[1] as number),
+                      })
+                    : t("adminOffers.insights.topCompanies.empty")}
                 </p>
               </div>
             </div>
@@ -534,22 +633,9 @@ export default function AdminOffersPage() {
               <Tag className="text-purple-500 flex-shrink-0 mt-0.5" size={20} />
               <div>
                 <h4 className="text-purple-500 font-bold mb-1">
-                  Offer Types Distribution
+                  {t("adminOffers.insights.distribution.title")}
                 </h4>
-                <p className="text-sm text-gray-300">
-                  {(() => {
-                    const typeCounts = offers.reduce((acc, offer) => {
-                      acc[offer.type] = (acc[offer.type] || 0) + 1;
-                      return acc;
-                    }, {} as Record<string, number>);
-                    return Object.entries(typeCounts)
-                      .map(
-                        ([type, count]) =>
-                          `${count} ${type.replace("_", " ")} offers`
-                      )
-                      .join(", ");
-                  })()}
-                </p>
+                <p className="text-sm text-gray-300">{typeDistributionText}</p>
               </div>
             </div>
 
@@ -560,15 +646,18 @@ export default function AdminOffersPage() {
               />
               <div>
                 <h4 className="text-orange-500 font-bold mb-1">
-                  Customer Engagement
+                  {t("adminOffers.insights.engagement.title")}
                 </h4>
                 <p className="text-sm text-gray-300">
-                  Total platform engagement: {stats.totalViews.toLocaleString()}{" "}
-                  views, {stats.totalPurchases} purchases,{" "}
-                  {Math.round(
-                    stats.totalRevenue / Math.max(stats.totalPurchases, 1)
-                  ).toLocaleString()}{" "}
-                  kr. average order value.
+                  {t("adminOffers.insights.engagement.description", {
+                    views: stats.totalViews.toLocaleString(locale),
+                    purchases: stats.totalPurchases,
+                    averageOrder: formatCurrency(
+                      Math.round(
+                        stats.totalRevenue / Math.max(stats.totalPurchases, 1)
+                      )
+                    ),
+                  })}
                 </p>
               </div>
             </div>

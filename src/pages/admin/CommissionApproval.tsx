@@ -14,6 +14,7 @@ import {
   Globe,
   AlertCircle,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface ApprovalItemDetails {
   id: string;
@@ -97,6 +98,10 @@ export default function CommissionApprovalPage() {
   const [item, setItem] = useState<ApprovalItemDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [isApproving, setIsApproving] = useState(false);
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language === "is" ? "is-IS" : "en-US";
+  const formatCurrency = (value: number) => value.toLocaleString(locale);
+  const giftCardCommissionRate = 5;
 
   useEffect(() => {
     // Simulate API call
@@ -131,15 +136,15 @@ export default function CommissionApprovalPage() {
   const getTypeText = (offerType?: string) => {
     switch (offerType) {
       case "active":
-        return "Active Offer";
+        return t("adminCommissionApproval.offerTypes.active");
       case "weekdays":
-        return "Weekdays Offer";
+        return t("adminCommissionApproval.offerTypes.weekdays");
       case "happy_hour":
-        return "Happy Hour";
+        return t("adminCommissionApproval.offerTypes.happyHour");
       case "gift_card":
-        return "Gift Card";
+        return t("adminCommissionApproval.offerTypes.giftCard");
       default:
-        return "Offer";
+        return t("adminCommissionApproval.offerTypes.default");
     }
   };
 
@@ -147,10 +152,10 @@ export default function CommissionApprovalPage() {
   const calculateCommission = () => {
     if (!item || item.type === "company") {
       return {
-        type: "Company Registration",
+        type: t("adminCommissionApproval.commission.company.type"),
         commission: 0,
-        description: "No commission for company registration",
-        breakdown: []
+        description: t("adminCommissionApproval.commission.company.description"),
+        breakdown: [],
       };
     }
 
@@ -158,14 +163,16 @@ export default function CommissionApprovalPage() {
       return {
         type: getTypeText(item.offerType),
         commission: 0,
-        description: "Commission will be calculated after approval",
-        breakdown: []
+        description: t("adminCommissionApproval.commission.pending.description"),
+        breakdown: [],
       };
     }
 
     const start = new Date(item.startDate);
     const end = new Date(item.endDate);
-    const daysDiff = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+    const daysDiff = Math.ceil(
+      (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+    );
     const weeksDiff = Math.ceil(daysDiff / 7);
     const monthsDiff = Math.ceil(daysDiff / 30);
 
@@ -174,60 +181,194 @@ export default function CommissionApprovalPage() {
     let breakdown: Array<{ label: string; value: string }> = [];
 
     switch (item.offerType) {
-      case "active":
-        const activeDays = Math.min(daysDiff, 30);
-        commission = activeDays * 1;
-        description = `${activeDays} days × 1 kr. per day`;
-        breakdown = [
-          { label: "Duration", value: `${daysDiff} days` },
-          { label: "Rate", value: "1 kr. per day" },
-          { label: "Max Duration", value: "30 days (capped)" },
-          { label: "Billable Days", value: `${activeDays} days` }
-        ];
-        if (daysDiff > 30) {
-          description += ` (capped at 30 days)`;
+      case "active": {
+        const rate = 1;
+        const maxDays = 30;
+        const activeDays = Math.min(daysDiff, maxDays);
+        commission = activeDays * rate;
+        description = t(
+          "adminCommissionApproval.commission.active.description",
+          {
+            days: activeDays,
+            rate,
+          }
+        );
+        if (daysDiff > maxDays) {
+          description += ` ${t(
+            "adminCommissionApproval.commission.active.cappedNote",
+            { max: maxDays }
+          )}`;
         }
-        break;
-      case "weekdays":
-        commission = weeksDiff * 4;
-        description = `${weeksDiff} weeks × 4 kr. per week`;
         breakdown = [
-          { label: "Duration", value: `${daysDiff} days (${weeksDiff} weeks)` },
-          { label: "Rate", value: "4 kr. per week" },
-          { label: "Total Weeks", value: `${weeksDiff} weeks` }
+          {
+            label: t("adminCommissionApproval.breakdownLabels.duration"),
+            value: t("adminCommissionApproval.breakdownValues.durationDays", {
+              count: daysDiff,
+            }),
+          },
+          {
+            label: t("adminCommissionApproval.breakdownLabels.rate"),
+            value: t("adminCommissionApproval.breakdownValues.ratePerDay", {
+              amount: rate,
+            }),
+          },
+          {
+            label: t("adminCommissionApproval.breakdownLabels.maxDuration"),
+            value: t("adminCommissionApproval.breakdownValues.maxDuration", {
+              count: maxDays,
+            }),
+          },
+          {
+            label: t("adminCommissionApproval.breakdownLabels.billableDays"),
+            value: t(
+              "adminCommissionApproval.breakdownValues.billableDays",
+              { count: activeDays }
+            ),
+          },
         ];
         break;
-      case "happy_hour":
-        commission = monthsDiff * 10;
-        description = `${monthsDiff} months × 10 kr. per month`;
+      }
+      case "weekdays": {
+        const rate = 4;
+        commission = weeksDiff * rate;
+        description = t(
+          "adminCommissionApproval.commission.weekdays.description",
+          {
+            weeks: weeksDiff,
+            rate,
+          }
+        );
         breakdown = [
-          { label: "Duration", value: `${daysDiff} days (${monthsDiff} months)` },
-          { label: "Rate", value: "10 kr. per month" },
-          { label: "Total Months", value: `${monthsDiff} months` }
+          {
+            label: t("adminCommissionApproval.breakdownLabels.duration"),
+            value: t(
+              "adminCommissionApproval.breakdownValues.durationDaysWeeks",
+              { days: daysDiff, weeks: weeksDiff }
+            ),
+          },
+          {
+            label: t("adminCommissionApproval.breakdownLabels.rate"),
+            value: t("adminCommissionApproval.breakdownValues.ratePerWeek", {
+              amount: rate,
+            }),
+          },
+          {
+            label: t("adminCommissionApproval.breakdownLabels.totalWeeks"),
+            value: t("adminCommissionApproval.breakdownValues.totalWeeks", {
+              count: weeksDiff,
+            }),
+          },
         ];
         break;
-      case "gift_card":
+      }
+      case "happy_hour": {
+        const rate = 10;
+        commission = monthsDiff * rate;
+        description = t(
+          "adminCommissionApproval.commission.happyHour.description",
+          {
+            months: monthsDiff,
+            rate,
+          }
+        );
+        breakdown = [
+          {
+            label: t("adminCommissionApproval.breakdownLabels.duration"),
+            value: t(
+              "adminCommissionApproval.breakdownValues.durationDaysMonths",
+              { days: daysDiff, months: monthsDiff }
+            ),
+          },
+          {
+            label: t("adminCommissionApproval.breakdownLabels.rate"),
+            value: t(
+              "adminCommissionApproval.breakdownValues.ratePerMonth",
+              { amount: rate }
+            ),
+          },
+          {
+            label: t("adminCommissionApproval.breakdownLabels.totalMonths"),
+            value: t(
+              "adminCommissionApproval.breakdownValues.totalMonths",
+              { count: monthsDiff }
+            ),
+          },
+        ];
+        break;
+      }
+      case "gift_card": {
+        const commissionRate = giftCardCommissionRate;
         if (item.discountPrice) {
-          commission = Math.round(item.discountPrice * 0.05);
-          description = `${item.discountPrice.toLocaleString()} kr. × 5%`;
+          commission = Math.round(item.discountPrice * (commissionRate / 100));
+          description = t(
+            "adminCommissionApproval.commission.giftCard.descriptionWithValue",
+            {
+              value: formatCurrency(item.discountPrice),
+              percent: commissionRate,
+            }
+          );
           breakdown = [
-            { label: "Gift Card Value", value: `${item.discountPrice.toLocaleString()} kr.` },
-            { label: "Commission Rate", value: "5% per sale" },
-            { label: "Commission per Sale", value: `${commission.toLocaleString()} kr.` }
+            {
+              label: t(
+                "adminCommissionApproval.breakdownLabels.giftCardValue"
+              ),
+              value: t(
+                "adminCommissionApproval.breakdownValues.giftCardValue",
+                { amount: formatCurrency(item.discountPrice) }
+              ),
+            },
+            {
+              label: t(
+                "adminCommissionApproval.breakdownLabels.commissionRate"
+              ),
+              value: t(
+                "adminCommissionApproval.breakdownValues.commissionRatePercent",
+                { percent: commissionRate }
+              ),
+            },
+            {
+              label: t(
+                "adminCommissionApproval.breakdownLabels.commissionPerSale"
+              ),
+              value: t(
+                "adminCommissionApproval.breakdownValues.commissionPerSale",
+                { amount: formatCurrency(commission) }
+              ),
+            },
           ];
         } else {
           commission = 0;
-          description = "Commission calculated per sale (5% of sale amount)";
+          description = t(
+            "adminCommissionApproval.commission.giftCard.description",
+            { percent: commissionRate }
+          );
           breakdown = [
-            { label: "Commission Rate", value: "5% per sale" },
-            { label: "Note", value: "Calculated when gift card is sold" }
+            {
+              label: t(
+                "adminCommissionApproval.breakdownLabels.commissionRate"
+              ),
+              value: t(
+                "adminCommissionApproval.breakdownValues.commissionRatePercent",
+                { percent: commissionRate }
+              ),
+            },
+            {
+              label: t("adminCommissionApproval.breakdownLabels.note"),
+              value: t(
+                "adminCommissionApproval.breakdownValues.noteGiftCard"
+              ),
+            },
           ];
         }
         break;
-      default:
+      }
+      default: {
         commission = 0;
-        description = "No commission structure defined";
+        description = t(
+          "adminCommissionApproval.commission.default.description"
+        );
         breakdown = [];
+      }
     }
 
     return {
@@ -235,7 +376,7 @@ export default function CommissionApprovalPage() {
       commission,
       description,
       breakdown,
-      duration: daysDiff
+      duration: daysDiff,
     };
   };
 
@@ -281,25 +422,27 @@ export default function CommissionApprovalPage() {
           </Link>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-              Item Not Found
+              {t("adminCommissionApproval.notFound.title")}
             </h1>
           </div>
         </div>
         <div className="bg-card-background border border-primary rounded-2xl p-6 text-center">
-          <p className="text-gray-400">The requested approval item could not be found.</p>
+          <p className="text-gray-400">
+            {t("adminCommissionApproval.notFound.description")}
+          </p>
         </div>
       </div>
     );
   }
 
   const weekdayMap: Record<string, string> = {
-    "monday": "Monday",
-    "tuesday": "Tuesday",
-    "wednesday": "Wednesday",
-    "thursday": "Thursday",
-    "friday": "Friday",
-    "saturday": "Saturday",
-    "sunday": "Sunday"
+    monday: t("adminCommissionApproval.weekdays.monday"),
+    tuesday: t("adminCommissionApproval.weekdays.tuesday"),
+    wednesday: t("adminCommissionApproval.weekdays.wednesday"),
+    thursday: t("adminCommissionApproval.weekdays.thursday"),
+    friday: t("adminCommissionApproval.weekdays.friday"),
+    saturday: t("adminCommissionApproval.weekdays.saturday"),
+    sunday: t("adminCommissionApproval.weekdays.sunday"),
   };
 
   return (
@@ -314,10 +457,10 @@ export default function CommissionApprovalPage() {
         </Link>
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-white">
-            Final Approval & Commission Summary
+            {t("adminCommissionApproval.title")}
           </h1>
           <p className="text-gray-400 text-sm">
-            Review offer details and commission before final approval
+            {t("adminCommissionApproval.subtitle")}
           </p>
         </div>
       </div>
@@ -362,7 +505,7 @@ export default function CommissionApprovalPage() {
                 <div className="bg-card-background border border-primary rounded-2xl p-6">
                   <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <Building2 className="text-primary" size={20} />
-                    Company
+                    {t("adminCommissionApproval.sections.company")}
                   </h3>
                   <div className="bg-background rounded-lg p-4">
                     <p className="text-white text-lg font-semibold">{item.companyName}</p>
@@ -375,20 +518,38 @@ export default function CommissionApprovalPage() {
                 <div className="bg-card-background border border-primary rounded-2xl p-6">
                   <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <DollarSign className="text-primary" size={20} />
-                    Pricing Information
+                    {t("adminCommissionApproval.sections.pricing")}
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="bg-background rounded-lg p-4">
-                      <p className="text-gray-400 text-sm mb-1">Original Price</p>
-                      <p className="text-white text-xl font-bold">{item.originalPrice.toLocaleString()} kr.</p>
+                      <p className="text-gray-400 text-sm mb-1">
+                        {t("adminCommissionApproval.fields.originalPrice")}
+                      </p>
+                      <p className="text-white text-xl font-bold">
+                        {t("adminCommissionApproval.values.currency", {
+                          amount: formatCurrency(item.originalPrice),
+                        })}
+                      </p>
                     </div>
                     <div className="bg-background rounded-lg p-4">
-                      <p className="text-gray-400 text-sm mb-1">Discounted Price</p>
-                      <p className="text-green text-xl font-bold">{item.discountPrice.toLocaleString()} kr.</p>
+                      <p className="text-gray-400 text-sm mb-1">
+                        {t("adminCommissionApproval.fields.discountedPrice")}
+                      </p>
+                      <p className="text-green text-xl font-bold">
+                        {t("adminCommissionApproval.values.currency", {
+                          amount: formatCurrency(item.discountPrice),
+                        })}
+                      </p>
                     </div>
                     <div className="bg-background rounded-lg p-4">
-                      <p className="text-gray-400 text-sm mb-1">Discount</p>
-                      <p className="text-primary text-xl font-bold">{item.discountPercentage}% OFF</p>
+                      <p className="text-gray-400 text-sm mb-1">
+                        {t("adminCommissionApproval.fields.discount")}
+                      </p>
+                      <p className="text-primary text-xl font-bold">
+                        {t("adminCommissionApproval.values.discountPercent", {
+                          percent: item.discountPercentage,
+                        })}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -399,26 +560,30 @@ export default function CommissionApprovalPage() {
                 <div className="bg-card-background border border-primary rounded-2xl p-6">
                   <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <Calendar className="text-primary" size={20} />
-                    Offer Duration
+                    {t("adminCommissionApproval.sections.offerDuration")}
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="bg-background rounded-lg p-4">
-                      <p className="text-gray-400 text-sm mb-1">Start Date</p>
+                      <p className="text-gray-400 text-sm mb-1">
+                        {t("adminCommissionApproval.fields.startDate")}
+                      </p>
                       <p className="text-white text-lg font-semibold">
-                        {new Date(item.startDate).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
+                        {new Date(item.startDate).toLocaleDateString(locale, {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
                         })}
                       </p>
                     </div>
                     <div className="bg-background rounded-lg p-4">
-                      <p className="text-gray-400 text-sm mb-1">End Date</p>
+                      <p className="text-gray-400 text-sm mb-1">
+                        {t("adminCommissionApproval.fields.endDate")}
+                      </p>
                       <p className="text-white text-lg font-semibold">
-                        {new Date(item.endDate).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
+                        {new Date(item.endDate).toLocaleDateString(locale, {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
                         })}
                       </p>
                     </div>
@@ -432,12 +597,14 @@ export default function CommissionApprovalPage() {
                 <div className="bg-card-background border border-primary rounded-2xl p-6">
                   <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <Clock className="text-primary" size={20} />
-                    Weekdays Details
+                    {t("adminCommissionApproval.sections.weekdays")}
                   </h3>
                   <div className="space-y-4">
                     {item.weekdays && item.weekdays.length > 0 && (
                       <div>
-                        <p className="text-gray-400 text-sm mb-2">Available Days</p>
+                        <p className="text-gray-400 text-sm mb-2">
+                          {t("adminCommissionApproval.fields.availableDays")}
+                        </p>
                         <div className="flex flex-wrap gap-2">
                           {item.weekdays.map(day => (
                             <span key={day} className="px-3 py-1 bg-green/10 text-green border border-green rounded-lg text-sm">
@@ -449,7 +616,9 @@ export default function CommissionApprovalPage() {
                     )}
                     {item.startTime && item.endTime && (
                       <div>
-                        <p className="text-gray-400 text-sm mb-2">Time Range</p>
+                        <p className="text-gray-400 text-sm mb-2">
+                          {t("adminCommissionApproval.fields.timeRange")}
+                        </p>
                         <p className="text-white text-lg font-semibold">{item.startTime} - {item.endTime}</p>
                       </div>
                     )}
@@ -457,7 +626,7 @@ export default function CommissionApprovalPage() {
                       <div>
                         <p className="text-gray-400 text-sm mb-2 flex items-center gap-2">
                           <MapPin size={16} />
-                          Location
+                          {t("adminCommissionApproval.fields.location")}
                         </p>
                         <p className="text-white text-lg font-semibold">{item.weekdayAddress}</p>
                       </div>
@@ -470,12 +639,14 @@ export default function CommissionApprovalPage() {
                 <div className="bg-card-background border border-primary rounded-2xl p-6">
                   <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <Clock className="text-primary" size={20} />
-                    Happy Hour Details
+                    {t("adminCommissionApproval.sections.happyHour")}
                   </h3>
                   <div className="space-y-4">
                     {item.startTime && item.endTime && (
                       <div>
-                        <p className="text-gray-400 text-sm mb-2">Time Range</p>
+                        <p className="text-gray-400 text-sm mb-2">
+                          {t("adminCommissionApproval.fields.timeRange")}
+                        </p>
                         <p className="text-white text-lg font-semibold">{item.startTime} - {item.endTime}</p>
                       </div>
                     )}
@@ -483,7 +654,7 @@ export default function CommissionApprovalPage() {
                       <div>
                         <p className="text-gray-400 text-sm mb-2 flex items-center gap-2">
                           <MapPin size={16} />
-                          Location
+                          {t("adminCommissionApproval.fields.location")}
                         </p>
                         <p className="text-white text-lg font-semibold">{item.location}</p>
                       </div>
@@ -497,18 +668,22 @@ export default function CommissionApprovalPage() {
                 <div className="bg-card-background border border-primary rounded-2xl p-6">
                   <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <FileText className="text-primary" size={20} />
-                    Additional Information
+                    {t("adminCommissionApproval.sections.additional")}
                   </h3>
                   <div className="space-y-4">
                     {item.terms && (
                       <div>
-                        <p className="text-gray-400 text-sm mb-2">Terms & Conditions</p>
+                        <p className="text-gray-400 text-sm mb-2">
+                          {t("adminCommissionApproval.fields.terms")}
+                        </p>
                         <p className="text-gray-300">{item.terms}</p>
                       </div>
                     )}
                     {item.offerLink && (
                       <div>
-                        <p className="text-gray-400 text-sm mb-2">Offer Link</p>
+                        <p className="text-gray-400 text-sm mb-2">
+                          {t("adminCommissionApproval.fields.offerLink")}
+                        </p>
                         <a
                           href={item.offerLink}
                           target="_blank"
@@ -526,7 +701,9 @@ export default function CommissionApprovalPage() {
             </>
           ) : (
             <div className="bg-card-background border border-primary rounded-2xl p-6">
-              <p className="text-gray-400">Company approvals do not require commission calculation.</p>
+              <p className="text-gray-400">
+                {t("adminCommissionApproval.messages.companyNoCommission")}
+              </p>
             </div>
           )}
         </div>
@@ -536,23 +713,30 @@ export default function CommissionApprovalPage() {
           <div className="bg-card-background border border-primary rounded-2xl p-6">
             <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
               <DollarSign className="text-primary" size={20} />
-              Commission Summary
+              {t("adminCommissionApproval.commissionSummary.title")}
             </h3>
             
             {commissionInfo && (
               <div className="space-y-4">
                 <div className="bg-background rounded-lg p-4">
-                  <p className="text-gray-400 text-sm mb-1">Offer Type</p>
+                  <p className="text-gray-400 text-sm mb-1">
+                    {t("adminCommissionApproval.commissionSummary.offerType")}
+                  </p>
                   <p className="text-white text-lg font-semibold">{commissionInfo.type}</p>
                 </div>
 
                 {commissionInfo.breakdown.length > 0 && (
                   <div className="space-y-2">
-                    <p className="text-gray-400 text-sm font-semibold">Calculation Breakdown</p>
-                    {commissionInfo.breakdown.map((item, index) => (
-                      <div key={index} className="flex items-center justify-between bg-background rounded-lg p-3">
-                        <span className="text-gray-300 text-sm">{item.label}</span>
-                        <span className="text-white font-medium text-sm">{item.value}</span>
+                    <p className="text-gray-400 text-sm font-semibold">
+                      {t("adminCommissionApproval.commissionSummary.breakdown")}
+                    </p>
+                    {commissionInfo.breakdown.map((entry, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between bg-background rounded-lg p-3"
+                      >
+                        <span className="text-gray-300 text-sm">{entry.label}</span>
+                        <span className="text-white font-medium text-sm">{entry.value}</span>
                       </div>
                     ))}
                   </div>
@@ -560,16 +744,22 @@ export default function CommissionApprovalPage() {
 
                 <div className="border-t border-primary/30 pt-4">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-gray-400">Commission Calculation</span>
+                    <span className="text-gray-400">
+                      {t("adminCommissionApproval.commissionSummary.calculation")}
+                    </span>
                   </div>
                   <p className="text-gray-300 text-sm mb-3">{commissionInfo.description}</p>
                   <div className="bg-primary/10 border border-primary rounded-lg p-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-white font-semibold">Total Commission</span>
+                      <span className="text-white font-semibold">
+                        {t("adminCommissionApproval.commissionSummary.total")}
+                      </span>
                       <span className="text-primary text-2xl font-bold">
-                        {commissionInfo.commission > 0 
-                          ? `${commissionInfo.commission.toLocaleString()} kr.`
-                          : "N/A"}
+                        {commissionInfo.commission > 0
+                          ? t("adminCommissionApproval.values.currency", {
+                              amount: formatCurrency(commissionInfo.commission),
+                            })
+                          : t("adminCommissionApproval.commissionSummary.notAvailable")}
                       </span>
                     </div>
                   </div>
@@ -580,7 +770,9 @@ export default function CommissionApprovalPage() {
                     <div className="flex items-start gap-2">
                       <AlertCircle className="text-blue-500 flex-shrink-0 mt-0.5" size={16} />
                       <p className="text-blue-500 text-xs">
-                        Commission will be calculated per sale (5% of each gift card sale amount)
+                        {t("adminCommissionApproval.alerts.giftCardPending", {
+                          percent: giftCardCommissionRate,
+                        })}
                       </p>
                     </div>
                   </div>
@@ -591,7 +783,9 @@ export default function CommissionApprovalPage() {
 
           {/* Action Buttons */}
           <div className="bg-card-background border border-primary rounded-2xl p-6">
-            <h3 className="text-lg font-bold text-white mb-4">Actions</h3>
+          <h3 className="text-lg font-bold text-white mb-4">
+            {t("adminCommissionApproval.actions.title")}
+          </h3>
             <div className="space-y-3">
               <button
                 onClick={handleFinalApproval}
@@ -601,12 +795,12 @@ export default function CommissionApprovalPage() {
                 {isApproving ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Approving...
+                  {t("adminCommissionApproval.actions.approving")}
                   </>
                 ) : (
                   <>
                     <CheckCircle size={18} />
-                    Final Approval
+                  {t("adminCommissionApproval.actions.approve")}
                   </>
                 )}
               </button>
@@ -615,7 +809,7 @@ export default function CommissionApprovalPage() {
                 className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-500 text-white font-semibold rounded-lg hover:bg-gray-600 transition-all"
               >
                 <XCircle size={18} />
-                Cancel
+              {t("adminCommissionApproval.actions.cancel")}
               </Link>
             </div>
           </div>

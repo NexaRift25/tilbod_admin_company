@@ -247,6 +247,811 @@
       "panelButton": "Admin Panel"
     }
   },
+  "adminDashboard": {
+    "header": {
+      "title": "Welcome back, {{name}}! 👋",
+      "subtitle": "Manage the platform and oversee all company registrations and offers"
+    },
+    "stats": {
+      "pendingApprovals": {
+        "label": "Pending Approvals",
+        "change": "Review in 30 min"
+      },
+      "totalCompanies": {
+        "label": "Total Companies",
+        "change": "+12 this month"
+      },
+      "activeOffers": {
+        "label": "Active Offers",
+        "change": "+28 this week"
+      },
+      "platformRevenue": {
+        "label": "Platform Revenue",
+        "change": "+15%"
+      }
+    },
+    "approvalQueue": {
+      "title": "Approval Queue",
+      "badge": "30 min SLA",
+      "reviewAll": "Review All"
+    },
+    "pendingItems": {
+      "type": {
+        "company": "Company",
+        "offer": "Offer"
+      },
+      "urgent": "Urgent",
+      "submittedAt": "Submitted {{time}}",
+      "timeRemaining": "{{count}} min left",
+      "reviewButton": "Review",
+      "items": {
+        "nordicSpa": {
+          "time": "5 minutes ago"
+        },
+        "christmasSpecial": {
+          "time": "12 minutes ago"
+        },
+        "reykjavikBar": {
+          "time": "20 minutes ago"
+        }
+      }
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "viewAll": "View All",
+      "actions": {
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "revision": "Revision Requested"
+      },
+      "type": {
+        "company": "Company",
+        "offer": "Offer"
+      },
+      "times": {
+        "blueLagoon": "2 hours ago",
+        "invalidPricing": "3 hours ago",
+        "mountainResort": "5 hours ago"
+      }
+    }
+  },
+  "adminApproval": {
+    "title": "Approval Queue",
+    "subtitle": "Review pending companies and offers (30-minute SLA)",
+    "actions": {
+      "refresh": "Refresh approvals",
+      "view": "View details",
+      "approve": "Approve",
+      "reject": "Reject",
+      "revision": "Request revision"
+    },
+    "stats": {
+      "total": "Total Pending",
+      "urgent": "Urgent",
+      "high": "High Priority",
+      "overdue": "Overdue"
+    },
+    "filters": {
+      "searchPlaceholder": "Search approvals...",
+      "types": {
+        "all": "All Types"
+      },
+      "priority": {
+        "all": "All Priorities"
+      }
+    },
+    "types": {
+      "company": "Company",
+      "offer": "Offer"
+    },
+    "priority": {
+      "urgent": "Urgent",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "sla": {
+      "badge": "{{time}} left",
+      "urgent": "URGENT: Only {{time}} remaining!",
+      "warning": "Warning: Only {{time}} remaining!",
+      "expired": "EXPIRED: Review time has exceeded 30 minutes!"
+    },
+    "details": {
+      "type": "Type",
+      "company": "Company",
+      "submittedBy": "Submitted By",
+      "submittedAt": "Submitted",
+      "category": "Category",
+      "description": "Description"
+    },
+    "empty": {
+      "title": "No pending approvals",
+      "description": "All items have been reviewed or no items match your current filters"
+    },
+    "pagination": {
+      "summary": "Showing {{start}}-{{end}} of {{total}} approvals"
+    },
+    "slaPanel": {
+      "title": "30-Minute SLA Requirement",
+      "description": "All approval requests must be reviewed within 30 minutes of submission. Items marked as urgent require immediate attention to maintain service quality."
+    },
+    "common": {
+      "cancel": "Cancel"
+    },
+    "rejectModal": {
+      "title": "Reject {{type}}",
+      "fallbackTitle": "Reject Item",
+      "reasonLabel": "Rejection Reason",
+      "reasonPlaceholder": "Select a reason...",
+      "notesLabel": "Additional Notes (Optional)",
+      "notesPlaceholder": "Add any additional information about the rejection...",
+      "notice": {
+        "title": "Important",
+        "description": "The {{type}} will be rejected and an email notification will be sent to {{name}} with the rejection reason."
+      },
+      "actions": {
+        "rejecting": "Rejecting...",
+        "confirm": "Confirm Rejection"
+      },
+      "success": "{{type}} rejected successfully"
+    },
+    "revisionModal": {
+      "title": "Request Revision - {{type}}",
+      "fallbackTitle": "Request Revision",
+      "commentLabel": "Revision Comments",
+      "commentPlaceholder": "Please provide detailed comments about what needs to be revised. Be specific about the changes required...",
+      "characterCount": "{{count}} characters",
+      "actions": {
+        "requesting": "Requesting...",
+        "submit": "Request Revision"
+      },
+      "notice": {
+        "title": "Important",
+        "description": "The {{type}} will be sent back for revision. An email notification will be sent to {{name}} with your comments. They will be able to make the requested changes and resubmit."
+      },
+      "success": "{{type}} revision requested successfully. The submitter will be notified."
+    },
+    "detailsPage": {
+      "notFound": {
+        "title": "Item Not Found",
+        "description": "The requested approval item could not be found."
+      },
+      "header": {
+        "subtitle": "{{type}} approval request"
+      },
+      "priorityBadge": "{{priority}} priority",
+      "submittedByLabel": "Submitted by:",
+      "submittedAtLabel": "Submitted:",
+      "submittedAt": "{{date}} at {{time}}",
+      "company": {
+        "infoTitle": "Company Information",
+        "nameLabel": "Company Name",
+        "categoryLabel": "Category",
+        "registrationLabel": "Registration Number",
+        "taxIdLabel": "Tax ID",
+        "contactTitle": "Contact Information",
+        "addressLabel": "Address",
+        "phoneLabel": "Phone",
+        "emailLabel": "Email",
+        "websiteLabel": "Website",
+        "descriptionTitle": "Description"
+      },
+      "offer": {
+        "companyTitle": "Company",
+        "pricingTitle": "Pricing Information",
+        "originalPrice": "Original Price",
+        "discountPrice": "Discounted Price",
+        "discountLabel": "Discount",
+        "durationTitle": "Offer Duration",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "weekdayTitle": "Weekdays Details",
+        "availableDays": "Available Days",
+        "timeRange": "Time Range",
+        "location": "Location",
+        "happyHourTitle": "Happy Hour Details",
+        "additionalTitle": "Additional Information",
+        "terms": "Terms & Conditions",
+        "link": "Offer Link"
+      },
+      "sidebar": {
+        "statusTitle": "Status & Priority",
+        "statusLabel": "Status",
+        "pending": "Pending Review",
+        "priorityLabel": "Priority",
+        "timeRemainingLabel": "Time Remaining",
+        "submittedByLabel": "Submitted By",
+        "submittedLabel": "Submitted",
+        "actionsTitle": "Actions",
+        "slaTitles": {
+          "expired": "SLA EXPIRED",
+          "urgent": "URGENT: SLA Deadline Approaching",
+          "warning": "SLA Deadline Warning"
+        },
+        "slaMessages": {
+          "expired": "This item has exceeded the 30-minute SLA requirement. Please review immediately.",
+          "remaining": "This item must be reviewed within {{time}} to meet the 30-minute SLA requirement."
+        }
+      },
+      "weekdays": {
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
+      }
+    },
+    "offerTypes": {
+      "active": "Active Offer",
+      "weekdays": "Weekdays Offer",
+      "happyHour": "Happy Hour",
+      "giftCard": "Gift Card",
+      "default": "Offer"
+    }
+  },
+  "adminCompanies": {
+    "title": "Company Management",
+    "subtitle": "Manage and review all company registrations",
+    "actions": {
+      "create": "Create Company",
+      "viewDetails": "View Details",
+      "edit": "Edit Company"
+    },
+    "stats": {
+      "total": "Total",
+      "approved": "Approved",
+      "pending": "Pending",
+      "revision": "Needs Revision",
+      "rejected": "Rejected"
+    },
+    "filters": {
+      "searchPlaceholder": "Search companies...",
+      "status": {
+        "all": "All Status",
+        "pending": "Pending",
+        "approved": "Approved",
+        "revision": "Needs Revision",
+        "rejected": "Rejected"
+      }
+    },
+    "statusLabels": {
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "revision": "Needs Revision",
+      "pending": "Pending",
+      "pendingReview": "Pending Review"
+    },
+    "emptyState": {
+      "title": "No companies found",
+      "description": "Try adjusting your search or filter criteria"
+    },
+    "companyCard": {
+      "category": "Category",
+      "owner": "Owner",
+      "registration": "Registration #",
+      "offers": "Offers",
+      "offersActive": "{{count}} active",
+      "email": "Email",
+      "phone": "Phone",
+      "registered": "Registered",
+      "revisionNotice": "Revision required (Attempt {{count}}/3)"
+    },
+    "insights": {
+      "title": "Company Insights",
+      "distribution": {
+        "title": "Company Distribution",
+        "description": "{{approved}} approved companies, {{pending}} pending, and {{revision}} in revision."
+      },
+      "approvalRate": {
+        "title": "Approval Rate",
+        "description": "{{approved}} approved out of {{total}} total companies ({{rate}}% approval rate)."
+      },
+      "status": {
+        "title": "Company Status",
+        "description": "{{approved}} approved, {{rejected}} rejected companies."
+      },
+      "totalOffers": {
+        "title": "Total Offers",
+        "description": "Companies have created {{count}} total offers across all registered companies."
+      }
+    }
+  },
+  "adminCompanyDetails": {
+    "notFound": {
+      "title": "Company Not Found",
+      "description": "The company you're looking for doesn't exist."
+    },
+    "header": {
+      "subtitle": "Company details and customer management",
+      "editButton": "Edit Company"
+    },
+    "status": {
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "revision": "Needs Revision",
+      "pending": "Pending",
+      "pendingReview": "Pending Review"
+    },
+    "statusBanner": {
+      "label": "Status: {{status}}",
+      "revisionAttempt": "Revision attempt {{count}} of {{total}}"
+    },
+    "companyInfo": {
+      "title": "Company Information",
+      "category": "Category",
+      "registrationNumber": "Registration Number",
+      "taxId": "Tax ID",
+      "registeredDate": "Registered Date",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "owner": "Owner"
+    },
+    "customers": {
+      "title": "Customer List",
+      "subtitle": "{{count}} customer",
+      "subtitle_plural": "{{count}} customers",
+      "addButton": "Add Customer",
+      "searchPlaceholder": "Search customers...",
+      "empty": {
+        "title": "No customers found",
+        "search": "Try adjusting your search",
+        "default": "Add your first customer to get started"
+      },
+      "purchases": "{{count}} purchase",
+      "purchases_plural": "{{count}} purchases",
+      "spent": "{{amount}} kr. spent",
+      "notesLabel": "Notes:",
+      "editTooltip": "Edit Customer",
+      "deleteTooltip": "Delete Customer"
+    },
+    "quickStats": {
+      "title": "Quick Stats",
+      "totalCustomers": "Total Customers",
+      "activeOffers": "Active Offers",
+      "totalPurchases": "Total Purchases",
+      "totalRevenue": "Total Revenue"
+    },
+    "modals": {
+      "addCustomerTitle": "Add New Customer",
+      "editCustomerTitle": "Edit Customer",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "addCustomer": "Add Customer",
+      "updateCustomer": "Update Customer"
+    },
+    "form": {
+      "firstNameLabel": "First Name",
+      "firstNamePlaceholder": "John",
+      "lastNameLabel": "Last Name",
+      "lastNamePlaceholder": "Doe",
+      "emailLabel": "Email",
+      "emailPlaceholder": "customer@example.com",
+      "phoneLabel": "Phone",
+      "phonePlaceholder": "+354 555 1234",
+      "addressLabel": "Address",
+      "addressPlaceholder": "Street address, City",
+      "notesLabel": "Notes",
+      "notesPlaceholder": "Additional notes about this customer..."
+    },
+    "deleteModal": {
+      "title": "Delete Customer",
+      "warning": "This action cannot be undone",
+      "description": "Are you sure you want to delete {{name}}? This will remove all customer information from this company.",
+      "cancel": "Cancel",
+      "confirm": "Delete Customer"
+    },
+    "values": {
+      "currency": "{{amount}} kr."
+    }
+  },
+  "adminEditCompany": {
+    "notFound": {
+      "title": "Company Not Found",
+      "description": "The company you're looking for doesn't exist."
+    },
+    "header": {
+      "title": "Edit Company",
+      "subtitle": "Update company information"
+    },
+    "statusBanner": {
+      "label": "Status: {{status}}",
+      "revisionAttempt": "Revision attempt {{count}} of {{total}}"
+    },
+    "sections": {
+      "companyInfoTitle": "Company Information",
+      "contactInfoTitle": "Contact Information",
+      "descriptionTitle": "Description"
+    },
+    "form": {
+      "companyNameLabel": "Company Name",
+      "companyNamePlaceholder": "Enter company name",
+      "categoryLabel": "Category",
+      "categoryPlaceholder": "Select category",
+      "registrationLabel": "Registration Number",
+      "registrationPlaceholder": "Enter registration number",
+      "taxIdLabel": "Tax ID",
+      "taxIdPlaceholder": "Enter tax ID",
+      "emailLabel": "Email",
+      "emailPlaceholder": "company@example.com",
+      "phoneLabel": "Phone",
+      "phonePlaceholder": "+354 555 1234",
+      "addressLabel": "Address",
+      "addressPlaceholder": "Street address, City",
+      "websiteLabel": "Website",
+      "websitePlaceholder": "https://company.com",
+      "descriptionLabel": "Company Description",
+      "descriptionPlaceholder": "Describe your company..."
+    },
+    "categories": {
+      "foodDining": "Food & Dining",
+      "hotelsAccommodation": "Hotels & Accommodation",
+      "wellnessSpa": "Wellness & Spa",
+      "activitiesEntertainment": "Activities & Entertainment",
+      "shoppingRetail": "Shopping & Retail",
+      "beautyPersonalCare": "Beauty & Personal Care",
+      "healthFitness": "Health & Fitness",
+      "travelTourism": "Travel & Tourism",
+      "educationTraining": "Education & Training",
+      "professionalServices": "Professional Services"
+    },
+    "validation": {
+      "nameRequired": "Company name is required",
+      "registrationRequired": "Registration number is required",
+      "taxIdRequired": "Tax ID is required",
+      "categoryRequired": "Category is required",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email",
+      "phoneRequired": "Phone number is required",
+      "addressRequired": "Address is required",
+      "descriptionRequired": "Company description is required"
+    },
+    "notifications": {
+      "success": "Company updated successfully!",
+      "error": "Failed to update company. Please try again."
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "submit": "Update Company",
+      "submitting": "Updating..."
+    }
+  },
+  "adminCreateCompany": {
+    "header": {
+      "title": "Create New Company",
+      "subtitle": "Create a company that is approved immediately (no approval queue)"
+    },
+    "notice": {
+      "title": "Direct Approval",
+      "description": "Companies created by admins are automatically approved and can create offers immediately. No approval queue required."
+    },
+    "errors": {
+      "general": "Failed to create company. Please try again."
+    },
+    "sections": {
+      "basicInfoTitle": "Basic Information",
+      "contactInfoTitle": "Contact Information"
+    },
+    "form": {
+      "companyNameLabel": "Company Name",
+      "companyNamePlaceholder": "Enter company name",
+      "registrationLabel": "Registration Number",
+      "registrationPlaceholder": "e.g., 550289-2349",
+      "taxIdLabel": "Tax ID / VAT Number",
+      "taxIdPlaceholder": "Enter tax ID",
+      "categoryLabel": "Business Category",
+      "categoryPlaceholder": "Select category",
+      "descriptionLabel": "Company Description",
+      "descriptionPlaceholder": "Describe the business, services, and what makes it unique...",
+      "ownerLabel": "Owner Name",
+      "ownerPlaceholder": "Enter company owner name",
+      "emailLabel": "Business Email",
+      "emailPlaceholder": "company@example.com",
+      "phoneLabel": "Phone Number",
+      "phonePlaceholder": "+354 XXX XXXX",
+      "addressLabel": "Street Address",
+      "addressPlaceholder": "Street address, City",
+      "websiteLabel": "Website (Optional)",
+      "websitePlaceholder": "https://www.company.com"
+    },
+    "validation": {
+      "nameRequired": "Company name is required",
+      "registrationRequired": "Registration number is required",
+      "taxIdRequired": "Tax ID is required",
+      "categoryRequired": "Category is required",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email",
+      "phoneRequired": "Phone number is required",
+      "addressRequired": "Address is required",
+      "descriptionRequired": "Company description is required",
+      "ownerRequired": "Owner name is required"
+    },
+    "notifications": {
+      "success": "Company created successfully and approved immediately! The company can now create offers.",
+      "error": "Failed to create company. Please try again."
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "submit": "Create Company",
+      "submitting": "Creating..."
+    }
+  },
+  "adminOffers": {
+    "header": {
+      "title": "Offer Management",
+      "subtitle": "Review and manage all platform offers",
+      "createButton": "Create Offer"
+    },
+    "stats": {
+      "total": "Total",
+      "approved": "Approved",
+      "pending": "Pending",
+      "revision": "Needs Revision",
+      "rejected": "Rejected"
+    },
+    "filters": {
+      "searchPlaceholder": "Search offers...",
+      "status": {
+        "all": "All Status",
+        "pending": "Pending",
+        "approved": "Approved",
+        "revision": "Needs Revision",
+        "rejected": "Rejected"
+      }
+    },
+    "status": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "active": "Active",
+      "expired": "Expired",
+      "rejected": "Rejected",
+      "revision": "Needs Revision",
+      "pendingReview": "Pending Review"
+    },
+    "types": {
+      "active": "Active Offer",
+      "weekdays": "Weekdays Offer",
+      "happyHour": "Happy Hour",
+      "giftCard": "Gift Card"
+    },
+    "emptyState": {
+      "title": "No offers found",
+      "description": "Try adjusting your search or filter criteria"
+    },
+    "cards": {
+      "company": "Company",
+      "price": "Price",
+      "discount": "Discount",
+      "performance": "Performance",
+      "performanceMetrics": "{{views}} views, {{purchases}} purchases",
+      "created": "Created",
+      "validUntil": "Valid Until",
+      "revisionNotice": "Revision required (Attempt {{count}}/{{total}})"
+    },
+    "values": {
+      "currency": "{{amount}} kr.",
+      "percentage": "{{value}}%"
+    },
+    "actions": {
+      "view": "View Offer Details"
+    },
+    "insights": {
+      "title": "Platform Insights",
+      "performance": {
+        "title": "Offer Performance",
+        "description": "Gift cards currently convert at {{conversion}} across {{count}} active offers."
+      },
+      "topCompanies": {
+        "title": "Top Companies",
+        "description": "{{company}} leads with {{revenue}} kr. in revenue.",
+        "empty": "No data available."
+      },
+      "distribution": {
+        "title": "Offer Types Distribution",
+        "item": "{{count}} {{type}}",
+        "empty": "No offers available."
+      },
+      "engagement": {
+        "title": "Customer Engagement",
+        "description": "Total platform engagement: {{views}} views, {{purchases}} purchases, {{averageOrder}} kr. average order value."
+      }
+    }
+  },
+  "adminCommissionApproval": {
+    "title": "Final Approval & Commission Summary",
+    "subtitle": "Review offer details and commission before final approval",
+    "notFound": {
+      "title": "Item Not Found",
+      "description": "The requested approval item could not be found."
+    },
+    "messages": {
+      "companyNoCommission": "Company approvals do not require commission calculation."
+    },
+    "sections": {
+      "company": "Company",
+      "pricing": "Pricing Information",
+      "offerDuration": "Offer Duration",
+      "weekdays": "Weekdays Details",
+      "happyHour": "Happy Hour Details",
+      "additional": "Additional Information"
+    },
+    "fields": {
+      "originalPrice": "Original Price",
+      "discountedPrice": "Discounted Price",
+      "discount": "Discount",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "availableDays": "Available Days",
+      "timeRange": "Time Range",
+      "location": "Location",
+      "terms": "Terms & Conditions",
+      "offerLink": "Offer Link"
+    },
+    "offerTypes": {
+      "active": "Active Offer",
+      "weekdays": "Weekdays Offer",
+      "happyHour": "Happy Hour",
+      "giftCard": "Gift Card",
+      "default": "Offer"
+    },
+    "commission": {
+      "company": {
+        "type": "Company Registration",
+        "description": "No commission for company registration"
+      },
+      "pending": {
+        "description": "Commission will be calculated after approval"
+      },
+      "active": {
+        "description": "{{days}} days × {{rate}} kr. per day",
+        "cappedNote": "(capped at {{max}} days)"
+      },
+      "weekdays": {
+        "description": "{{weeks}} weeks × {{rate}} kr. per week"
+      },
+      "happyHour": {
+        "description": "{{months}} months × {{rate}} kr. per month"
+      },
+      "giftCard": {
+        "descriptionWithValue": "{{value}} kr. × {{percent}}%",
+        "description": "Commission calculated per sale ({{percent}}% of sale amount)"
+      },
+      "default": {
+        "description": "No commission structure defined"
+      }
+    },
+    "breakdownLabels": {
+      "duration": "Duration",
+      "rate": "Rate",
+      "maxDuration": "Max Duration",
+      "billableDays": "Billable Days",
+      "totalWeeks": "Total Weeks",
+      "totalMonths": "Total Months",
+      "giftCardValue": "Gift Card Value",
+      "commissionRate": "Commission Rate",
+      "commissionPerSale": "Commission per Sale",
+      "note": "Note"
+    },
+    "breakdownValues": {
+      "durationDays": "{{count}} days",
+      "durationDaysWeeks": "{{days}} days ({{weeks}} weeks)",
+      "durationDaysMonths": "{{days}} days ({{months}} months)",
+      "ratePerDay": "{{amount}} kr. per day",
+      "ratePerWeek": "{{amount}} kr. per week",
+      "ratePerMonth": "{{amount}} kr. per month",
+      "maxDuration": "{{count}} days (capped)",
+      "billableDays": "{{count}} days",
+      "totalWeeks": "{{count}} weeks",
+      "totalMonths": "{{count}} months",
+      "giftCardValue": "{{amount}} kr.",
+      "commissionRatePercent": "{{percent}}% per sale",
+      "commissionPerSale": "{{amount}} kr.",
+      "noteGiftCard": "Calculated when gift card is sold"
+    },
+    "commissionSummary": {
+      "title": "Commission Summary",
+      "offerType": "Offer Type",
+      "breakdown": "Calculation Breakdown",
+      "calculation": "Commission Calculation",
+      "total": "Total Commission",
+      "notAvailable": "N/A"
+    },
+    "alerts": {
+      "giftCardPending": "Commission will be calculated per sale ({{percent}}% of each gift card sale amount)"
+    },
+    "actions": {
+      "title": "Actions",
+      "approve": "Final Approval",
+      "approving": "Approving...",
+      "cancel": "Cancel"
+    },
+    "values": {
+      "currency": "{{amount}} kr.",
+      "discountPercent": "{{percent}}% OFF"
+    },
+    "weekdays": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
+    }
+  },
+  "adminUsers": {
+    "title": "User Management",
+    "subtitle": "Manage platform users and their access",
+    "stats": {
+      "total": "Total Users",
+      "active": "Active",
+      "pending": "Pending",
+      "suspended": "Suspended",
+      "verified": "Verified"
+    },
+    "filters": {
+      "searchPlaceholder": "Search users...",
+      "status": {
+        "all": "All Status"
+      },
+      "role": {
+        "all": "All Roles"
+      }
+    },
+    "status": {
+      "active": "Active",
+      "pending": "Pending Verification",
+      "suspended": "Suspended",
+      "unknown": "Unknown"
+    },
+    "roles": {
+      "admin": "Admin",
+      "company": "Company"
+    },
+    "empty": {
+      "title": "No users found",
+      "description": "Try adjusting your search or filter criteria"
+    },
+    "badges": {
+      "verified": "Verified"
+    },
+    "details": {
+      "email": "Email",
+      "phone": "Phone",
+      "companies": "Companies",
+      "offers": "Offers",
+      "joined": "Joined",
+      "lastLogin": "Last Login"
+    },
+    "actions": {
+      "view": "View user",
+      "edit": "Edit user",
+      "suspend": "Suspend user",
+      "activate": "Activate user",
+      "more": "More actions"
+    },
+    "insights": {
+      "title": "User Insights",
+      "userDistribution": {
+        "title": "User Distribution",
+        "description": "{{companies}} company users and {{admins}} administrators."
+      },
+      "verification": {
+        "title": "Verification Status",
+        "description": "{{verified}} verified users ({{rate}}% verification rate)."
+      },
+      "security": {
+        "title": "Account Security",
+        "description": "{{active}} active accounts, {{suspended}} suspended accounts."
+      },
+      "activity": {
+        "title": "Company Activity",
+        "description": "Company users have registered {{count}} total companies."
+      }
+    }
+  },
   "companyAnalytics": {
     "title": "Analytics",
     "subtitle": "Track your offers' performance and insights",
@@ -329,15 +1134,6 @@
       "customers": "New Customers",
       "conversion": "Avg Conversion"
     },
-    "weekdays": {
-      "monday": "Mon",
-      "tuesday": "Tue",
-      "wednesday": "Wed",
-      "thursday": "Thu",
-      "friday": "Fri",
-      "saturday": "Sat",
-      "sunday": "Sun"
-    },
     "insights": {
       "performance": {
         "title": "Strong Performance",
@@ -417,15 +1213,6 @@
     "happyHour": "Happy Hour",
     "giftCard": "Gift Card",
     "offer": "Offer"
-  },
-  "weekdays": {
-    "monday": "Monday",
-    "tuesday": "Tuesday",
-    "wednesday": "Wednesday",
-    "thursday": "Thursday",
-    "friday": "Friday",
-    "saturday": "Saturday",
-    "sunday": "Sunday"
   },
   "dashboard": {
     "welcome": "Welcome back, {{name}}! 👋",

@@ -22,6 +22,7 @@ import {
   Save,
 } from "lucide-react";
 import Modal from "@/components/ui/modal";
+import { useTranslation } from "react-i18next";
 
 interface Company {
   id: string;
@@ -98,6 +99,15 @@ export default function AdminCompanyDetailsPage() {
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language === "is" ? "is-IS" : "en-US";
+  const formatCurrency = (value: number) => value.toLocaleString(locale);
+  const formatDate = (value: string | number | Date) =>
+    new Date(value).toLocaleDateString(locale, {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -181,6 +191,19 @@ export default function AdminCompanyDetailsPage() {
       customer.phone.includes(searchTerm)
     );
   });
+
+  const totalCustomers = customers.length;
+  const totalPurchases = customers.reduce(
+    (sum, c) => sum + (c.purchasesCount || 0),
+    0
+  );
+  const totalRevenue = customers.reduce(
+    (sum, c) => sum + (c.totalSpent || 0),
+    0
+  );
+  const customerBeingDeleted = showDeleteConfirm
+    ? customers.find((c) => c.id === showDeleteConfirm)
+    : undefined;
 
   const handleOpenAddModal = () => {
     setEditingCustomer(null);
@@ -298,18 +321,15 @@ export default function AdminCompanyDetailsPage() {
     }
   };
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case "approved":
-        return "Approved";
-      case "rejected":
-        return "Rejected";
-      case "revision":
-        return "Needs Revision";
-      default:
-        return "Pending Review";
-    }
+  const statusTranslationMap: Record<string, string> = {
+    approved: "adminCompanyDetails.status.approved",
+    rejected: "adminCompanyDetails.status.rejected",
+    revision: "adminCompanyDetails.status.revision",
+    pending: "adminCompanyDetails.status.pending",
   };
+
+  const getStatusText = (status: string) =>
+    t(statusTranslationMap[status] ?? "adminCompanyDetails.status.pendingReview");
 
   if (loading) {
     return (
@@ -335,10 +355,14 @@ export default function AdminCompanyDetailsPage() {
           >
             <ArrowLeft className="text-primary" size={20} />
           </Link>
-          <h1 className="text-2xl font-bold text-white">Company Not Found</h1>
+          <h1 className="text-2xl font-bold text-white">
+            {t("adminCompanyDetails.notFound.title")}
+          </h1>
         </div>
         <div className="bg-card-background border border-primary rounded-2xl p-8 text-center">
-          <p className="text-gray-400">The company you're looking for doesn't exist.</p>
+          <p className="text-gray-400">
+            {t("adminCompanyDetails.notFound.description")}
+          </p>
         </div>
       </div>
     );
@@ -357,7 +381,9 @@ export default function AdminCompanyDetailsPage() {
           </Link>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white">{company.name}</h1>
-            <p className="text-gray-400 text-sm">Company Details & Customer Management</p>
+            <p className="text-gray-400 text-sm">
+              {t("adminCompanyDetails.header.subtitle")}
+            </p>
           </div>
         </div>
         <Link
@@ -365,7 +391,7 @@ export default function AdminCompanyDetailsPage() {
           className="flex items-center gap-2 px-6 py-3 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all"
         >
           <Edit size={18} />
-          Edit Company
+          {t("adminCompanyDetails.header.editButton")}
         </Link>
       </div>
 
@@ -374,10 +400,17 @@ export default function AdminCompanyDetailsPage() {
         <div className="flex items-center gap-3">
           {getStatusIcon(company.status)}
           <div>
-            <p className="font-semibold">Status: {getStatusText(company.status)}</p>
+            <p className="font-semibold">
+              {t("adminCompanyDetails.statusBanner.label", {
+                status: getStatusText(company.status),
+              })}
+            </p>
             {company.status === "revision" && (
               <p className="text-sm opacity-90 mt-1">
-                Revision attempt {company.revisionCount} of 3
+                {t("adminCompanyDetails.statusBanner.revisionAttempt", {
+                  count: company.revisionCount,
+                  total: 3,
+                })}
               </p>
             )}
           </div>
@@ -393,35 +426,39 @@ export default function AdminCompanyDetailsPage() {
               <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center">
                 <Building2 className="text-primary" size={20} />
               </div>
-              <h2 className="text-xl font-bold text-white">Company Information</h2>
+              <h2 className="text-xl font-bold text-white">
+                {t("adminCompanyDetails.companyInfo.title")}
+              </h2>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
               <div className="bg-background/50 rounded-xl p-4 border border-primary/30">
-                <p className="text-gray-400 text-xs uppercase tracking-wide mb-2">Category</p>
+                <p className="text-gray-400 text-xs uppercase tracking-wide mb-2">
+                  {t("adminCompanyDetails.companyInfo.category")}
+                </p>
                 <p className="text-white font-semibold text-lg">{company.category}</p>
               </div>
               <div className="bg-background/50 rounded-xl p-4 border border-primary/30">
                 <p className="text-gray-400 text-xs uppercase tracking-wide mb-2 flex items-center gap-2">
                   <Hash size={14} />
-                  Registration Number
+                  {t("adminCompanyDetails.companyInfo.registrationNumber")}
                 </p>
                 <p className="text-white font-semibold text-lg">{company.registrationNumber}</p>
               </div>
               <div className="bg-background/50 rounded-xl p-4 border border-primary/30">
                 <p className="text-gray-400 text-xs uppercase tracking-wide mb-2 flex items-center gap-2">
                   <Hash size={14} />
-                  Tax ID
+                  {t("adminCompanyDetails.companyInfo.taxId")}
                 </p>
                 <p className="text-white font-semibold text-lg">{company.taxId}</p>
               </div>
               <div className="bg-background/50 rounded-xl p-4 border border-primary/30">
                 <p className="text-gray-400 text-xs uppercase tracking-wide mb-2 flex items-center gap-2">
                   <Calendar size={14} />
-                  Registered Date
+                  {t("adminCompanyDetails.companyInfo.registeredDate")}
                 </p>
                 <p className="text-white font-semibold text-lg">
-                  {new Date(company.createdAt).toLocaleDateString()}
+                  {formatDate(company.createdAt)}
                 </p>
               </div>
             </div>
@@ -430,28 +467,36 @@ export default function AdminCompanyDetailsPage() {
               <div className="flex items-center gap-3">
                 <Mail className="text-gray-400" size={18} />
                 <div>
-                  <p className="text-gray-400 text-sm">Email</p>
+                  <p className="text-gray-400 text-sm">
+                    {t("adminCompanyDetails.companyInfo.email")}
+                  </p>
                   <p className="text-white font-medium">{company.email}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="text-gray-400" size={18} />
                 <div>
-                  <p className="text-gray-400 text-sm">Phone</p>
+                  <p className="text-gray-400 text-sm">
+                    {t("adminCompanyDetails.companyInfo.phone")}
+                  </p>
                   <p className="text-white font-medium">{company.phone}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <MapPin className="text-gray-400" size={18} />
                 <div>
-                  <p className="text-gray-400 text-sm">Address</p>
+                  <p className="text-gray-400 text-sm">
+                    {t("adminCompanyDetails.companyInfo.address")}
+                  </p>
                   <p className="text-white font-medium">{company.address}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <Users className="text-gray-400" size={18} />
                 <div>
-                  <p className="text-gray-400 text-sm">Owner</p>
+                  <p className="text-gray-400 text-sm">
+                    {t("adminCompanyDetails.companyInfo.owner")}
+                  </p>
                   <p className="text-white font-medium">{company.owner}</p>
                 </div>
               </div>
@@ -466,8 +511,14 @@ export default function AdminCompanyDetailsPage() {
                   <Users className="text-primary" size={20} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-white">Customer List</h2>
-                  <p className="text-gray-400 text-sm">{customers.length} customers</p>
+                  <h2 className="text-xl font-bold text-white">
+                    {t("adminCompanyDetails.customers.title")}
+                  </h2>
+                  <p className="text-gray-400 text-sm">
+                    {t("adminCompanyDetails.customers.subtitle", {
+                      count: customers.length,
+                    })}
+                  </p>
                 </div>
               </div>
               <button
@@ -475,7 +526,7 @@ export default function AdminCompanyDetailsPage() {
                 className="flex items-center gap-2 px-4 py-2 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all"
               >
                 <Plus size={18} />
-                Add Customer
+                {t("adminCompanyDetails.customers.addButton")}
               </button>
             </div>
 
@@ -485,7 +536,7 @@ export default function AdminCompanyDetailsPage() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                 <input
                   type="text"
-                  placeholder="Search customers..."
+                  placeholder={t("adminCompanyDetails.customers.searchPlaceholder")}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 bg-background border border-primary/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary"
@@ -497,9 +548,13 @@ export default function AdminCompanyDetailsPage() {
             {filteredCustomers.length === 0 ? (
               <div className="text-center py-12">
                 <Users className="mx-auto text-gray-400 mb-4" size={48} />
-                <h3 className="text-lg font-bold text-white mb-2">No customers found</h3>
+                <h3 className="text-lg font-bold text-white mb-2">
+                  {t("adminCompanyDetails.customers.empty.title")}
+                </h3>
                 <p className="text-gray-400 mb-4">
-                  {searchTerm ? "Try adjusting your search" : "Add your first customer to get started"}
+                  {searchTerm
+                    ? t("adminCompanyDetails.customers.empty.search")
+                    : t("adminCompanyDetails.customers.empty.default")}
                 </p>
                 {!searchTerm && (
                   <button
@@ -507,7 +562,7 @@ export default function AdminCompanyDetailsPage() {
                     className="flex items-center gap-2 px-6 py-3 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all mx-auto"
                   >
                     <Plus size={18} />
-                    Add Customer
+                    {t("adminCompanyDetails.customers.addButton")}
                   </button>
                 )}
               </div>
@@ -547,7 +602,9 @@ export default function AdminCompanyDetailsPage() {
                             <div className="flex items-center gap-2">
                               <FileText className="text-gray-400" size={14} />
                               <span className="text-gray-300">
-                                {customer.purchasesCount} purchases
+                                {t("adminCompanyDetails.customers.purchases", {
+                                  count: customer.purchasesCount,
+                                })}
                               </span>
                             </div>
                           )}
@@ -555,7 +612,9 @@ export default function AdminCompanyDetailsPage() {
                             <div className="flex items-center gap-2">
                               <Globe className="text-gray-400" size={14} />
                               <span className="text-gray-300">
-                                {customer.totalSpent.toLocaleString()} kr. spent
+                                {t("adminCompanyDetails.customers.spent", {
+                                  amount: formatCurrency(customer.totalSpent),
+                                })}
                               </span>
                             </div>
                           )}
@@ -564,7 +623,10 @@ export default function AdminCompanyDetailsPage() {
                         {customer.notes && (
                           <div className="mt-3 pt-3 border-t border-primary/20">
                             <p className="text-gray-400 text-sm">
-                              <span className="font-semibold">Notes:</span> {customer.notes}
+                              <span className="font-semibold">
+                                {t("adminCompanyDetails.customers.notesLabel")}
+                              </span>{" "}
+                              {customer.notes}
                             </p>
                           </div>
                         )}
@@ -574,14 +636,14 @@ export default function AdminCompanyDetailsPage() {
                         <button
                           onClick={() => handleOpenEditModal(customer)}
                           className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
-                          title="Edit Customer"
+                          title={t("adminCompanyDetails.customers.editTooltip")}
                         >
                           <Edit size={18} />
                         </button>
                         <button
                           onClick={() => setShowDeleteConfirm(customer.id)}
                           className="p-2 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
-                          title="Delete Customer"
+                          title={t("adminCompanyDetails.customers.deleteTooltip")}
                         >
                           <Trash2 size={18} />
                         </button>
@@ -598,26 +660,36 @@ export default function AdminCompanyDetailsPage() {
         <div className="space-y-6">
           {/* Quick Stats */}
           <div className="bg-card-background border border-primary rounded-2xl p-6">
-            <h3 className="text-lg font-bold text-white mb-4">Quick Stats</h3>
+            <h3 className="text-lg font-bold text-white mb-4">
+              {t("adminCompanyDetails.quickStats.title")}
+            </h3>
             <div className="space-y-4">
               <div>
-                <p className="text-gray-400 text-sm">Total Customers</p>
-                <p className="text-white text-2xl font-bold">{customers.length}</p>
+                <p className="text-gray-400 text-sm">
+                  {t("adminCompanyDetails.quickStats.totalCustomers")}
+                </p>
+                <p className="text-white text-2xl font-bold">{totalCustomers}</p>
               </div>
               <div>
-                <p className="text-gray-400 text-sm">Active Offers</p>
+                <p className="text-gray-400 text-sm">
+                  {t("adminCompanyDetails.quickStats.activeOffers")}
+                </p>
                 <p className="text-white text-2xl font-bold">{company.offersCount}</p>
               </div>
               <div>
-                <p className="text-gray-400 text-sm">Total Purchases</p>
-                <p className="text-white text-2xl font-bold">
-                  {customers.reduce((sum, c) => sum + (c.purchasesCount || 0), 0)}
+                <p className="text-gray-400 text-sm">
+                  {t("adminCompanyDetails.quickStats.totalPurchases")}
                 </p>
+                <p className="text-white text-2xl font-bold">{totalPurchases}</p>
               </div>
               <div>
-                <p className="text-gray-400 text-sm">Total Revenue</p>
+                <p className="text-gray-400 text-sm">
+                  {t("adminCompanyDetails.quickStats.totalRevenue")}
+                </p>
                 <p className="text-white text-2xl font-bold">
-                  {customers.reduce((sum, c) => sum + (c.totalSpent || 0), 0).toLocaleString()} kr.
+                  {t("adminCompanyDetails.values.currency", {
+                    amount: formatCurrency(totalRevenue),
+                  })}
                 </p>
               </div>
             </div>
@@ -629,7 +701,11 @@ export default function AdminCompanyDetailsPage() {
       <Modal
         isOpen={showAddModal}
         onClose={handleCloseModal}
-        title={editingCustomer ? "Edit Customer" : "Add New Customer"}
+        title={
+          editingCustomer
+            ? t("adminCompanyDetails.modals.editCustomerTitle")
+            : t("adminCompanyDetails.modals.addCustomerTitle")
+        }
         size="2xl"
         footer={
           <div className="flex items-center justify-end gap-3">
@@ -637,7 +713,7 @@ export default function AdminCompanyDetailsPage() {
               onClick={handleCloseModal}
               className="px-6 py-2 text-gray-400 hover:text-white hover:bg-primary/10 rounded-lg transition-all"
             >
-              Cancel
+              {t("adminCompanyDetails.modals.cancel")}
             </button>
             <button
               onClick={handleSave}
@@ -647,12 +723,14 @@ export default function AdminCompanyDetailsPage() {
               {isSaving ? (
                 <>
                   <div className="w-4 h-4 border-2 border-dark border-t-transparent rounded-full animate-spin" />
-                  Saving...
+                  {t("adminCompanyDetails.modals.saving")}
                 </>
               ) : (
                 <>
                   <Save size={16} />
-                  {editingCustomer ? "Update Customer" : "Add Customer"}
+                  {editingCustomer
+                    ? t("adminCompanyDetails.modals.updateCustomer")
+                    : t("adminCompanyDetails.modals.addCustomer")}
                 </>
               )}
             </button>
@@ -663,25 +741,27 @@ export default function AdminCompanyDetailsPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="text-gray-400 text-sm mb-2 block">
-                First Name <span className="text-red-500">*</span>
+                {t("adminCompanyDetails.form.firstNameLabel")}{" "}
+                <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 value={formData.firstName}
                 onChange={(e) => setFormData((prev) => ({ ...prev, firstName: e.target.value }))}
-                placeholder="John"
+                placeholder={t("adminCompanyDetails.form.firstNamePlaceholder")}
                 className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary"
               />
             </div>
             <div>
               <label className="text-gray-400 text-sm mb-2 block">
-                Last Name <span className="text-red-500">*</span>
+                {t("adminCompanyDetails.form.lastNameLabel")}{" "}
+                <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 value={formData.lastName}
                 onChange={(e) => setFormData((prev) => ({ ...prev, lastName: e.target.value }))}
-                placeholder="Doe"
+                placeholder={t("adminCompanyDetails.form.lastNamePlaceholder")}
                 className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary"
               />
             </div>
@@ -689,45 +769,52 @@ export default function AdminCompanyDetailsPage() {
 
           <div>
             <label className="text-gray-400 text-sm mb-2 block">
-              Email <span className="text-red-500">*</span>
+              {t("adminCompanyDetails.form.emailLabel")}{" "}
+              <span className="text-red-500">*</span>
             </label>
             <input
               type="email"
               value={formData.email}
               onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
-              placeholder="customer@example.com"
+              placeholder={t("adminCompanyDetails.form.emailPlaceholder")}
               className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary"
             />
           </div>
 
           <div>
-            <label className="text-gray-400 text-sm mb-2 block">Phone</label>
+            <label className="text-gray-400 text-sm mb-2 block">
+              {t("adminCompanyDetails.form.phoneLabel")}
+            </label>
             <input
               type="tel"
               value={formData.phone}
               onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))}
-              placeholder="+354 555 1234"
+              placeholder={t("adminCompanyDetails.form.phonePlaceholder")}
               className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary"
             />
           </div>
 
           <div>
-            <label className="text-gray-400 text-sm mb-2 block">Address</label>
+            <label className="text-gray-400 text-sm mb-2 block">
+              {t("adminCompanyDetails.form.addressLabel")}
+            </label>
             <input
               type="text"
               value={formData.address}
               onChange={(e) => setFormData((prev) => ({ ...prev, address: e.target.value }))}
-              placeholder="Street address, City"
+              placeholder={t("adminCompanyDetails.form.addressPlaceholder")}
               className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary"
             />
           </div>
 
           <div>
-            <label className="text-gray-400 text-sm mb-2 block">Notes</label>
+            <label className="text-gray-400 text-sm mb-2 block">
+              {t("adminCompanyDetails.form.notesLabel")}
+            </label>
             <textarea
               value={formData.notes}
               onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
-              placeholder="Additional notes about this customer..."
+              placeholder={t("adminCompanyDetails.form.notesPlaceholder")}
               rows={4}
               className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary resize-none"
             />
@@ -746,13 +833,13 @@ export default function AdminCompanyDetailsPage() {
               onClick={() => setShowDeleteConfirm(null)}
               className="px-6 py-2 text-gray-400 hover:text-white hover:bg-primary/10 rounded-lg transition-all"
             >
-              Cancel
+              {t("adminCompanyDetails.deleteModal.cancel")}
             </button>
             <button
               onClick={() => handleDelete(showDeleteConfirm!)}
               className="px-6 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition-all"
             >
-              Delete Customer
+              {t("adminCompanyDetails.deleteModal.confirm")}
             </button>
           </div>
         }
@@ -762,18 +849,21 @@ export default function AdminCompanyDetailsPage() {
             <AlertCircle className="text-red-500" size={24} />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-white">Delete Customer</h3>
-            <p className="text-gray-400 text-sm">This action cannot be undone</p>
+            <h3 className="text-xl font-bold text-white">
+              {t("adminCompanyDetails.deleteModal.title")}
+            </h3>
+            <p className="text-gray-400 text-sm">
+              {t("adminCompanyDetails.deleteModal.warning")}
+            </p>
           </div>
         </div>
 
         <p className="text-gray-300">
-          Are you sure you want to delete{" "}
-          <span className="text-white font-semibold">
-            {customers.find((c) => c.id === showDeleteConfirm)?.firstName}{" "}
-            {customers.find((c) => c.id === showDeleteConfirm)?.lastName}
-          </span>
-          ? This will remove all customer information from this company.
+          {t("adminCompanyDetails.deleteModal.description", {
+            name: customerBeingDeleted
+              ? `${customerBeingDeleted.firstName} ${customerBeingDeleted.lastName}`
+              : "",
+          })}
         </p>
       </Modal>
     </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
   Building2,
@@ -11,9 +11,24 @@ import {
   CheckCircle,
   Globe,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
+
+const categoryOptionsBase = [
+  { value: "Food & Dining", key: "foodDining" },
+  { value: "Hotels & Accommodation", key: "hotelsAccommodation" },
+  { value: "Wellness & Spa", key: "wellnessSpa" },
+  { value: "Activities & Entertainment", key: "activitiesEntertainment" },
+  { value: "Shopping & Retail", key: "shoppingRetail" },
+  { value: "Beauty & Personal Care", key: "beautyPersonalCare" },
+  { value: "Health & Fitness", key: "healthFitness" },
+  { value: "Travel & Tourism", key: "travelTourism" },
+  { value: "Education & Training", key: "educationTraining" },
+  { value: "Professional Services", key: "professionalServices" },
+];
 
 export default function AdminCreateCompanyPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -30,18 +45,14 @@ export default function AdminCreateCompanyPage() {
     owner: "",
   });
 
-  const categories = [
-    "Food & Dining",
-    "Hotels & Accommodation",
-    "Wellness & Spa",
-    "Activities & Entertainment",
-    "Shopping & Retail",
-    "Beauty & Personal Care",
-    "Health & Fitness",
-    "Travel & Tourism",
-    "Education & Training",
-    "Professional Services"
-  ];
+  const categoryOptions = useMemo(
+    () =>
+      categoryOptionsBase.map((category) => ({
+        value: category.value,
+        label: t(`adminEditCompany.categories.${category.key}`),
+      })),
+    [t]
+  );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -54,18 +65,20 @@ export default function AdminCreateCompanyPage() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.name.trim()) newErrors.name = "Company name is required";
-    if (!formData.registrationNumber.trim()) newErrors.registrationNumber = "Registration number is required";
-    if (!formData.taxId.trim()) newErrors.taxId = "Tax ID is required";
-    if (!formData.category) newErrors.category = "Category is required";
-    if (!formData.email.trim()) newErrors.email = "Email is required";
+    if (!formData.name.trim()) newErrors.name = t("adminCreateCompany.validation.nameRequired");
+    if (!formData.registrationNumber.trim())
+      newErrors.registrationNumber = t("adminCreateCompany.validation.registrationRequired");
+    if (!formData.taxId.trim()) newErrors.taxId = t("adminCreateCompany.validation.taxIdRequired");
+    if (!formData.category) newErrors.category = t("adminCreateCompany.validation.categoryRequired");
+    if (!formData.email.trim()) newErrors.email = t("adminCreateCompany.validation.emailRequired");
     if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email";
+      newErrors.email = t("adminCreateCompany.validation.emailInvalid");
     }
-    if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
-    if (!formData.address.trim()) newErrors.address = "Address is required";
-    if (!formData.description.trim()) newErrors.description = "Company description is required";
-    if (!formData.owner.trim()) newErrors.owner = "Owner name is required";
+    if (!formData.phone.trim()) newErrors.phone = t("adminCreateCompany.validation.phoneRequired");
+    if (!formData.address.trim()) newErrors.address = t("adminCreateCompany.validation.addressRequired");
+    if (!formData.description.trim())
+      newErrors.description = t("adminCreateCompany.validation.descriptionRequired");
+    if (!formData.owner.trim()) newErrors.owner = t("adminCreateCompany.validation.ownerRequired");
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -105,13 +118,14 @@ export default function AdminCreateCompanyPage() {
       console.log("Admin creating company (approved immediately):", newCompany);
 
       // Show success message
-      alert("Company created successfully and approved immediately! The company can now create offers.");
+      window.alert(t("adminCreateCompany.notifications.success"));
 
       // Redirect to companies list
       navigate("/admin/companies");
     } catch (error) {
       console.error("Company creation failed", error);
-      setErrors({ general: "Failed to create company. Please try again." });
+      setErrors({ general: t("adminCreateCompany.errors.general") });
+      window.alert(t("adminCreateCompany.notifications.error"));
     } finally {
       setIsLoading(false);
     }
@@ -129,10 +143,10 @@ export default function AdminCreateCompanyPage() {
         </Link>
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-white">
-            Create New Company
+            {t("adminCreateCompany.header.title")}
           </h1>
           <p className="text-gray-400 text-sm">
-            Create a company that will be approved immediately (no approval queue)
+            {t("adminCreateCompany.header.subtitle")}
           </p>
         </div>
       </div>
@@ -142,10 +156,11 @@ export default function AdminCreateCompanyPage() {
         <div className="flex items-start gap-3">
           <CheckCircle className="text-green flex-shrink-0 mt-0.5" size={20} />
           <div>
-            <h3 className="text-green font-bold mb-1">Direct Approval</h3>
+            <h3 className="text-green font-bold mb-1">
+              {t("adminCreateCompany.notice.title")}
+            </h3>
             <p className="text-sm text-gray-300">
-              Companies created by admins are automatically approved and can create offers immediately. 
-              No approval queue required.
+              {t("adminCreateCompany.notice.description")}
             </p>
           </div>
         </div>
@@ -164,13 +179,14 @@ export default function AdminCreateCompanyPage() {
         <div className="bg-card-background border border-primary rounded-2xl p-6">
           <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
             <Building2 className="text-primary" size={20} />
-            Basic Information
+            {t("adminCreateCompany.sections.basicInfoTitle")}
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
               <label className="text-gray-400 text-sm mb-2 block">
-                Company Name <span className="text-red-500">*</span>
+                {t("adminCreateCompany.form.companyNameLabel")}{" "}
+                <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -182,7 +198,7 @@ export default function AdminCreateCompanyPage() {
                   className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                     errors.name ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                   }`}
-                  placeholder="Enter company name"
+                  placeholder={t("adminCreateCompany.form.companyNamePlaceholder")}
                 />
               </div>
               {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
@@ -190,7 +206,8 @@ export default function AdminCreateCompanyPage() {
 
             <div>
               <label className="text-gray-400 text-sm mb-2 block">
-                Registration Number <span className="text-red-500">*</span>
+                {t("adminCreateCompany.form.registrationLabel")}{" "}
+                <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <FileText className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -202,7 +219,7 @@ export default function AdminCreateCompanyPage() {
                   className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                     errors.registrationNumber ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                   }`}
-                  placeholder="e.g., 550289-2349"
+                  placeholder={t("adminCreateCompany.form.registrationPlaceholder")}
                 />
               </div>
               {errors.registrationNumber && <p className="text-red-500 text-xs mt-1">{errors.registrationNumber}</p>}
@@ -210,7 +227,8 @@ export default function AdminCreateCompanyPage() {
 
             <div>
               <label className="text-gray-400 text-sm mb-2 block">
-                Tax ID / VAT Number <span className="text-red-500">*</span>
+                {t("adminCreateCompany.form.taxIdLabel")}{" "}
+                <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <FileText className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -222,7 +240,7 @@ export default function AdminCreateCompanyPage() {
                   className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                     errors.taxId ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                   }`}
-                  placeholder="Enter tax ID"
+                  placeholder={t("adminCreateCompany.form.taxIdPlaceholder")}
                 />
               </div>
               {errors.taxId && <p className="text-red-500 text-xs mt-1">{errors.taxId}</p>}
@@ -230,7 +248,8 @@ export default function AdminCreateCompanyPage() {
 
             <div className="md:col-span-2">
               <label className="text-gray-400 text-sm mb-2 block">
-                Business Category <span className="text-red-500">*</span>
+                {t("adminCreateCompany.form.categoryLabel")}{" "}
+                <span className="text-red-500">*</span>
               </label>
               <select
                 name="category"
@@ -240,9 +259,13 @@ export default function AdminCreateCompanyPage() {
                   errors.category ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                 }`}
               >
-                <option value="">Select category</option>
-                {categories.map(category => (
-                  <option key={category} value={category}>{category}</option>
+                <option value="">
+                  {t("adminCreateCompany.form.categoryPlaceholder")}
+                </option>
+                {categoryOptions.map((category) => (
+                  <option key={category.value} value={category.value}>
+                    {category.label}
+                  </option>
                 ))}
               </select>
               {errors.category && <p className="text-red-500 text-xs mt-1">{errors.category}</p>}
@@ -250,7 +273,8 @@ export default function AdminCreateCompanyPage() {
 
             <div className="md:col-span-2">
               <label className="text-gray-400 text-sm mb-2 block">
-                Company Description <span className="text-red-500">*</span>
+                {t("adminCreateCompany.form.descriptionLabel")}{" "}
+                <span className="text-red-500">*</span>
               </label>
               <textarea
                 name="description"
@@ -260,14 +284,15 @@ export default function AdminCreateCompanyPage() {
                 className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all resize-none ${
                   errors.description ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                 }`}
-                placeholder="Describe the business, services, and what makes it unique..."
+                placeholder={t("adminCreateCompany.form.descriptionPlaceholder")}
               />
               {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description}</p>}
             </div>
 
             <div className="md:col-span-2">
               <label className="text-gray-400 text-sm mb-2 block">
-                Owner Name <span className="text-red-500">*</span>
+                {t("adminCreateCompany.form.ownerLabel")}{" "}
+                <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -277,7 +302,7 @@ export default function AdminCreateCompanyPage() {
                 className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                   errors.owner ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                 }`}
-                placeholder="Enter company owner name"
+                placeholder={t("adminCreateCompany.form.ownerPlaceholder")}
               />
               {errors.owner && <p className="text-red-500 text-xs mt-1">{errors.owner}</p>}
             </div>
@@ -288,13 +313,14 @@ export default function AdminCreateCompanyPage() {
         <div className="bg-card-background border border-primary rounded-2xl p-6">
           <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
             <Mail className="text-primary" size={20} />
-            Contact Information
+            {t("adminCreateCompany.sections.contactInfoTitle")}
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="text-gray-400 text-sm mb-2 block">
-                Business Email <span className="text-red-500">*</span>
+                {t("adminCreateCompany.form.emailLabel")}{" "}
+                <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -306,7 +332,7 @@ export default function AdminCreateCompanyPage() {
                   className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                     errors.email ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                   }`}
-                  placeholder="company@example.com"
+                  placeholder={t("adminCreateCompany.form.emailPlaceholder")}
                 />
               </div>
               {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
@@ -314,7 +340,8 @@ export default function AdminCreateCompanyPage() {
 
             <div>
               <label className="text-gray-400 text-sm mb-2 block">
-                Phone Number <span className="text-red-500">*</span>
+                {t("adminCreateCompany.form.phoneLabel")}{" "}
+                <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -326,7 +353,7 @@ export default function AdminCreateCompanyPage() {
                   className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                     errors.phone ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                   }`}
-                  placeholder="+354 XXX XXXX"
+                  placeholder={t("adminCreateCompany.form.phonePlaceholder")}
                 />
               </div>
               {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
@@ -334,7 +361,8 @@ export default function AdminCreateCompanyPage() {
 
             <div className="md:col-span-2">
               <label className="text-gray-400 text-sm mb-2 block">
-                Street Address <span className="text-red-500">*</span>
+                {t("adminCreateCompany.form.addressLabel")}{" "}
+                <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -346,16 +374,16 @@ export default function AdminCreateCompanyPage() {
                   className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                     errors.address ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                   }`}
-                  placeholder="Street address, City"
+                  placeholder={t("adminCreateCompany.form.addressPlaceholder")}
                 />
               </div>
               {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
             </div>
 
             <div className="md:col-span-2">
-              <label className="text-gray-400 text-sm mb-2 block flex items-center gap-2">
+              <label className="text-gray-400 text-sm mb-2 flex items-center gap-2">
                 <Globe size={16} />
-                Website (Optional)
+                {t("adminCreateCompany.form.websiteLabel")}
               </label>
               <input
                 type="url"
@@ -363,7 +391,7 @@ export default function AdminCreateCompanyPage() {
                 value={formData.website}
                 onChange={handleInputChange}
                 className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all"
-                placeholder="https://www.company.com"
+                placeholder={t("adminCreateCompany.form.websitePlaceholder")}
               />
             </div>
           </div>
@@ -375,7 +403,7 @@ export default function AdminCreateCompanyPage() {
             to="/admin/companies"
             className="px-6 py-3 bg-background border border-primary/50 text-white font-semibold rounded-full hover:bg-primary/10 transition-all"
           >
-            Cancel
+            {t("adminCreateCompany.buttons.cancel")}
           </Link>
           <button
             type="submit"
@@ -383,11 +411,14 @@ export default function AdminCreateCompanyPage() {
             className="flex items-center gap-2 px-8 py-3 bg-primary text-dark font-semibold rounded-full hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? (
-              <div className="w-5 h-5 border-2 border-dark border-t-transparent rounded-full animate-spin" />
+              <>
+                <div className="w-5 h-5 border-2 border-dark border-t-transparent rounded-full animate-spin" />
+                {t("adminCreateCompany.buttons.submitting")}
+              </>
             ) : (
               <>
                 <Save size={20} />
-                Create Company
+                {t("adminCreateCompany.buttons.submit")}
               </>
             )}
           </button>

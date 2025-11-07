@@ -194,7 +194,7 @@
     },
     "messages": {
       "personalSaved": "Persónuupplýsingar uppfærðar!",
-      "passwordRequested": "Beiðni um breytingu á lykilorði send."
+      "passwordRequested": "Beiðni um breytingu á lykilorði sent."
     },
     "errors": {
       "updateFailed": "Ekki tókst að uppfæra prófíl. Reyndu aftur."
@@ -245,6 +245,811 @@
       "settings": "Stillingar stjórnanda",
       "logout": "Skrá út",
       "panelButton": "Stjórnborð"
+    }
+  },
+  "adminDashboard": {
+    "header": {
+      "title": "Velkomin aftur, {{name}}! 👋",
+      "subtitle": "Stjórnaðu kerfinu og fylgstu með öllum fyrirtækjaskráningum og tilboðum"
+    },
+    "stats": {
+      "pendingApprovals": {
+        "label": "Beiðnir í bið",
+        "change": "Yfirfarið innan 30 mín"
+      },
+      "totalCompanies": {
+        "label": "Fjöldi fyrirtækja",
+        "change": "+12 í þessum mánuði"
+      },
+      "activeOffers": {
+        "label": "Virk tilboð",
+        "change": "+28 í þessari viku"
+      },
+      "platformRevenue": {
+        "label": "Tekjur kerfisins",
+        "change": "+15%"
+      }
+    },
+    "approvalQueue": {
+      "title": "Samþykktarröð",
+      "badge": "SLA 30 mín",
+      "reviewAll": "Skoða allar"
+    },
+    "pendingItems": {
+      "type": {
+        "company": "Fyrirtæki",
+        "offer": "Tilboð"
+      },
+      "urgent": "Brýnt",
+      "submittedAt": "Sent inn {{time}}",
+      "timeRemaining": "{{count}} mín eftir",
+      "reviewButton": "Yfirfara",
+      "items": {
+        "nordicSpa": {
+          "time": "fyrir 5 mínútum"
+        },
+        "christmasSpecial": {
+          "time": "fyrir 12 mínútum"
+        },
+        "reykjavikBar": {
+          "time": "fyrir 20 mínútum"
+        }
+      }
+    },
+    "recentActivity": {
+      "title": "Nýleg virkni",
+      "viewAll": "Skoða allt",
+      "actions": {
+        "approved": "Samþykkt",
+        "rejected": "Hafnað",
+        "revision": "Beðið um breytingar"
+      },
+      "type": {
+        "company": "Fyrirtæki",
+        "offer": "Tilboð"
+      },
+      "times": {
+        "blueLagoon": "fyrir 2 klukkustundum",
+        "invalidPricing": "fyrir 3 klukkustundum",
+        "mountainResort": "fyrir 5 klukkustundum"
+      }
+    }
+  },
+  "adminApproval": {
+    "title": "Samþykktarröð",
+    "subtitle": "Farið yfir fyrirtæki og tilboð í bið (30 mínútna SLA)",
+    "actions": {
+      "refresh": "Endurhlaða samþykktir",
+      "view": "Skoða nánar",
+      "approve": "Samþykkja",
+      "reject": "Hafna",
+      "revision": "Óska eftir breytingu"
+    },
+    "stats": {
+      "total": "Samþykktir í bið",
+      "urgent": "Brýnt",
+      "high": "Há forgangur",
+      "overdue": "Útrunnið"
+    },
+    "filters": {
+      "searchPlaceholder": "Leita í samþykktum...",
+      "types": {
+        "all": "Allar gerðir"
+      },
+      "priority": {
+        "all": "Allur forgangur"
+      }
+    },
+    "types": {
+      "company": "Fyrirtæki",
+      "offer": "Tilboð"
+    },
+    "priority": {
+      "urgent": "Brýnt",
+      "high": "Hár",
+      "medium": "Miðlungs",
+      "low": "Lágt"
+    },
+    "sla": {
+      "badge": "{{time}} eftir",
+      "urgent": "BRÝNT: Aðeins {{time}} eftir!",
+      "warning": "Aðvörun: Aðeins {{time}} eftir!",
+      "expired": "ÚTRUNIÐ: 30 mínútna frestur er liðinn!"
+    },
+    "details": {
+      "type": "Gerð",
+      "company": "Fyrirtæki",
+      "submittedBy": "Sent inn af",
+      "submittedAt": "Sent inn",
+      "category": "Flokkur",
+      "description": "Lýsing"
+    },
+    "empty": {
+      "title": "Engar samþykktir í bið",
+      "description": "Allt hefur verið yfirfarið eða ekkert passar við núverandi síur"
+    },
+    "pagination": {
+      "summary": "Sýni {{start}}-{{end}} af {{total}} beiðnum"
+    },
+    "slaPanel": {
+      "title": "30 mínútna SLA krafa",
+      "description": "Allar samþykktarbeiðnir þarf að yfirfara innan 30 mínútna frá innsendingu. Atriði merkt sem brýn þurfa tafarlausa athygli til að halda þjónustugæðum."
+    },
+    "common": {
+      "cancel": "Hætta við"
+    },
+    "rejectModal": {
+      "title": "Hafna {{type}}",
+      "fallbackTitle": "Hafna atriði",
+      "reasonLabel": "Ástæða höfnunar",
+      "reasonPlaceholder": "Veldu ástæðu...",
+      "notesLabel": "Viðbótarupplýsingar (valfrjálst)",
+      "notesPlaceholder": "Bættu við frekari upplýsingum um höfnun...",
+      "notice": {
+        "title": "Mikilvægt",
+        "description": "{{type}} verður hafnað og tilkynning send til {{name}} með ástæðu höfnunar."
+      },
+      "actions": {
+        "rejecting": "Hafna...",
+        "confirm": "Staðfesta höfnun"
+      },
+      "success": "{{type}} hefur verið hafnað"
+    },
+    "revisionModal": {
+      "title": "Óska eftir breytingu - {{type}}",
+      "fallbackTitle": "Óska eftir breytingu",
+      "commentLabel": "Athugasemdir við breytingu",
+      "commentPlaceholder": "Lýstu nákvæmlega hvaða breytingar þarf að gera...",
+      "characterCount": "{{count}} stafir",
+      "actions": {
+        "requesting": "Sæki...",
+        "submit": "Senda beiðni"
+      },
+      "notice": {
+        "title": "Mikilvægt",
+        "description": "{{type}} verður sent til breytinga. Tilkynning verður send til {{name}} með athugasemdum þínum. Viðkomandi getur uppfært og sent inn aftur."
+      },
+      "success": "Beiðni um breytingu á {{type}} hefur verið send. Viðkomandi fær tilkynningu."
+    },
+    "detailsPage": {
+      "notFound": {
+        "title": "Fannst ekki",
+        "description": "Ekki tókst að finna þessa samþykktarbeiðni."
+      },
+      "header": {
+        "subtitle": "{{type}} beiðni um samþykkt"
+      },
+      "priorityBadge": "Forgangur: {{priority}}",
+      "submittedByLabel": "Sent inn af:",
+      "submittedAtLabel": "Sent inn:",
+      "submittedAt": "{{date}} kl. {{time}}",
+      "company": {
+        "infoTitle": "Upplýsingar um fyrirtæki",
+        "nameLabel": "Heiti fyrirtækis",
+        "categoryLabel": "Flokkur",
+        "registrationLabel": "Kennitala/skrárnúmer",
+        "taxIdLabel": "Skattanúmer",
+        "contactTitle": "Tengiliðir",
+        "addressLabel": "Heimilisfang",
+        "phoneLabel": "Sími",
+        "emailLabel": "Netfang",
+        "websiteLabel": "Vefsíða",
+        "descriptionTitle": "Lýsing"
+      },
+      "offer": {
+        "companyTitle": "Fyrirtæki",
+        "pricingTitle": "Verðupplýsingar",
+        "originalPrice": "Upphaflegt verð",
+        "discountPrice": "Afsláttarverð",
+        "discountLabel": "Afsláttur",
+        "durationTitle": "Gildistími tilboðs",
+        "startDate": "Upphafsdagur",
+        "endDate": "Lokadagur",
+        "weekdayTitle": "Upplýsingar um virka daga",
+        "availableDays": "Virkir dagar",
+        "timeRange": "Tímarammi",
+        "location": "Staðsetning",
+        "happyHourTitle": "Upplýsingar um happy hour",
+        "additionalTitle": "Aðrar upplýsingar",
+        "terms": "Skilmálar",
+        "link": "Slóð á tilboð"
+      },
+      "sidebar": {
+        "statusTitle": "Staða og forgangur",
+        "statusLabel": "Staða",
+        "pending": "Í bið",
+        "priorityLabel": "Forgangur",
+        "timeRemainingLabel": "Tími eftir",
+        "submittedByLabel": "Sent inn af",
+        "submittedLabel": "Sent inn",
+        "actionsTitle": "Aðgerðir",
+        "slaTitles": {
+          "expired": "SLA útrunnið",
+          "urgent": "BRÝNT: SLA að renna út",
+          "warning": "Aðvörun um SLA"
+        },
+        "slaMessages": {
+          "expired": "Þetta atriði hefur farið yfir 30 mínútna SLA tímann. Vinsamlegast yfirfarðu tafarlaust.",
+          "remaining": "Yfirfara þarf atriðið innan {{time}} til að halda 30 mínútna SLA krafa."
+        }
+      },
+      "weekdays": {
+        "monday": "Mánudagur",
+        "tuesday": "Þriðjudagur",
+        "wednesday": "Miðvikudagur",
+        "thursday": "Fimmtudagur",
+        "friday": "Föstudagur",
+        "saturday": "Laugardagur",
+        "sunday": "Sunnudagur"
+      }
+    },
+    "offerTypes": {
+      "active": "Virk tilboð",
+      "weekdays": "Tilboð á virkum dögum",
+      "happyHour": "Happy hour",
+      "giftCard": "Gjafabréf",
+      "default": "Tilboð"
+    }
+  },
+  "adminCompanies": {
+    "title": "Fyrirtækjastjórnun",
+    "subtitle": "Stjórnaðu og farðu yfir allar fyrirtækjaskráningar",
+    "actions": {
+      "create": "Stofna fyrirtæki",
+      "viewDetails": "Skoða nánar",
+      "edit": "Breyta fyrirtæki"
+    },
+    "stats": {
+      "total": "Heildarfjöldi",
+      "approved": "Samþykkt",
+      "pending": "Í bið",
+      "revision": "Þarfnast endurskoðunar",
+      "rejected": "Hafnað"
+    },
+    "filters": {
+      "searchPlaceholder": "Leita að fyrirtækjum...",
+      "status": {
+        "all": "Allar stöður",
+        "pending": "Í bið",
+        "approved": "Samþykkt",
+        "revision": "Þarfnast endurskoðunar",
+        "rejected": "Hafnað"
+      }
+    },
+    "statusLabels": {
+      "approved": "Samþykkt",
+      "rejected": "Hafnað",
+      "revision": "Þarfnast endurskoðunar",
+      "pending": "Í bið",
+      "pendingReview": "Í bið um yfirferð"
+    },
+    "emptyState": {
+      "title": "Engin fyrirtæki fundust",
+      "description": "Reyndu að breyta leit eða síu"
+    },
+    "companyCard": {
+      "category": "Flokkur",
+      "owner": "Eigandi",
+      "registration": "Skráningarnúmer",
+      "offers": "Tilboð",
+      "offersActive": "{{count}} virk",
+      "email": "Netfang",
+      "phone": "Sími",
+      "registered": "Skráð",
+      "revisionNotice": "Endurskoðun nauðsynleg (tilraun {{count}}/3)"
+    },
+    "insights": {
+      "title": "Fyrirtækjagreining",
+      "distribution": {
+        "title": "Dreifing fyrirtækja",
+        "description": "{{approved}} samþykkt fyrirtæki, {{pending}} í bið og {{revision}} í endurskoðun."
+      },
+      "approvalRate": {
+        "title": "Samþykktarhlutfall",
+        "description": "{{approved}} samþykkt af {{total}} fyrirtækjum ({{rate}}% samþykktarhlutfall)."
+      },
+      "status": {
+        "title": "Staða fyrirtækja",
+        "description": "{{approved}} samþykkt, {{rejected}} hafnað."
+      },
+      "totalOffers": {
+        "title": "Heildarfjöldi tilboða",
+        "description": "Fyrirtækin hafa búið til samtals {{count}} tilboð."
+      }
+    }
+  },
+  "adminCompanyDetails": {
+    "notFound": {
+      "title": "Fyrirtæki fannst ekki",
+      "description": "Fyrirtækið sem þú leitar að er ekki til."
+    },
+    "header": {
+      "subtitle": "Upplýsingar um fyrirtæki og viðskiptavini",
+      "editButton": "Breyta fyrirtæki"
+    },
+    "status": {
+      "approved": "Samþykkt",
+      "rejected": "Hafnað",
+      "revision": "Þarfnast endurskoðunar",
+      "pending": "Í bið",
+      "pendingReview": "Í bið um yfirferð"
+    },
+    "statusBanner": {
+      "label": "Staða: {{status}}",
+      "revisionAttempt": "Endurskoðunartilraun {{count}} af {{total}}"
+    },
+    "companyInfo": {
+      "title": "Upplýsingar um fyrirtæki",
+      "category": "Flokkur",
+      "registrationNumber": "Skráningarnúmer",
+      "taxId": "Skattanúmer",
+      "registeredDate": "Skráningardagur",
+      "email": "Netfang",
+      "phone": "Sími",
+      "address": "Heimilisfang",
+      "owner": "Eigandi"
+    },
+    "customers": {
+      "title": "Viðskiptavinaskrá",
+      "subtitle": "{{count}} viðskiptavinur",
+      "subtitle_plural": "{{count}} viðskiptavinir",
+      "addButton": "Bæta við viðskiptavini",
+      "searchPlaceholder": "Leita að viðskiptavinum...",
+      "empty": {
+        "title": "Engir viðskiptavinir fundust",
+        "search": "Reyndu að breyta leitinni",
+        "default": "Bættu við fyrsta viðskiptavininum til að hefjast handa"
+      },
+      "purchases": "{{count}} kaup",
+      "purchases_plural": "{{count}} kaup",
+      "spent": "{{amount}} kr. í kaupum",
+      "notesLabel": "Athugasemdir:",
+      "editTooltip": "Breyta viðskiptavini",
+      "deleteTooltip": "Eyða viðskiptavini"
+    },
+    "quickStats": {
+      "title": "Flýtitölur",
+      "totalCustomers": "Heildarfjöldi viðskiptavina",
+      "activeOffers": "Virk tilboð",
+      "totalPurchases": "Heildarfjöldi kaupa",
+      "totalRevenue": "Heildartekjur"
+    },
+    "modals": {
+      "addCustomerTitle": "Bæta við viðskiptavini",
+      "editCustomerTitle": "Breyta viðskiptavini",
+      "cancel": "Hætta við",
+      "saving": "Vista...",
+      "addCustomer": "Bæta við viðskiptavini",
+      "updateCustomer": "Uppfæra viðskiptavin"
+    },
+    "form": {
+      "firstNameLabel": "Fornafn",
+      "firstNamePlaceholder": "Jón",
+      "lastNameLabel": "Eftirnafn",
+      "lastNamePlaceholder": "Jónsson",
+      "emailLabel": "Netfang",
+      "emailPlaceholder": "vidskiptavinur@example.com",
+      "phoneLabel": "Símanúmer",
+      "phonePlaceholder": "+354 555 1234",
+      "addressLabel": "Heimilisfang",
+      "addressPlaceholder": "Heimilisfang, Bær",
+      "notesLabel": "Athugasemdir",
+      "notesPlaceholder": "Viðbótarupplýsingar um þennan viðskiptavin..."
+    },
+    "deleteModal": {
+      "title": "Eyða viðskiptavini",
+      "warning": "Þessa aðgerð er ekki hægt að afturkalla",
+      "description": "Ertu viss um að þú viljir eyða {{name}}? Þetta mun fjarlægja allar upplýsingar um viðskiptavininn fyrir þetta fyrirtæki.",
+      "cancel": "Hætta við",
+      "confirm": "Eyða viðskiptavini"
+    },
+    "values": {
+      "currency": "{{amount}} kr."
+    }
+  },
+  "adminEditCompany": {
+    "notFound": {
+      "title": "Fyrirtæki fannst ekki",
+      "description": "Fyrirtækið sem þú leitar að er ekki til."
+    },
+    "header": {
+      "title": "Breyta fyrirtæki",
+      "subtitle": "Uppfærðu upplýsingar um fyrirtækið"
+    },
+    "statusBanner": {
+      "label": "Staða: {{status}}",
+      "revisionAttempt": "Endurskoðunartilraun {{count}} af {{total}}"
+    },
+    "sections": {
+      "companyInfoTitle": "Upplýsingar um fyrirtæki",
+      "contactInfoTitle": "Tengiliðaupplýsingar",
+      "descriptionTitle": "Lýsing"
+    },
+    "form": {
+      "companyNameLabel": "Heiti fyrirtækis",
+      "companyNamePlaceholder": "Sláðu inn heiti fyrirtækis",
+      "categoryLabel": "Flokkur",
+      "categoryPlaceholder": "Veldu flokk",
+      "registrationLabel": "Skráningarnúmer",
+      "registrationPlaceholder": "Sláðu inn skráningarnúmer",
+      "taxIdLabel": "Skattanúmer",
+      "taxIdPlaceholder": "Sláðu inn skattanúmer",
+      "emailLabel": "Netfang",
+      "emailPlaceholder": "company@example.com",
+      "phoneLabel": "Símanúmer",
+      "phonePlaceholder": "+354 555 1234",
+      "addressLabel": "Heimilisfang",
+      "addressPlaceholder": "Heimilisfang, Bær",
+      "websiteLabel": "Vefsíða",
+      "websitePlaceholder": "https://company.com",
+      "descriptionLabel": "Lýsing fyrirtækis",
+      "descriptionPlaceholder": "Lýstu fyrirtækinu þínu..."
+    },
+    "categories": {
+      "foodDining": "Veitingar og matsölustaðir",
+      "hotelsAccommodation": "Hótel og gististaðir",
+      "wellnessSpa": "Heilsulindir og spa",
+      "activitiesEntertainment": "Afþreying og skemmtun",
+      "shoppingRetail": "Verslun og smásala",
+      "beautyPersonalCare": "Snyrting og persónuleg þjónusta",
+      "healthFitness": "Heilsa og líkamsrækt",
+      "travelTourism": "Ferðir og ferðamennska",
+      "educationTraining": "Menntun og þjálfun",
+      "professionalServices": "Sérfræðingsþjónusta"
+    },
+    "validation": {
+      "nameRequired": "Heiti fyrirtækis er skilyrt",
+      "registrationRequired": "Skráningarnúmer er skilyrt",
+      "taxIdRequired": "Skattanúmer er skilyrt",
+      "categoryRequired": "Veldu flokk",
+      "emailRequired": "Netfang er skilyrt",
+      "emailInvalid": "Vinsamlegast sláðu inn gilt netfang",
+      "phoneRequired": "Símanúmer er skilyrt",
+      "addressRequired": "Heimilisfang er skilyrt",
+      "descriptionRequired": "Lýsing fyrirtækis er skilyrt"
+    },
+    "notifications": {
+      "success": "Fyrirtæki hefur verið uppfært!",
+      "error": "Ekki tókst að uppfæra fyrirtækið. Reyndu aftur."
+    },
+    "buttons": {
+      "cancel": "Hætta við",
+      "submit": "Uppfæra fyrirtæki",
+      "submitting": "Uppfæri..."
+    }
+  },
+  "adminCreateCompany": {
+    "header": {
+      "title": "Stofna nýtt fyrirtæki",
+      "subtitle": "Stofnaðu fyrirtæki sem fær strax samþykki (engin samþykktarröð)"
+    },
+    "notice": {
+      "title": "Beint samþykki",
+      "description": "Fyrirtæki sem stjórnendur stofna eru samþykkt strax og geta búið til tilboð án tafar. Engin samþykktarröð er nauðsynleg."
+    },
+    "errors": {
+      "general": "Ekki tókst að stofna fyrirtækið. Reyndu aftur."
+    },
+    "sections": {
+      "basicInfoTitle": "Grunnupplýsingar",
+      "contactInfoTitle": "Tengiliðaupplýsingar"
+    },
+    "form": {
+      "companyNameLabel": "Heiti fyrirtækis",
+      "companyNamePlaceholder": "Sláðu inn nafn fyrirtækis",
+      "registrationLabel": "Skráningarnúmer",
+      "registrationPlaceholder": "t.d. 550289-2349",
+      "taxIdLabel": "Skattanúmer / VSK númer",
+      "taxIdPlaceholder": "Sláðu inn skattanúmer",
+      "categoryLabel": "Viðskiptategund",
+      "categoryPlaceholder": "Veldu flokk",
+      "descriptionLabel": "Lýsing fyrirtækis",
+      "descriptionPlaceholder": "Lýstu starfsemi, þjónustu og því sem gerir fyrirtækið sérstakt...",
+      "ownerLabel": "Eigandi",
+      "ownerPlaceholder": "Sláðu inn nafn eiganda",
+      "emailLabel": "Netfang fyrirtækis",
+      "emailPlaceholder": "company@example.com",
+      "phoneLabel": "Símanúmer",
+      "phonePlaceholder": "+354 XXX XXXX",
+      "addressLabel": "Heimilisfang",
+      "addressPlaceholder": "Heimilisfang, Bær",
+      "websiteLabel": "Vefsíða (valfrjálst)",
+      "websitePlaceholder": "https://www.company.com"
+    },
+    "validation": {
+      "nameRequired": "Heiti fyrirtækis er skilyrt",
+      "registrationRequired": "Skráningarnúmer er skilyrt",
+      "taxIdRequired": "Skattanúmer er skilyrt",
+      "categoryRequired": "Veldu flokk",
+      "emailRequired": "Netfang er skilyrt",
+      "emailInvalid": "Vinsamlegast sláðu inn gilt netfang",
+      "phoneRequired": "Símanúmer er skilyrt",
+      "addressRequired": "Heimilisfang er skilyrt",
+      "descriptionRequired": "Lýsing fyrirtækis er skilyrt",
+      "ownerRequired": "Nafn eiganda er skilyrt"
+    },
+    "notifications": {
+      "success": "Fyrirtæki var stofnað og fær strax samþykki! Fyrirtækið getur nú búið til tilboð.",
+      "error": "Ekki tókst að stofna fyrirtækið. Reyndu aftur."
+    },
+    "buttons": {
+      "cancel": "Hætta við",
+      "submit": "Stofna fyrirtæki",
+      "submitting": "Stofna..."
+    }
+  },
+  "adminOffers": {
+    "header": {
+      "title": "Umsjón með tilboðum",
+      "subtitle": "Farðu yfir og stjórnaðu öllum tilboðum á kerfinu",
+      "createButton": "Búa til tilboð"
+    },
+    "stats": {
+      "total": "Heildarfjöldi",
+      "approved": "Samþykkt",
+      "pending": "Í bið",
+      "revision": "Þarf endurskoðun",
+      "rejected": "Hafnað"
+    },
+    "filters": {
+      "searchPlaceholder": "Leita að tilboðum...",
+      "status": {
+        "all": "Allar stöður",
+        "pending": "Í bið",
+        "approved": "Samþykkt",
+        "revision": "Þarf endurskoðun",
+        "rejected": "Hafnað"
+      }
+    },
+    "status": {
+      "pending": "Í bið",
+      "approved": "Samþykkt",
+      "active": "Virk",
+      "expired": "Útrunnið",
+      "rejected": "Hafnað",
+      "revision": "Þarf endurskoðun",
+      "pendingReview": "Í bið um yfirferð"
+    },
+    "types": {
+      "active": "Virkt tilboð",
+      "weekdays": "Tilboð á virkum dögum",
+      "happyHour": "Happy hour",
+      "giftCard": "Gjafabréf"
+    },
+    "emptyState": {
+      "title": "Engin tilboð fundust",
+      "description": "Reyndu að breyta leitinni eða sía niðurstöðurnar"
+    },
+    "cards": {
+      "company": "Fyrirtæki",
+      "price": "Verð",
+      "discount": "Afsláttur",
+      "performance": "Frammistaða",
+      "performanceMetrics": "{{views}} skoðanir, {{purchases}} kaup",
+      "created": "Stofnað",
+      "validUntil": "Gildir til",
+      "revisionNotice": "Endurskoðun nauðsynleg (tilraun {{count}}/{{total}})"
+    },
+    "values": {
+      "currency": "{{amount}} kr.",
+      "percentage": "{{value}}%"
+    },
+    "actions": {
+      "view": "Skoða tilboð"
+    },
+    "insights": {
+      "title": "Yfirsýn yfir kerfið",
+      "performance": {
+        "title": "Frammistaða tilboða",
+        "description": "Gjafabréf hafa nú {{conversion}} umbreytingarhlutfall í {{count}} virkum tilboðum."
+      },
+      "topCompanies": {
+        "title": "Fyrirtæki í forystu",
+        "description": "{{company}} leiðir með {{revenue}} kr. í tekjur.",
+        "empty": "Engin gögn tiltæk."
+      },
+      "distribution": {
+        "title": "Dreifing tilboðstegunda",
+        "item": "{{count}} {{type}}",
+        "empty": "Engin tilboð tiltæk."
+      },
+      "engagement": {
+        "title": "Viðskiptavinahengun",
+        "description": "Heildarhengun á kerfinu: {{views}} skoðanir, {{purchases}} kaup, {{averageOrder}} kr. meðalkaup."
+      }
+    }
+  },
+  "adminCommissionApproval": {
+    "title": "Endanlegt samþykki og þóknunaryfirlit",
+    "subtitle": "Farðu yfir tilboðsupplýsingar og þóknun áður en samþykkt er endanlega",
+    "notFound": {
+      "title": "Hlutur fannst ekki",
+      "description": "Beðinn samþykktarhlutur fannst ekki."
+    },
+    "messages": {
+      "companyNoCommission": "Samþykktir fyrirtækja krefjast ekki þóknunarútreiknings."
+    },
+    "sections": {
+      "company": "Fyrirtæki",
+      "pricing": "Verðupplýsingar",
+      "offerDuration": "Gildistími tilboðs",
+      "weekdays": "Upplýsingar um virka daga",
+      "happyHour": "Upplýsingar um happy hour",
+      "additional": "Aðrar upplýsingar"
+    },
+    "fields": {
+      "originalPrice": "Upphaflegt verð",
+      "discountedPrice": "Afsláttarverð",
+      "discount": "Afsláttur",
+      "startDate": "Upphafsdagur",
+      "endDate": "Lokadagur",
+      "availableDays": "Virkir dagar",
+      "timeRange": "Tímarammi",
+      "location": "Staðsetning",
+      "terms": "Skilmálar",
+      "offerLink": "Slóð á tilboð"
+    },
+    "offerTypes": {
+      "active": "Virkt tilboð",
+      "weekdays": "Tilboð á virkum dögum",
+      "happyHour": "Happy hour",
+      "giftCard": "Gjafabréf",
+      "default": "Tilboð"
+    },
+    "commission": {
+      "company": {
+        "type": "Skráning fyrirtækis",
+        "description": "Engin þóknun fyrir skráningu fyrirtækis"
+      },
+      "pending": {
+        "description": "Þóknun verður reiknuð eftir samþykki"
+      },
+      "active": {
+        "description": "{{days}} dagar × {{rate}} kr. á dag",
+        "cappedNote": "(hámark {{max}} dagar)"
+      },
+      "weekdays": {
+        "description": "{{weeks}} vikur × {{rate}} kr. á viku"
+      },
+      "happyHour": {
+        "description": "{{months}} mánuðir × {{rate}} kr. á mánuði"
+      },
+      "giftCard": {
+        "descriptionWithValue": "{{value}} kr. × {{percent}}%",
+        "description": "Þóknun reiknast fyrir hverja sölu ({{percent}}% af söluupphæð)"
+      },
+      "default": {
+        "description": "Engin skilgreind þóknun"
+      }
+    },
+    "breakdownLabels": {
+      "duration": "Tímalengd",
+      "rate": "Verð",
+      "maxDuration": "Hámarks tímalengd",
+      "billableDays": "Reiknanlegir dagar",
+      "totalWeeks": "Heildarvikur",
+      "totalMonths": "Heildarmánuðir",
+      "giftCardValue": "Upphæð gjafabréfs",
+      "commissionRate": "Þóknunarhlutfall",
+      "commissionPerSale": "Þóknun á sölu",
+      "note": "Athugasemd"
+    },
+    "breakdownValues": {
+      "durationDays": "{{count}} dagar",
+      "durationDaysWeeks": "{{days}} dagar ({{weeks}} vikur)",
+      "durationDaysMonths": "{{days}} dagar ({{months}} mánuðir)",
+      "ratePerDay": "{{amount}} kr. á dag",
+      "ratePerWeek": "{{amount}} kr. á viku",
+      "ratePerMonth": "{{amount}} kr. á mánuði",
+      "maxDuration": "{{count}} dagar (hámark)",
+      "billableDays": "{{count}} dagar",
+      "totalWeeks": "{{count}} vikur",
+      "totalMonths": "{{count}} mánuðir",
+      "giftCardValue": "{{amount}} kr.",
+      "commissionRatePercent": "{{percent}}% á sölu",
+      "commissionPerSale": "{{amount}} kr.",
+      "noteGiftCard": "Reiknast þegar gjafabréf er selt"
+    },
+    "commissionSummary": {
+      "title": "Þóknunaryfirlit",
+      "offerType": "Tegund tilboðs",
+      "breakdown": "Útreikningsniðurstöður",
+      "calculation": "Útreikningur á þóknun",
+      "total": "Heildarþóknun",
+      "notAvailable": "Ekki í boði"
+    },
+    "alerts": {
+      "giftCardPending": "Þóknun verður reiknuð fyrir hverja sölu ({{percent}}% af hverri gjafabréfasölu)"
+    },
+    "actions": {
+      "title": "Aðgerðir",
+      "approve": "Samþykkja endanlega",
+      "approving": "Samþykki í gangi...",
+      "cancel": "Hætta við"
+    },
+    "values": {
+      "currency": "{{amount}} kr.",
+      "discountPercent": "{{percent}}% afsláttur"
+    },
+    "weekdays": {
+      "monday": "Mánudagur",
+      "tuesday": "Þriðjudagur",
+      "wednesday": "Miðvikudagur",
+      "thursday": "Fimmtudagur",
+      "friday": "Föstudagur",
+      "saturday": "Laugardagur",
+      "sunday": "Sunnudagur"
+    }
+  },
+  "adminUsers": {
+    "title": "Notendastjórnun",
+    "subtitle": "Stjórnaðu notendum kerfisins og aðgangi þeirra",
+    "stats": {
+      "total": "Heildarfjöldi notenda",
+      "active": "Virktir",
+      "pending": "Í bið",
+      "suspended": "Frestaðir",
+      "verified": "Staðfestir"
+    },
+    "filters": {
+      "searchPlaceholder": "Leita að notendum...",
+      "status": {
+        "all": "Allar stöður"
+      },
+      "role": {
+        "all": "Öll hlutverk"
+      }
+    },
+    "status": {
+      "active": "Virkt",
+      "pending": "Í bið eftir staðfestingu",
+      "suspended": "Frestað",
+      "unknown": "Óþekkt"
+    },
+    "roles": {
+      "admin": "Stjórnandi",
+      "company": "Fyrirtæki"
+    },
+    "empty": {
+      "title": "Engir notendur fundust",
+      "description": "Reyndu að breyta leit eða síu"
+    },
+    "badges": {
+      "verified": "Staðfestur"
+    },
+    "details": {
+      "email": "Netfang",
+      "phone": "Sími",
+      "companies": "Fyrirtæki",
+      "offers": "Tilboð",
+      "joined": "Skráningardagur",
+      "lastLogin": "Síðasta innskráning"
+    },
+    "actions": {
+      "view": "Skoða notanda",
+      "edit": "Breyta notanda",
+      "suspend": "Gera notanda óvirkan",
+      "activate": "Virkja notanda",
+      "more": "Fleiri aðgerðir"
+    },
+    "insights": {
+      "title": "Innsýn í notendur",
+      "userDistribution": {
+        "title": "Dreifing notenda",
+        "description": "{{companies}} fyrirtækjanotendur og {{admins}} stjórnendur."
+      },
+      "verification": {
+        "title": "Staðfestingarstaða",
+        "description": "{{verified}} staðfestir notendur ({{rate}}% staðfestingarhlutfall)."
+      },
+      "security": {
+        "title": "Öryggi reikninga",
+        "description": "{{active}} virkir reikningar, {{suspended}} reikningar í bið."
+      },
+      "activity": {
+        "title": "Virkni fyrirtækja",
+        "description": "Fyrirtækjanotendur hafa skráð samtals {{count}} fyrirtæki."
+      }
     }
   },
   "companyAnalytics": {

@@ -21,7 +21,14 @@ import {
 } from "lucide-react";
 import Modal from "@/components/ui/modal";
 import { getAllRejectionReasons } from "@/utils/rejectionReasons";
-import { calculateSLA, formatTimeRemaining, formatTimeRemainingDetailed, getSLAColorClass, getSLABadgeColorClass } from "@/utils/slaTracking";
+import {
+  calculateSLA,
+  formatTimeRemaining,
+  formatTimeRemainingDetailed,
+  getSLAColorClass,
+  getSLABadgeColorClass,
+} from "@/utils/slaTracking";
+import { useTranslation } from "react-i18next";
 
 interface ApprovalItemDetails {
   id: string;
@@ -144,6 +151,7 @@ const mockApprovalItems: Record<string, ApprovalItemDetails> = {
 export default function AdminApprovalDetailsPage() {
   const { id, type } = useParams<{ id: string; type: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [item, setItem] = useState<ApprovalItemDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [showRejectModal, setShowRejectModal] = useState(false);
@@ -206,6 +214,11 @@ export default function AdminApprovalDetailsPage() {
     }
   };
 
+  const getTypeLabel = (approvalType: ApprovalItemDetails["type"]) =>
+    t(`adminApproval.types.${approvalType}`, { defaultValue: approvalType });
+
+  const getPriorityLabel = (priority: ApprovalItemDetails["priority"]) =>
+    t(`adminApproval.priority.${priority}`, { defaultValue: priority });
 
   const getTypeColor = (offerType?: string) => {
     switch (offerType) {
@@ -225,15 +238,15 @@ export default function AdminApprovalDetailsPage() {
   const getTypeText = (offerType?: string) => {
     switch (offerType) {
       case "active":
-        return "Active Offer";
+        return t("adminApproval.offerTypes.active");
       case "weekdays":
-        return "Weekdays Offer";
+        return t("adminApproval.offerTypes.weekdays");
       case "happy_hour":
-        return "Happy Hour";
+        return t("adminApproval.offerTypes.happyHour");
       case "gift_card":
-        return "Gift Card";
+        return t("adminApproval.offerTypes.giftCard");
       default:
-        return "Offer";
+        return t("adminApproval.offerTypes.default");
     }
   };
 
@@ -266,12 +279,12 @@ export default function AdminApprovalDetailsPage() {
           </Link>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-              Item Not Found
+              {t("adminApproval.detailsPage.notFound.title")}
             </h1>
           </div>
         </div>
         <div className="bg-card-background border border-primary rounded-2xl p-6 text-center">
-          <p className="text-gray-400">The requested approval item could not be found.</p>
+          <p className="text-gray-400">{t("adminApproval.detailsPage.notFound.description")}</p>
         </div>
       </div>
     );
@@ -280,14 +293,14 @@ export default function AdminApprovalDetailsPage() {
   // Calculate SLA for real-time tracking
   const sla = calculateSLA(item.submittedAt);
 
-  const weekdayMap: Record<string, string> = {
-    "monday": "Monday",
-    "tuesday": "Tuesday",
-    "wednesday": "Wednesday",
-    "thursday": "Thursday",
-    "friday": "Friday",
-    "saturday": "Saturday",
-    "sunday": "Sunday"
+  const weekdayMap = {
+    monday: t("adminApproval.detailsPage.weekdays.monday"),
+    tuesday: t("adminApproval.detailsPage.weekdays.tuesday"),
+    wednesday: t("adminApproval.detailsPage.weekdays.wednesday"),
+    thursday: t("adminApproval.detailsPage.weekdays.thursday"),
+    friday: t("adminApproval.detailsPage.weekdays.friday"),
+    saturday: t("adminApproval.detailsPage.weekdays.saturday"),
+    sunday: t("adminApproval.detailsPage.weekdays.sunday"),
   };
 
   return (
@@ -301,8 +314,7 @@ export default function AdminApprovalDetailsPage() {
                 to="/admin/approval-queue"
                 className="flex items-center justify-center w-12 h-12 border border-red-500/50 bg-card-background/50 backdrop-blur-sm rounded-lg hover:bg-red-500/20 transition-all hover:scale-105"
               >
-                <ArrowLeft className="text-white
-                -500" size={20} />
+                <ArrowLeft className="text-white-500" size={20} />
               </Link>
               <div className="flex-1">
                 <div className="flex flex-wrap items-center gap-3 mb-3">
@@ -319,17 +331,25 @@ export default function AdminApprovalDetailsPage() {
                         {item.name}
                       </h1>
                       <p className="text-gray-400 text-sm capitalize">
-                        {item.type} Approval Request
+                        {t("adminApproval.detailsPage.header.subtitle", {
+                          type: getTypeLabel(item.type),
+                        })}
                       </p>
                     </div>
                   </div>
                   <span className={`px-4 py-2 flex items-center gap-2 rounded-full text-sm font-semibold border ${getPriorityColor(item.priority)}`}>
                     {getPriorityIcon(item.priority)}
-                    <span className="capitalize">{item.priority} Priority</span>
+                    <span className="capitalize">
+                      {t("adminApproval.detailsPage.priorityBadge", {
+                        priority: getPriorityLabel(item.priority),
+                      })}
+                    </span>
                   </span>
                   <span className={`px-4 py-2 rounded-full text-sm font-semibold border ${getSLABadgeColorClass(sla.status)}`}>
                     <Clock size={14} className="inline mr-1" />
-                    {formatTimeRemaining(sla.timeRemaining)} remaining
+                    {t("adminApproval.sla.badge", {
+                      time: formatTimeRemaining(sla.timeRemaining),
+                    })}
                   </span>
                 </div>
               </div>
@@ -342,8 +362,10 @@ export default function AdminApprovalDetailsPage() {
                 <AlertTriangle className="text-red-500" size={20} />
                 <span className="text-red-500 font-bold">
                   {sla.status === "expired"
-                    ? "EXPIRED: Review time has exceeded 30 minutes!"
-                    : `URGENT: Only ${formatTimeRemainingDetailed(sla.timeRemainingSeconds)} remaining!`}
+                    ? t("adminApproval.sla.expired")
+                    : t("adminApproval.sla.urgent", {
+                        time: formatTimeRemainingDetailed(sla.timeRemainingSeconds),
+                      })}
                 </span>
               </div>
             </div>
@@ -353,7 +375,9 @@ export default function AdminApprovalDetailsPage() {
               <div className="flex items-center gap-2">
                 <Clock className="text-yellow" size={20} />
                 <span className="text-yellow font-bold">
-                  Warning: Only {formatTimeRemainingDetailed(sla.timeRemainingSeconds)} remaining!
+                  {t("adminApproval.sla.warning", {
+                    time: formatTimeRemainingDetailed(sla.timeRemainingSeconds),
+                  })}
                 </span>
               </div>
             </div>
@@ -362,15 +386,17 @@ export default function AdminApprovalDetailsPage() {
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-2 text-sm">
               <User className="text-gray-400" size={16} />
-              <span className="text-gray-400">Submitted by:</span>
+              <span className="text-gray-400">{t("adminApproval.detailsPage.submittedByLabel")}</span>
               <span className="text-white font-semibold">{item.submittedBy}</span>
             </div>
             <div className="flex items-center gap-2 text-sm">
               <Clock className="text-gray-400" size={16} />
-              <span className="text-gray-400">Submitted:</span>
+              <span className="text-gray-400">{t("adminApproval.detailsPage.submittedAtLabel")}</span>
               <span className="text-white font-semibold">
-                {new Date(item.submittedAt).toLocaleDateString()} at{" "}
-                {new Date(item.submittedAt).toLocaleTimeString()}
+                {t("adminApproval.detailsPage.submittedAt", {
+                  date: new Date(item.submittedAt).toLocaleDateString(),
+                  time: new Date(item.submittedAt).toLocaleTimeString(),
+                })}
               </span>
             </div>
           </div>
@@ -387,16 +413,20 @@ export default function AdminApprovalDetailsPage() {
               <div className="bg-card-background border border-primary rounded-2xl p-6">
                 <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                   <FileText className="text-primary" size={20} />
-                  Company Information
+                  {t("adminApproval.detailsPage.company.infoTitle")}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="bg-background rounded-lg p-4">
-                    <p className="text-gray-400 text-sm mb-1">Company Name</p>
+                    <p className="text-gray-400 text-sm mb-1">
+                      {t("adminApproval.detailsPage.company.nameLabel")}
+                    </p>
                     <p className="text-white text-lg font-semibold">{item.name}</p>
                   </div>
                   {item.category && (
                     <div className="bg-background rounded-lg p-4">
-                      <p className="text-gray-400 text-sm mb-1">Category</p>
+                      <p className="text-gray-400 text-sm mb-1">
+                        {t("adminApproval.detailsPage.company.categoryLabel")}
+                      </p>
                       <p className="text-white text-lg font-semibold">{item.category}</p>
                     </div>
                   )}
@@ -404,7 +434,7 @@ export default function AdminApprovalDetailsPage() {
                     <div className="bg-background rounded-lg p-4">
                       <p className="text-gray-400 text-sm mb-1 flex items-center gap-2">
                         <Hash size={16} />
-                        Registration Number
+                        {t("adminApproval.detailsPage.company.registrationLabel")}
                       </p>
                       <p className="text-white text-lg font-semibold">{item.registrationNumber}</p>
                     </div>
@@ -413,7 +443,7 @@ export default function AdminApprovalDetailsPage() {
                     <div className="bg-background rounded-lg p-4">
                       <p className="text-gray-400 text-sm mb-1 flex items-center gap-2">
                         <Hash size={16} />
-                        Tax ID
+                        {t("adminApproval.detailsPage.company.taxIdLabel")}
                       </p>
                       <p className="text-white text-lg font-semibold">{item.taxId}</p>
                     </div>
@@ -426,14 +456,14 @@ export default function AdminApprovalDetailsPage() {
                 <div className="bg-card-background border border-primary rounded-2xl p-6">
                   <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <Phone className="text-primary" size={20} />
-                    Contact Information
+                    {t("adminApproval.detailsPage.company.contactTitle")}
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {item.address && (
                       <div className="bg-background rounded-lg p-4">
                         <p className="text-gray-400 text-sm mb-1 flex items-center gap-2">
                           <MapPin size={16} />
-                          Address
+                          {t("adminApproval.detailsPage.company.addressLabel")}
                         </p>
                         <p className="text-white text-lg font-semibold">{item.address}</p>
                       </div>
@@ -442,7 +472,7 @@ export default function AdminApprovalDetailsPage() {
                       <div className="bg-background rounded-lg p-4">
                         <p className="text-gray-400 text-sm mb-1 flex items-center gap-2">
                           <Phone size={16} />
-                          Phone
+                          {t("adminApproval.detailsPage.company.phoneLabel")}
                         </p>
                         <p className="text-white text-lg font-semibold">{item.phone}</p>
                       </div>
@@ -451,7 +481,7 @@ export default function AdminApprovalDetailsPage() {
                       <div className="bg-background rounded-lg p-4">
                         <p className="text-gray-400 text-sm mb-1 flex items-center gap-2">
                           <Mail size={16} />
-                          Email
+                          {t("adminApproval.detailsPage.company.emailLabel")}
                         </p>
                         <p className="text-white text-lg font-semibold">{item.email}</p>
                       </div>
@@ -460,7 +490,7 @@ export default function AdminApprovalDetailsPage() {
                       <div className="bg-background rounded-lg p-4">
                         <p className="text-gray-400 text-sm mb-1 flex items-center gap-2">
                           <Globe size={16} />
-                          Website
+                          {t("adminApproval.detailsPage.company.websiteLabel")}
                         </p>
                         <a
                           href={item.website}
@@ -479,7 +509,9 @@ export default function AdminApprovalDetailsPage() {
               {/* Description */}
               {item.description && (
                 <div className="bg-card-background border border-primary rounded-2xl p-6">
-                  <h3 className="text-lg font-bold text-white mb-4">Description</h3>
+                  <h3 className="text-lg font-bold text-white mb-4">
+                    {t("adminApproval.detailsPage.company.descriptionTitle")}
+                  </h3>
                   <p className="text-gray-300 leading-relaxed">{item.description}</p>
                 </div>
               )}
@@ -520,7 +552,7 @@ export default function AdminApprovalDetailsPage() {
                 <div className="bg-card-background border border-primary rounded-2xl p-6">
                   <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <Building2 className="text-primary" size={20} />
-                    Company
+                    {t("adminApproval.detailsPage.offer.companyTitle")}
                   </h3>
                   <div className="bg-background rounded-lg p-4">
                     <p className="text-white text-lg font-semibold">{item.companyName}</p>
@@ -533,19 +565,25 @@ export default function AdminApprovalDetailsPage() {
                 <div className="bg-card-background border border-primary rounded-2xl p-6">
                   <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <DollarSign className="text-primary" size={20} />
-                    Pricing Information
+                    {t("adminApproval.detailsPage.offer.pricingTitle")}
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="bg-background rounded-lg p-4">
-                      <p className="text-gray-400 text-sm mb-1">Original Price</p>
+                      <p className="text-gray-400 text-sm mb-1">
+                        {t("adminApproval.detailsPage.offer.originalPrice")}
+                      </p>
                       <p className="text-white text-xl font-bold">{item.originalPrice.toLocaleString()} kr.</p>
                     </div>
                     <div className="bg-background rounded-lg p-4">
-                      <p className="text-gray-400 text-sm mb-1">Discounted Price</p>
+                      <p className="text-gray-400 text-sm mb-1">
+                        {t("adminApproval.detailsPage.offer.discountPrice")}
+                      </p>
                       <p className="text-green text-xl font-bold">{item.discountPrice.toLocaleString()} kr.</p>
                     </div>
                     <div className="bg-background rounded-lg p-4">
-                      <p className="text-gray-400 text-sm mb-1">Discount</p>
+                      <p className="text-gray-400 text-sm mb-1">
+                        {t("adminApproval.detailsPage.offer.discountLabel")}
+                      </p>
                       <p className="text-primary text-xl font-bold">{item.discountPercentage}% OFF</p>
                     </div>
                   </div>
@@ -557,11 +595,13 @@ export default function AdminApprovalDetailsPage() {
                 <div className="bg-card-background border border-primary rounded-2xl p-6">
                   <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <Calendar className="text-primary" size={20} />
-                    Offer Duration
+                    {t("adminApproval.detailsPage.offer.durationTitle")}
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="bg-background rounded-lg p-4">
-                      <p className="text-gray-400 text-sm mb-1">Start Date</p>
+                      <p className="text-gray-400 text-sm mb-1">
+                        {t("adminApproval.detailsPage.offer.startDate")}
+                      </p>
                       <p className="text-white text-lg font-semibold">
                         {new Date(item.startDate).toLocaleDateString('en-US', {
                           year: 'numeric',
@@ -571,7 +611,9 @@ export default function AdminApprovalDetailsPage() {
                       </p>
                     </div>
                     <div className="bg-background rounded-lg p-4">
-                      <p className="text-gray-400 text-sm mb-1">End Date</p>
+                      <p className="text-gray-400 text-sm mb-1">
+                        {t("adminApproval.detailsPage.offer.endDate")}
+                      </p>
                       <p className="text-white text-lg font-semibold">
                         {new Date(item.endDate).toLocaleDateString('en-US', {
                           year: 'numeric',
@@ -589,16 +631,18 @@ export default function AdminApprovalDetailsPage() {
                 <div className="bg-card-background border border-primary rounded-2xl p-6">
                   <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <Clock className="text-primary" size={20} />
-                    Weekdays Details
+                    {t("adminApproval.detailsPage.offer.weekdayTitle")}
                   </h3>
                   <div className="space-y-4">
                     {item.weekdays && item.weekdays.length > 0 && (
                       <div>
-                        <p className="text-gray-400 text-sm mb-2">Available Days</p>
+                        <p className="text-gray-400 text-sm mb-2">
+                          {t("adminApproval.detailsPage.offer.availableDays")}
+                        </p>
                         <div className="flex flex-wrap gap-2">
                           {item.weekdays.map(day => (
                             <span key={day} className="px-3 py-1 bg-green/10 text-green border border-green rounded-lg text-sm">
-                              {weekdayMap[day] || day}
+                              {weekdayMap[day as keyof typeof weekdayMap] || day}
                             </span>
                           ))}
                         </div>
@@ -606,7 +650,9 @@ export default function AdminApprovalDetailsPage() {
                     )}
                     {item.startTime && item.endTime && (
                       <div>
-                        <p className="text-gray-400 text-sm mb-2">Time Range</p>
+                        <p className="text-gray-400 text-sm mb-2">
+                          {t("adminApproval.detailsPage.offer.timeRange")}
+                        </p>
                         <p className="text-white text-lg font-semibold">{item.startTime} - {item.endTime}</p>
                       </div>
                     )}
@@ -614,7 +660,7 @@ export default function AdminApprovalDetailsPage() {
                       <div>
                         <p className="text-gray-400 text-sm mb-2 flex items-center gap-2">
                           <MapPin size={16} />
-                          Location
+                          {t("adminApproval.detailsPage.offer.location")}
                         </p>
                         <p className="text-white text-lg font-semibold">{item.weekdayAddress}</p>
                       </div>
@@ -627,12 +673,14 @@ export default function AdminApprovalDetailsPage() {
                 <div className="bg-card-background border border-primary rounded-2xl p-6">
                   <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <Clock className="text-primary" size={20} />
-                    Happy Hour Details
+                    {t("adminApproval.detailsPage.offer.happyHourTitle")}
                   </h3>
                   <div className="space-y-4">
                     {item.startTime && item.endTime && (
                       <div>
-                        <p className="text-gray-400 text-sm mb-2">Time Range</p>
+                        <p className="text-gray-400 text-sm mb-2">
+                          {t("adminApproval.detailsPage.offer.timeRange")}
+                        </p>
                         <p className="text-white text-lg font-semibold">{item.startTime} - {item.endTime}</p>
                       </div>
                     )}
@@ -640,7 +688,7 @@ export default function AdminApprovalDetailsPage() {
                       <div>
                         <p className="text-gray-400 text-sm mb-2 flex items-center gap-2">
                           <MapPin size={16} />
-                          Location
+                          {t("adminApproval.detailsPage.offer.location")}
                         </p>
                         <p className="text-white text-lg font-semibold">{item.location}</p>
                       </div>
@@ -654,18 +702,22 @@ export default function AdminApprovalDetailsPage() {
                 <div className="bg-card-background border border-primary rounded-2xl p-6">
                   <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <FileText className="text-primary" size={20} />
-                    Additional Information
+                    {t("adminApproval.detailsPage.offer.additionalTitle")}
                   </h3>
                   <div className="space-y-4">
                     {item.terms && (
                       <div>
-                        <p className="text-gray-400 text-sm mb-2">Terms & Conditions</p>
+                        <p className="text-gray-400 text-sm mb-2">
+                          {t("adminApproval.detailsPage.offer.terms")}
+                        </p>
                         <p className="text-gray-300">{item.terms}</p>
                       </div>
                     )}
                     {item.offerLink && (
                       <div>
-                        <p className="text-gray-400 text-sm mb-2">Offer Link</p>
+                        <p className="text-gray-400 text-sm mb-2">
+                          {t("adminApproval.detailsPage.offer.link")}
+                        </p>
                         <a
                           href={item.offerLink}
                           target="_blank"
@@ -687,33 +739,35 @@ export default function AdminApprovalDetailsPage() {
         <div className="space-y-6">
           {/* Status & Priority Card */}
           <div className="bg-card-background border border-primary rounded-2xl p-6">
-            <h3 className="text-lg font-bold text-white mb-4">Status & Priority</h3>
+            <h3 className="text-lg font-bold text-white mb-4">
+              {t("adminApproval.detailsPage.sidebar.statusTitle")}
+            </h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-gray-400">Status</span>
+                <span className="text-gray-400">{t("adminApproval.detailsPage.sidebar.statusLabel")}</span>
                 <span className="px-3 py-1 bg-yellow/10 text-yellow border border-yellow rounded-full text-xs font-semibold">
-                  Pending Review
+                  {t("adminApproval.detailsPage.sidebar.pending")}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-400">Priority</span>
+                <span className="text-gray-400">{t("adminApproval.detailsPage.sidebar.priorityLabel")}</span>
                 <span className={`px-3 py-1 flex items-center gap-1 rounded-full text-xs font-semibold border ${getPriorityColor(item.priority)}`}>
                   {getPriorityIcon(item.priority)}
-                  <span className="capitalize">{item.priority}</span>
+                  <span className="capitalize">{getPriorityLabel(item.priority)}</span>
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-400">Time Remaining</span>
+                <span className="text-gray-400">{t("adminApproval.detailsPage.sidebar.timeRemainingLabel")}</span>
                 <span className={`font-semibold ${getSLAColorClass(sla.status)}`}>
                   {formatTimeRemaining(sla.timeRemaining)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-400">Submitted By</span>
+                <span className="text-gray-400">{t("adminApproval.detailsPage.sidebar.submittedByLabel")}</span>
                 <span className="text-white font-semibold">{item.submittedBy}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-400">Submitted</span>
+                <span className="text-gray-400">{t("adminApproval.detailsPage.sidebar.submittedLabel")}</span>
                 <span className="text-white font-semibold text-sm">
                   {new Date(item.submittedAt).toLocaleDateString()}
                 </span>
@@ -723,14 +777,16 @@ export default function AdminApprovalDetailsPage() {
 
           {/* Action Buttons */}
           <div className="bg-card-background border border-primary rounded-2xl p-6">
-            <h3 className="text-lg font-bold text-white mb-4">Actions</h3>
+            <h3 className="text-lg font-bold text-white mb-4">
+              {t("adminApproval.detailsPage.sidebar.actionsTitle")}
+            </h3>
             <div className="space-y-3">
               <button 
                 onClick={() => navigate(`/admin/approval-queue/${type}/${id}/commission`)}
                 className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green text-white font-semibold rounded-lg hover:bg-green/90 transition-all"
               >
                 <CheckCircle size={18} />
-                Approve
+                {t("adminApproval.actions.approve")}
               </button>
               <button 
                 onClick={() => {
@@ -740,14 +796,14 @@ export default function AdminApprovalDetailsPage() {
                 className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all"
               >
                 <AlertCircle size={18} />
-                Request Revision
+                {t("adminApproval.actions.revision")}
               </button>
               <button 
                 onClick={() => setShowRejectModal(true)}
                 className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition-all"
               >
                 <XCircle size={18} />
-                Reject
+                {t("adminApproval.actions.reject")}
               </button>
             </div>
           </div>
@@ -771,16 +827,18 @@ export default function AdminApprovalDetailsPage() {
                       ? "text-red-500" 
                       : "text-yellow"
                   }`}>
-                    {sla.status === "expired" 
-                      ? "SLA EXPIRED" 
-                      : sla.status === "urgent" 
-                        ? "URGENT: SLA Deadline Approaching" 
-                        : "SLA Deadline Warning"}
+                    {sla.status === "expired"
+                      ? t("adminApproval.detailsPage.sidebar.slaTitles.expired")
+                      : sla.status === "urgent"
+                        ? t("adminApproval.detailsPage.sidebar.slaTitles.urgent")
+                        : t("adminApproval.detailsPage.sidebar.slaTitles.warning")}
                   </h4>
                   <p className="text-sm text-gray-300">
                     {sla.status === "expired"
-                      ? "This item has exceeded the 30-minute SLA requirement. Please review immediately."
-                      : `This item must be reviewed within ${formatTimeRemainingDetailed(sla.timeRemainingSeconds)} to meet the 30-minute SLA requirement.`}
+                      ? t("adminApproval.detailsPage.sidebar.slaMessages.expired")
+                      : t("adminApproval.detailsPage.sidebar.slaMessages.remaining", {
+                          time: formatTimeRemainingDetailed(sla.timeRemainingSeconds),
+                        })}
                   </p>
                 </div>
               </div>
@@ -797,7 +855,7 @@ export default function AdminApprovalDetailsPage() {
           setSelectedReason("");
           setRejectionNotes("");
         }}
-        title={`Reject ${type === 'company' ? 'Company' : 'Offer'}`}
+        title={t("adminApproval.rejectModal.title", { type: getTypeLabel(item.type) })}
         size="lg"
         footer={
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3">
@@ -809,7 +867,7 @@ export default function AdminApprovalDetailsPage() {
               }}
               className="px-4 sm:px-6 py-2.5 sm:py-2 text-gray-400 hover:text-white hover:bg-primary/10 rounded-lg transition-all text-sm sm:text-base min-h-[44px] sm:min-h-[40px]"
             >
-              Cancel
+              {t("adminApproval.common.cancel")}
             </button>
             <button
               onClick={async () => {
@@ -828,13 +886,18 @@ export default function AdminApprovalDetailsPage() {
                 setShowRejectModal(false);
                 setSelectedReason("");
                 setRejectionNotes("");
-                // In real app, redirect or update UI
-                alert(`${type === 'company' ? 'Company' : 'Offer'} rejected successfully`);
+                window.alert(
+                  t("adminApproval.rejectModal.success", {
+                    type: getTypeLabel(item.type),
+                  })
+                );
               }}
               disabled={!selectedReason || isRejecting}
               className="px-4 sm:px-6 py-2.5 sm:py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base min-h-[44px] sm:min-h-[40px]"
             >
-              {isRejecting ? "Rejecting..." : "Confirm Rejection"}
+              {isRejecting
+                ? t("adminApproval.rejectModal.actions.rejecting")
+                : t("adminApproval.rejectModal.actions.confirm")}
             </button>
           </div>
         }
@@ -842,7 +905,8 @@ export default function AdminApprovalDetailsPage() {
         <div className="space-y-4 sm:space-y-6">
           <div>
             <label className="text-gray-400 text-sm sm:text-base mb-2 block">
-              Rejection Reason <span className="text-red-500">*</span>
+              {t("adminApproval.rejectModal.reasonLabel")}
+              <span className="text-red-500">*</span>
             </label>
             <div className="relative w-full">
               <select
@@ -859,7 +923,9 @@ export default function AdminApprovalDetailsPage() {
                   backgroundSize: '1.25em 1.25em',
                 }}
               >
-                <option value="" className="bg-background text-white">Select a reason...</option>
+                <option value="" className="bg-background text-white">
+                  {t("adminApproval.rejectModal.reasonPlaceholder")}
+                </option>
                 {getAllRejectionReasons(type as "company" | "offer").map(reason => (
                   <option key={reason.id} value={reason.id} className="bg-background text-white">
                     {reason.reason}
@@ -881,12 +947,12 @@ export default function AdminApprovalDetailsPage() {
 
           <div>
             <label className="text-gray-400 text-sm sm:text-base mb-2 block">
-              Additional Notes (Optional)
+              {t("adminApproval.rejectModal.notesLabel")}
             </label>
             <textarea
               value={rejectionNotes}
               onChange={(e) => setRejectionNotes(e.target.value)}
-              placeholder="Add any additional information about the rejection..."
+              placeholder={t("adminApproval.rejectModal.notesPlaceholder")}
               rows={4}
               className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-background border border-primary/50 rounded-lg text-white text-sm sm:text-base placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary resize-none min-h-[100px]"
             />
@@ -896,9 +962,14 @@ export default function AdminApprovalDetailsPage() {
             <div className="flex items-start gap-2 sm:gap-3">
               <AlertTriangle className="text-yellow flex-shrink-0 mt-0.5" size={18} />
               <div className="flex-1 min-w-0">
-                <h4 className="text-yellow font-bold mb-1 text-sm sm:text-base">Important</h4>
+                <h4 className="text-yellow font-bold mb-1 text-sm sm:text-base">
+                  {t("adminApproval.rejectModal.notice.title")}
+                </h4>
                 <p className="text-xs sm:text-sm text-gray-300 break-words">
-                  The {type === 'company' ? 'company' : 'offer'} will be rejected and an email notification will be sent to the submitter with the rejection reason.
+                  {t("adminApproval.rejectModal.notice.description", {
+                    type: getTypeLabel(item.type),
+                    name: item.submittedBy,
+                  })}
                 </p>
               </div>
             </div>
@@ -913,7 +984,7 @@ export default function AdminApprovalDetailsPage() {
           setShowRevisionModal(false);
           setRevisionComment("");
         }}
-        title={`Request Revision - ${type === 'company' ? 'Company' : 'Offer'}`}
+        title={t("adminApproval.revisionModal.title", { type: getTypeLabel(item.type) })}
         size="lg"
         footer={
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3">
@@ -924,7 +995,7 @@ export default function AdminApprovalDetailsPage() {
               }}
               className="px-4 sm:px-6 py-2.5 sm:py-2 text-gray-400 hover:text-white hover:bg-primary/10 rounded-lg transition-all text-sm sm:text-base min-h-[44px] sm:min-h-[40px]"
             >
-              Cancel
+              {t("adminApproval.common.cancel")}
             </button>
             <button
               onClick={async () => {
@@ -941,12 +1012,18 @@ export default function AdminApprovalDetailsPage() {
                 setIsRequestingRevision(false);
                 setShowRevisionModal(false);
                 setRevisionComment("");
-                alert(`${type === 'company' ? 'Company' : 'Offer'} revision requested successfully. The submitter will be notified.`);
+                window.alert(
+                  t("adminApproval.revisionModal.success", {
+                    type: getTypeLabel(item.type),
+                  })
+                );
               }}
               disabled={!revisionComment.trim() || isRequestingRevision}
               className="px-4 sm:px-6 py-2.5 sm:py-2 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base min-h-[44px] sm:min-h-[40px]"
             >
-              {isRequestingRevision ? "Requesting..." : "Request Revision"}
+              {isRequestingRevision
+                ? t("adminApproval.revisionModal.actions.requesting")
+                : t("adminApproval.revisionModal.actions.submit")}
             </button>
           </div>
         }
@@ -979,17 +1056,18 @@ export default function AdminApprovalDetailsPage() {
 
           <div>
             <label className="text-gray-400 text-sm sm:text-base mb-2 block">
-              Revision Comments <span className="text-red-500">*</span>
+              {t("adminApproval.revisionModal.commentLabel")}
+              <span className="text-red-500">*</span>
             </label>
             <textarea
               value={revisionComment}
               onChange={(e) => setRevisionComment(e.target.value)}
-              placeholder="Please provide detailed comments about what needs to be revised. Be specific about the changes required..."
+              placeholder={t("adminApproval.revisionModal.commentPlaceholder")}
               rows={6}
               className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-background border border-primary/50 rounded-lg text-white text-sm sm:text-base placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary resize-none min-h-[150px]"
             />
             <p className="text-gray-500 text-xs mt-2">
-              {revisionComment.length} characters
+              {t("adminApproval.revisionModal.characterCount", { count: revisionComment.length })}
             </p>
           </div>
 
@@ -997,9 +1075,14 @@ export default function AdminApprovalDetailsPage() {
             <div className="flex items-start gap-2 sm:gap-3">
               <AlertCircle className="text-blue-500 flex-shrink-0 mt-0.5" size={18} />
               <div className="flex-1 min-w-0">
-                <h4 className="text-blue-500 font-bold mb-1 text-sm sm:text-base">Important</h4>
+                <h4 className="text-blue-500 font-bold mb-1 text-sm sm:text-base">
+                  {t("adminApproval.revisionModal.notice.title")}
+                </h4>
                 <p className="text-xs sm:text-sm text-gray-300 break-words">
-                  The {type === 'company' ? 'company' : 'offer'} will be sent back for revision. An email notification will be sent to {item?.submittedBy} with your comments. They will be able to make the requested changes and resubmit.
+                  {t("adminApproval.revisionModal.notice.description", {
+                    type: getTypeLabel(item.type),
+                    name: item?.submittedBy ?? "",
+                  })}
                 </p>
               </div>
             </div>

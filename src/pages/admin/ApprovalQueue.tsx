@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Clock,
@@ -18,6 +18,7 @@ import Pagination from "@/components/ui/Pagination";
 import Modal from "@/components/ui/modal";
 import { getAllRejectionReasons } from "@/utils/rejectionReasons";
 import { calculateSLA, formatTimeRemaining, formatTimeRemainingDetailed, getSLABadgeColorClass } from "@/utils/slaTracking";
+import { useTranslation } from "react-i18next";
 
 interface ApprovalItem {
   id: string;
@@ -34,6 +35,7 @@ interface ApprovalItem {
 
 export default function ApprovalsPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [approvals] = useState<ApprovalItem[]>([
     {
       id: "1",
@@ -249,6 +251,12 @@ export default function ApprovalsPage() {
     setCurrentPage(1);
   }, [searchTerm, typeFilter, priorityFilter]);
 
+  const getTypeLabel = (type: ApprovalItem["type"]) =>
+    t(`adminApproval.types.${type}`, { defaultValue: type });
+
+  const getPriorityLabel = (priority: ApprovalItem["priority"]) =>
+    t(`adminApproval.priority.${priority}`, { defaultValue: priority });
+
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "urgent": return "bg-red-500/10 text-red-500 border-red-500";
@@ -267,18 +275,76 @@ export default function ApprovalsPage() {
     }
   };
 
-  const stats = {
-    total: approvals.length,
-    urgent: approvals.filter(a => {
-      const sla = calculateSLA(a.submittedAt);
-      return sla.status === "urgent" || sla.status === "expired";
-    }).length,
-    high: approvals.filter(a => a.priority === "high").length,
-    overdue: approvals.filter(a => {
-      const sla = calculateSLA(a.submittedAt);
-      return sla.status === "expired";
-    }).length,
-  };
+  const stats = useMemo(
+    () => ({
+      total: approvals.length,
+      urgent: approvals.filter(a => {
+        const sla = calculateSLA(a.submittedAt);
+        return sla.status === "urgent" || sla.status === "expired";
+      }).length,
+      high: approvals.filter(a => a.priority === "high").length,
+      overdue: approvals.filter(a => {
+        const sla = calculateSLA(a.submittedAt);
+        return sla.status === "expired";
+      }).length,
+    }),
+    [approvals]
+  );
+
+  const statsCards = useMemo(
+    () => [
+      {
+        id: "total",
+        value: stats.total,
+        icon: Clock,
+        borderClass: "border-primary",
+        iconColor: "text-primary",
+      },
+      {
+        id: "urgent",
+        value: stats.urgent,
+        icon: AlertTriangle,
+        borderClass: "border-red-500",
+        iconColor: "text-red-500",
+      },
+      {
+        id: "high",
+        value: stats.high,
+        icon: Clock,
+        borderClass: "border-orange-500",
+        iconColor: "text-orange-500",
+      },
+      {
+        id: "overdue",
+        value: stats.overdue,
+        icon: AlertTriangle,
+        borderClass: "border-red-500",
+        iconColor: "text-red-500",
+        animate: true,
+      },
+    ],
+    [stats]
+  );
+
+  const typeOptions = useMemo(
+    () => [
+      { value: "all", label: t("adminApproval.filters.types.all") },
+      { value: "company", label: t("adminApproval.types.company") },
+      { value: "offer", label: t("adminApproval.types.offer") },
+    ],
+    [t]
+  );
+
+  const priorityOptions = useMemo(
+    () => [
+      { value: "all", label: t("adminApproval.filters.priority.all") },
+      { value: "urgent", label: t("adminApproval.priority.urgent") },
+      { value: "high", label: t("adminApproval.priority.high") },
+      { value: "medium", label: t("adminApproval.priority.medium") },
+      { value: "low", label: t("adminApproval.priority.low") },
+    ],
+    [t]
+  );
 
   return (
     <div className="space-y-6">
@@ -293,16 +359,19 @@ export default function ApprovalsPage() {
           </Link>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white">
-              Approval Queue
+              {t("adminApproval.title")}
             </h1>
             <p className="text-gray-400 text-sm">
-              Review pending companies and offers (30-minute SLA)
+              {t("adminApproval.subtitle")}
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <button className="p-2 hover:bg-red-500/10 rounded-lg transition-all">
+          <button
+            className="p-2 hover:bg-red-500/10 rounded-lg transition-all"
+            title={t("adminApproval.actions.refresh")}
+          >
             <RefreshCw className="text-red-500" size={20} />
           </button>
         </div>
@@ -310,45 +379,23 @@ export default function ApprovalsPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-card-background border border-primary rounded-2xl p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Total Pending</p>
-              <p className="text-white text-2xl font-bold">{stats.total}</p>
+        {statsCards.map(card => {
+          const Icon = card.icon;
+          return (
+            <div
+              key={card.id}
+              className={`bg-card-background border ${card.borderClass} rounded-2xl p-4 ${card.animate ? "animate-pulse" : ""}`}
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-400 text-sm">{t(`adminApproval.stats.${card.id}`)}</p>
+                  <p className="text-white text-2xl font-bold">{card.value}</p>
+                </div>
+                <Icon className={card.iconColor} size={24} />
+              </div>
             </div>
-            <Clock className="text-primary" size={24} />
-          </div>
-        </div>
-
-        <div className="bg-card-background border border-red-500 rounded-2xl p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Urgent</p>
-              <p className="text-white text-2xl font-bold">{stats.urgent}</p>
-            </div>
-            <AlertTriangle className="text-red-500" size={24} />
-          </div>
-        </div>
-
-        <div className="bg-card-background border border-orange-500 rounded-2xl p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">High Priority</p>
-              <p className="text-white text-2xl font-bold">{stats.high}</p>
-            </div>
-            <Clock className="text-orange-500" size={24} />
-          </div>
-        </div>
-
-        <div className="bg-card-background border border-red-500 rounded-2xl p-4 animate-pulse">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Overdue</p>
-              <p className="text-white text-2xl font-bold">{stats.overdue}</p>
-            </div>
-            <AlertTriangle className="text-red-500" size={24} />
-          </div>
-        </div>
+          );
+        })}
       </div>
 
       {/* Filters */}
@@ -359,7 +406,7 @@ export default function ApprovalsPage() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
               <input
                 type="text"
-                placeholder="Search approvals..."
+                placeholder={t("adminApproval.filters.searchPlaceholder")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-background border border-primary/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary"
@@ -374,9 +421,11 @@ export default function ApprovalsPage() {
               onChange={(e) => setTypeFilter(e.target.value)}
               className="px-3 py-2 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
             >
-              <option value="all">All Types</option>
-              <option value="company">Companies</option>
-              <option value="offer">Offers</option>
+              {typeOptions.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -387,11 +436,11 @@ export default function ApprovalsPage() {
               onChange={(e) => setPriorityFilter(e.target.value)}
               className="px-3 py-2 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
             >
-              <option value="all">All Priorities</option>
-              <option value="urgent">Urgent</option>
-              <option value="high">High</option>
-              <option value="medium">Medium</option>
-              <option value="low">Low</option>
+              {priorityOptions.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -402,10 +451,8 @@ export default function ApprovalsPage() {
         {filteredApprovals.length === 0 ? (
           <div className="bg-card-background border border-primary rounded-2xl p-8 text-center">
             <CheckCircle className="mx-auto text-green mb-4" size={48} />
-            <h3 className="text-xl font-bold text-white mb-2">No pending approvals</h3>
-            <p className="text-gray-400">
-              All items have been reviewed or no items match your current filters
-            </p>
+            <h3 className="text-xl font-bold text-white mb-2">{t("adminApproval.empty.title")}</h3>
+            <p className="text-gray-400">{t("adminApproval.empty.description")}</p>
           </div>
         ) : (
           currentPageItems.map((item) => {
@@ -429,30 +476,30 @@ export default function ApprovalsPage() {
 
                     <span className={`px-3 py-1 flex items-center rounded-full text-xs font-semibold ${getPriorityColor(item.priority)}`}>
                       {getPriorityIcon(item.priority)}
-                      <span className="ml-1 capitalize">{item.priority}</span>
+                      <span className="ml-1">{getPriorityLabel(item.priority)}</span>
                     </span>
 
                     <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getSLABadgeColorClass(sla.status)}`}>
                       <Clock size={12} className="inline mr-1" />
-                      {formatTimeRemaining(sla.timeRemaining)}
+                      {t("adminApproval.sla.badge", { time: formatTimeRemaining(sla.timeRemaining) })}
                     </span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
                     <div>
-                      <p className="text-gray-400">Type</p>
-                      <p className="text-white font-medium capitalize">{item.type}</p>
+                      <p className="text-gray-400">{t("adminApproval.details.type")}</p>
+                      <p className="text-white font-medium">{getTypeLabel(item.type)}</p>
                     </div>
                     <div>
-                      <p className="text-gray-400">Company</p>
+                      <p className="text-gray-400">{t("adminApproval.details.company")}</p>
                       <p className="text-white font-medium">{item.companyName}</p>
                     </div>
                     <div>
-                      <p className="text-gray-400">Submitted By</p>
+                      <p className="text-gray-400">{t("adminApproval.details.submittedBy")}</p>
                       <p className="text-white font-medium">{item.submittedBy}</p>
                     </div>
                     <div>
-                      <p className="text-gray-400">Submitted</p>
+                      <p className="text-gray-400">{t("adminApproval.details.submittedAt")}</p>
                       <p className="text-white font-medium">
                         {new Date(item.submittedAt).toLocaleDateString()} at{" "}
                         {new Date(item.submittedAt).toLocaleTimeString()}
@@ -462,13 +509,17 @@ export default function ApprovalsPage() {
 
                   {item.category && (
                     <div className="mt-2">
-                      <p className="text-gray-400 text-sm">Category: <span className="text-white">{item.category}</span></p>
+                      <p className="text-gray-400 text-sm">
+                        {t("adminApproval.details.category")}: <span className="text-white">{item.category}</span>
+                      </p>
                     </div>
                   )}
 
                   {item.description && (
                     <div className="mt-2">
-                      <p className="text-gray-400 text-sm">Description: <span className="text-white">{item.description}</span></p>
+                      <p className="text-gray-400 text-sm">
+                        {t("adminApproval.details.description")}: <span className="text-white">{item.description}</span>
+                      </p>
                     </div>
                   )}
 
@@ -477,9 +528,11 @@ export default function ApprovalsPage() {
                       <div className="flex items-center gap-2">
                         <AlertTriangle className="text-red-500" size={16} />
                         <span className="text-red-500 text-sm font-semibold">
-                          {sla.status === "expired" 
-                            ? "EXPIRED: Review time has exceeded 30 minutes!"
-                            : `URGENT: Only ${formatTimeRemainingDetailed(sla.timeRemainingSeconds)} remaining!`}
+                          {sla.status === "expired"
+                            ? t("adminApproval.sla.expired")
+                            : t("adminApproval.sla.urgent", {
+                                time: formatTimeRemainingDetailed(sla.timeRemainingSeconds),
+                              })}
                         </span>
                       </div>
                     </div>
@@ -489,7 +542,9 @@ export default function ApprovalsPage() {
                       <div className="flex items-center gap-2">
                         <Clock className="text-yellow" size={16} />
                         <span className="text-yellow text-sm font-semibold">
-                          Warning: Only {formatTimeRemainingDetailed(sla.timeRemainingSeconds)} remaining!
+                          {t("adminApproval.sla.warning", {
+                            time: formatTimeRemainingDetailed(sla.timeRemainingSeconds),
+                          })}
                         </span>
                       </div>
                     </div>
@@ -500,7 +555,7 @@ export default function ApprovalsPage() {
                   <Link
                     to={`/admin/approval-queue/${item.type}/${item.id}`}
                     className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-500/10 rounded-lg transition-all flex-shrink-0"
-                    title="View Details"
+                    title={t("adminApproval.actions.view")}
                   >
                     <Eye size={20} />
                   </Link>
@@ -508,7 +563,7 @@ export default function ApprovalsPage() {
                     onClick={() => navigate(`/admin/approval-queue/${item.type}/${item.id}/commission`)}
                     className="px-4 py-2 bg-green text-white font-semibold rounded-lg hover:bg-green transition-all whitespace-nowrap"
                   >
-                    Approve
+                    {t("adminApproval.actions.approve")}
                   </button>
                   <button 
                     onClick={() => {
@@ -519,7 +574,7 @@ export default function ApprovalsPage() {
                     }}
                     className="px-4 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition-all whitespace-nowrap"
                   >
-                    Reject
+                    {t("adminApproval.actions.reject")}
                   </button>
                   <button 
                     onClick={() => {
@@ -529,7 +584,7 @@ export default function ApprovalsPage() {
                     }}
                     className="px-4 py-2 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all whitespace-nowrap"
                   >
-                    Revision
+                    {t("adminApproval.actions.revision")}
                   </button>
                 </div>
               </div>
@@ -543,7 +598,11 @@ export default function ApprovalsPage() {
       {filteredApprovals.length > 0 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-gray-400">
-            Showing {startIndex + 1}-{Math.min(endIndex, filteredApprovals.length)} of {filteredApprovals.length} approvals
+            {t("adminApproval.pagination.summary", {
+              start: startIndex + 1,
+              end: Math.min(endIndex, filteredApprovals.length),
+              total: filteredApprovals.length,
+            })}
           </p>
           <Pagination
             currentPage={currentPage}
@@ -559,11 +618,10 @@ export default function ApprovalsPage() {
           <AlertTriangle className="text-red-500 flex-shrink-0 mt-0.5" size={20} />
           <div>
             <h3 className="text-red-500 font-bold mb-1">
-              30-Minute SLA Requirement
+              {t("adminApproval.slaPanel.title")}
             </h3>
             <p className="text-sm text-gray-300">
-              All approval requests must be reviewed within 30 minutes of submission.
-              Items marked as urgent require immediate attention to maintain service quality.
+              {t("adminApproval.slaPanel.description")}
             </p>
           </div>
         </div>
@@ -578,7 +636,11 @@ export default function ApprovalsPage() {
           setSelectedReason("");
           setRejectionNotes("");
         }}
-        title={rejectingItem ? `Reject ${rejectingItem.type === 'company' ? 'Company' : 'Offer'}` : "Reject Item"}
+        title={
+          rejectingItem
+            ? t("adminApproval.rejectModal.title", { type: getTypeLabel(rejectingItem.type) })
+            : t("adminApproval.rejectModal.fallbackTitle")
+        }
         size="lg"
         footer={
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3">
@@ -591,7 +653,7 @@ export default function ApprovalsPage() {
               }}
               className="px-4 sm:px-6 py-2.5 sm:py-2 text-gray-400 hover:text-white hover:bg-primary/10 rounded-lg transition-all text-sm sm:text-base min-h-[44px] sm:min-h-[40px]"
             >
-              Cancel
+              {t("adminApproval.common.cancel")}
             </button>
             <button
               onClick={async () => {
@@ -614,12 +676,18 @@ export default function ApprovalsPage() {
                 setRejectingItem(null);
                 setSelectedReason("");
                 setRejectionNotes("");
-                alert(`${rejectingItem.type === 'company' ? 'Company' : 'Offer'} rejected successfully`);
+                window.alert(
+                  t("adminApproval.rejectModal.success", {
+                    type: getTypeLabel(rejectingItem.type),
+                  })
+                );
               }}
               disabled={!selectedReason || isRejecting || !rejectingItem}
               className="px-4 sm:px-6 py-2.5 sm:py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base min-h-[44px] sm:min-h-[40px]"
             >
-              {isRejecting ? "Rejecting..." : "Confirm Rejection"}
+              {isRejecting
+                ? t("adminApproval.rejectModal.actions.rejecting")
+                : t("adminApproval.rejectModal.actions.confirm")}
             </button>
           </div>
         }
@@ -652,7 +720,8 @@ export default function ApprovalsPage() {
 
           <div>
             <label className="text-gray-400 text-sm sm:text-base mb-2 block">
-              Rejection Reason <span className="text-red-500">*</span>
+              {t("adminApproval.rejectModal.reasonLabel")}
+              <span className="text-red-500">*</span>
             </label>
             <div className="relative w-full">
               <select
@@ -669,7 +738,9 @@ export default function ApprovalsPage() {
                   backgroundSize: '1.25em 1.25em',
                 }}
               >
-                <option value="" className="bg-background text-white">Select a reason...</option>
+                <option value="" className="bg-background text-white">
+                  {t("adminApproval.rejectModal.reasonPlaceholder")}
+                </option>
                 {rejectingItem && getAllRejectionReasons(rejectingItem.type).map(reason => (
                   <option key={reason.id} value={reason.id} className="bg-background text-white">
                     {reason.reason}
@@ -691,12 +762,12 @@ export default function ApprovalsPage() {
 
           <div>
             <label className="text-gray-400 text-sm sm:text-base mb-2 block">
-              Additional Notes (Optional)
+              {t("adminApproval.rejectModal.notesLabel")}
             </label>
             <textarea
               value={rejectionNotes}
               onChange={(e) => setRejectionNotes(e.target.value)}
-              placeholder="Add any additional information about the rejection..."
+              placeholder={t("adminApproval.rejectModal.notesPlaceholder")}
               rows={4}
               className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-background border border-primary/50 rounded-lg text-white text-sm sm:text-base placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary resize-none min-h-[100px]"
             />
@@ -706,9 +777,12 @@ export default function ApprovalsPage() {
             <div className="flex items-start gap-2 sm:gap-3">
               <AlertTriangle className="text-yellow flex-shrink-0 mt-0.5" size={18} />
               <div className="flex-1 min-w-0">
-                <h4 className="text-yellow font-bold mb-1 text-sm sm:text-base">Important</h4>
+                <h4 className="text-yellow font-bold mb-1 text-sm sm:text-base">{t("adminApproval.rejectModal.notice.title")}</h4>
                 <p className="text-xs sm:text-sm text-gray-300 break-words">
-                  The {rejectingItem?.type === 'company' ? 'company' : 'offer'} will be rejected and an email notification will be sent to {rejectingItem?.submittedBy} with the rejection reason.
+                  {t("adminApproval.rejectModal.notice.description", {
+                    type: rejectingItem ? getTypeLabel(rejectingItem.type) : "",
+                    name: rejectingItem?.submittedBy ?? "",
+                  })}
                 </p>
               </div>
             </div>
@@ -724,7 +798,11 @@ export default function ApprovalsPage() {
           setRevisingItem(null);
           setRevisionComment("");
         }}
-        title={revisingItem ? `Request Revision - ${revisingItem.type === 'company' ? 'Company' : 'Offer'}` : "Request Revision"}
+        title={
+          revisingItem
+            ? t("adminApproval.revisionModal.title", { type: getTypeLabel(revisingItem.type) })
+            : t("adminApproval.revisionModal.fallbackTitle")
+        }
         size="lg"
         footer={
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3">
@@ -736,7 +814,7 @@ export default function ApprovalsPage() {
               }}
               className="px-4 sm:px-6 py-2.5 sm:py-2 text-gray-400 hover:text-white hover:bg-primary/10 rounded-lg transition-all text-sm sm:text-base min-h-[44px] sm:min-h-[40px]"
             >
-              Cancel
+              {t("adminApproval.common.cancel")}
             </button>
             <button
               onClick={async () => {
@@ -754,12 +832,18 @@ export default function ApprovalsPage() {
                 setShowRevisionModal(false);
                 setRevisingItem(null);
                 setRevisionComment("");
-                alert(`${revisingItem.type === 'company' ? 'Company' : 'Offer'} revision requested successfully. The submitter will be notified.`);
+                window.alert(
+                  t("adminApproval.revisionModal.success", {
+                    type: getTypeLabel(revisingItem.type),
+                  })
+                );
               }}
               disabled={!revisionComment.trim() || isRequestingRevision || !revisingItem}
               className="px-4 sm:px-6 py-2.5 sm:py-2 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base min-h-[44px] sm:min-h-[40px]"
             >
-              {isRequestingRevision ? "Requesting..." : "Request Revision"}
+              {isRequestingRevision
+                ? t("adminApproval.revisionModal.actions.requesting")
+                : t("adminApproval.revisionModal.actions.submit")}
             </button>
           </div>
         }
@@ -792,17 +876,18 @@ export default function ApprovalsPage() {
 
           <div>
             <label className="text-gray-400 text-sm sm:text-base mb-2 block">
-              Revision Comments <span className="text-red-500">*</span>
+              {t("adminApproval.revisionModal.commentLabel")}
+              <span className="text-red-500">*</span>
             </label>
             <textarea
               value={revisionComment}
               onChange={(e) => setRevisionComment(e.target.value)}
-              placeholder="Please provide detailed comments about what needs to be revised. Be specific about the changes required..."
+              placeholder={t("adminApproval.revisionModal.commentPlaceholder")}
               rows={6}
               className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-background border border-primary/50 rounded-lg text-white text-sm sm:text-base placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary resize-none min-h-[150px]"
             />
             <p className="text-gray-500 text-xs mt-2">
-              {revisionComment.length} characters
+              {t("adminApproval.revisionModal.characterCount", { count: revisionComment.length })}
             </p>
           </div>
 
@@ -810,9 +895,12 @@ export default function ApprovalsPage() {
             <div className="flex items-start gap-2 sm:gap-3">
               <AlertCircle className="text-blue-500 flex-shrink-0 mt-0.5" size={18} />
               <div className="flex-1 min-w-0">
-                <h4 className="text-blue-500 font-bold mb-1 text-sm sm:text-base">Important</h4>
+                <h4 className="text-blue-500 font-bold mb-1 text-sm sm:text-base">{t("adminApproval.revisionModal.notice.title")}</h4>
                 <p className="text-xs sm:text-sm text-gray-300 break-words">
-                  The {revisingItem?.type === 'company' ? 'company' : 'offer'} will be sent back for revision. An email notification will be sent to {revisingItem?.submittedBy} with your comments. They will be able to make the requested changes and resubmit.
+                  {t("adminApproval.revisionModal.notice.description", {
+                    type: revisingItem ? getTypeLabel(revisingItem.type) : "",
+                    name: revisingItem?.submittedBy ?? "",
+                  })}
                 </p>
               </div>
             </div>

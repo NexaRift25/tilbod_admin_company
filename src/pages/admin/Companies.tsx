@@ -14,12 +14,22 @@ import {
   Plus,
 } from "lucide-react";
 import Pagination from "@/components/ui/Pagination";
+import { useTranslation } from "react-i18next";
 
 export default function AdminCompaniesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language === "is" ? "is-IS" : "en-US";
+  const statusOptions = [
+    { value: "all", label: t("adminCompanies.filters.status.all") },
+    { value: "pending", label: t("adminCompanies.filters.status.pending") },
+    { value: "approved", label: t("adminCompanies.filters.status.approved") },
+    { value: "revision", label: t("adminCompanies.filters.status.revision") },
+    { value: "rejected", label: t("adminCompanies.filters.status.rejected") },
+  ];
 
   // Mock data for admin companies management
   const companies = [
@@ -137,16 +147,16 @@ export default function AdminCompaniesPage() {
   };
 
   const getStatusText = (status: string) => {
-    switch (status) {
-      case "approved":
-        return "Approved";
-      case "rejected":
-        return "Rejected";
-      case "revision":
-        return "Needs Revision";
-      default:
-        return "Pending Review";
-    }
+    const statusTranslationMap: Record<string, string> = {
+      approved: "adminCompanies.statusLabels.approved",
+      rejected: "adminCompanies.statusLabels.rejected",
+      revision: "adminCompanies.statusLabels.revision",
+      pending: "adminCompanies.statusLabels.pending",
+    };
+
+    return t(
+      statusTranslationMap[status] ?? "adminCompanies.statusLabels.pendingReview"
+    );
   };
 
   const companyStats = {
@@ -156,6 +166,14 @@ export default function AdminCompaniesPage() {
     revision: companies.filter(c => c.status === "revision").length,
     rejected: companies.filter(c => c.status === "rejected").length,
   };
+  const totalOffers = companies.reduce(
+    (sum, company) => sum + (company.offersCount || 0),
+    0
+  );
+  const approvalRate =
+    companyStats.total > 0
+      ? Math.round((companyStats.approved / companyStats.total) * 100)
+      : 0;
 
   return (
     <div className="space-y-6">
@@ -170,10 +188,10 @@ export default function AdminCompaniesPage() {
           </Link>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white">
-              Company Management
+              {t("adminCompanies.title")}
             </h1>
             <p className="text-gray-400 text-sm">
-              Manage and review all company registrations
+              {t("adminCompanies.subtitle")}
             </p>
           </div>
         </div>
@@ -182,7 +200,7 @@ export default function AdminCompaniesPage() {
           className="flex items-center gap-2 px-6 py-3 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all"
         >
           <Plus size={18} />
-          Create Company
+          {t("adminCompanies.actions.create")}
         </Link>
       </div>
 
@@ -191,7 +209,9 @@ export default function AdminCompaniesPage() {
         <div className="bg-card-background border border-primary rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Total</p>
+              <p className="text-gray-400 text-sm">
+                {t("adminCompanies.stats.total")}
+              </p>
               <p className="text-white text-2xl font-bold">{companyStats.total}</p>
             </div>
             <Building2 className="text-primary" size={24} />
@@ -201,7 +221,9 @@ export default function AdminCompaniesPage() {
         <div className="bg-card-background border border-green-500 rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Approved</p>
+              <p className="text-gray-400 text-sm">
+                {t("adminCompanies.stats.approved")}
+              </p>
               <p className="text-white text-2xl font-bold">{companyStats.approved}</p>
             </div>
             <CheckCircle className="text-green" size={24} />
@@ -211,7 +233,9 @@ export default function AdminCompaniesPage() {
         <div className="bg-card-background border border-gray-500 rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Pending</p>
+              <p className="text-gray-400 text-sm">
+                {t("adminCompanies.stats.pending")}
+              </p>
               <p className="text-white text-2xl font-bold">{companyStats.pending}</p>
             </div>
             <Clock className="text-gray-400" size={24} />
@@ -221,7 +245,9 @@ export default function AdminCompaniesPage() {
         <div className="bg-card-background border border-yellow-500 rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Revision</p>
+              <p className="text-gray-400 text-sm">
+                {t("adminCompanies.stats.revision")}
+              </p>
               <p className="text-white text-2xl font-bold">{companyStats.revision}</p>
             </div>
             <AlertCircle className="text-yellow" size={24} />
@@ -231,7 +257,9 @@ export default function AdminCompaniesPage() {
         <div className="bg-card-background border border-red-500 rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Rejected</p>
+              <p className="text-gray-400 text-sm">
+                {t("adminCompanies.stats.rejected")}
+              </p>
               <p className="text-white text-2xl font-bold">{companyStats.rejected}</p>
             </div>
             <XCircle className="text-red-500" size={24} />
@@ -247,7 +275,7 @@ export default function AdminCompaniesPage() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
               <input
                 type="text"
-                placeholder="Search companies..."
+                placeholder={t("adminCompanies.filters.searchPlaceholder")}
                 value={searchTerm}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary"
@@ -257,16 +285,16 @@ export default function AdminCompaniesPage() {
 
           <div className="flex items-center gap-2">
             <Filter size={20} className="text-gray-400" />
-                <select
-                  value={statusFilter}
-                  onChange={(e) => handleFilterChange(e.target.value)}
-                  className="px-3 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
-                >
-              <option value="all">All Status</option>
-              <option value="pending">Pending</option>
-              <option value="approved">Approved</option>
-              <option value="revision">Needs Revision</option>
-              <option value="rejected">Rejected</option>
+            <select
+              value={statusFilter}
+              onChange={(e) => handleFilterChange(e.target.value)}
+              className="px-3 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
+            >
+              {statusOptions.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -277,9 +305,11 @@ export default function AdminCompaniesPage() {
         {paginatedCompanies.length === 0 ? (
           <div className="bg-card-background border border-primary rounded-2xl p-8 text-center">
             <Building2 className="mx-auto text-gray-400 mb-4" size={48} />
-            <h3 className="text-xl font-bold text-white mb-2">No companies found</h3>
+            <h3 className="text-xl font-bold text-white mb-2">
+              {t("adminCompanies.emptyState.title")}
+            </h3>
             <p className="text-gray-400">
-              Try adjusting your search or filter criteria
+              {t("adminCompanies.emptyState.description")}
             </p>
           </div>
         ) : (
@@ -301,36 +331,54 @@ export default function AdminCompaniesPage() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm mb-4">
                     <div>
-                      <p className="text-gray-400">Category</p>
+                      <p className="text-gray-400">
+                        {t("adminCompanies.companyCard.category")}
+                      </p>
                       <p className="text-white font-medium">{company.category}</p>
                     </div>
                     <div>
-                      <p className="text-gray-400">Owner</p>
+                      <p className="text-gray-400">
+                        {t("adminCompanies.companyCard.owner")}
+                      </p>
                       <p className="text-white font-medium">{company.owner}</p>
                     </div>
                     <div>
-                      <p className="text-gray-400">Registration #</p>
+                      <p className="text-gray-400">
+                        {t("adminCompanies.companyCard.registration")}
+                      </p>
                       <p className="text-white font-medium">{company.registrationNumber}</p>
                     </div>
                     <div>
-                      <p className="text-gray-400">Offers</p>
-                      <p className="text-white font-medium">{company.offersCount} active</p>
+                      <p className="text-gray-400">
+                        {t("adminCompanies.companyCard.offers")}
+                      </p>
+                      <p className="text-white font-medium">
+                        {t("adminCompanies.companyCard.offersActive", {
+                          count: company.offersCount,
+                        })}
+                      </p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
                     <div>
-                      <p className="text-gray-400">Email</p>
+                      <p className="text-gray-400">
+                        {t("adminCompanies.companyCard.email")}
+                      </p>
                       <p className="text-white font-medium">{company.email}</p>
                     </div>
                     <div>
-                      <p className="text-gray-400">Phone</p>
+                      <p className="text-gray-400">
+                        {t("adminCompanies.companyCard.phone")}
+                      </p>
                       <p className="text-white font-medium">{company.phone}</p>
                     </div>
                     <div>
-                      <p className="text-gray-400">Registered</p>
+                      <p className="text-gray-400">
+                        {t("adminCompanies.companyCard.registered")}
+                      </p>
                       <p className="text-white font-medium">
-                        {new Date(company.createdAt).toLocaleDateString()}
+                        {new Date(company.createdAt).toLocaleDateString(locale)}
                       </p>
                     </div>
                   </div>
@@ -340,7 +388,9 @@ export default function AdminCompaniesPage() {
                       <div className="flex items-center gap-2">
                         <AlertCircle className="text-yellow" size={16} />
                         <span className="text-yellow text-sm">
-                          Revision required (Attempt {company.revisionCount}/3)
+                          {t("adminCompanies.companyCard.revisionNotice", {
+                            count: company.revisionCount,
+                          })}
                         </span>
                       </div>
                     </div>
@@ -351,14 +401,14 @@ export default function AdminCompaniesPage() {
                   <Link
                     to={`/admin/companies/${company.id}`}
                     className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
-                    title="View Details"
+                    title={t("adminCompanies.actions.viewDetails")}
                   >
                     <Eye size={20} />
                   </Link>
                   <Link
                     to={`/admin/companies/${company.id}/edit`}
                     className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
-                    title="Edit Company"
+                    title={t("adminCompanies.actions.edit")}
                   >
                     <Edit size={20} />
                   </Link>
@@ -383,18 +433,26 @@ export default function AdminCompaniesPage() {
           )}
 
 
-  {/* Company Insights */}
+      {/* Company Insights */}
       <div className="bg-card-background border border-primary rounded-2xl p-6">
-        <h3 className="text-lg font-bold text-white mb-4">Company Insights</h3>
+        <h3 className="text-lg font-bold text-white mb-4">
+          {t("adminCompanies.insights.title")}
+        </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <div className="flex items-start gap-3">
               <Building2 className="text-green flex-shrink-0 mt-0.5" size={20} />
               <div>
-                <h4 className="text-green font-bold mb-1">Company Distribution</h4>
+                <h4 className="text-green font-bold mb-1">
+                  {t("adminCompanies.insights.distribution.title")}
+                </h4>
                 <p className="text-sm text-gray-300">
-                  {companies.filter(c => c.status === "approved").length} approved companies, {companies.filter(c => c.status === "pending").length} pending, and {companies.filter(c => c.status === "revision").length} in revision.
+                  {t("adminCompanies.insights.distribution.description", {
+                    approved: companyStats.approved,
+                    pending: companyStats.pending,
+                    revision: companyStats.revision,
+                  })}
                 </p>
               </div>
             </div>
@@ -402,9 +460,15 @@ export default function AdminCompaniesPage() {
             <div className="flex items-start gap-3">
               <CheckCircle className="text-blue-500 flex-shrink-0 mt-0.5" size={20} />
               <div>
-                <h4 className="text-blue-500 font-bold mb-1">Approval Rate</h4>
+                <h4 className="text-blue-500 font-bold mb-1">
+                  {t("adminCompanies.insights.approvalRate.title")}
+                </h4>
                 <p className="text-sm text-gray-300">
-                  {companies.filter(c => c.status === "approved").length} approved out of {companies.length} total companies ({Math.round((companies.filter(c => c.status === "approved").length / companies.length) * 100)}% approval rate).
+                  {t("adminCompanies.insights.approvalRate.description", {
+                    approved: companyStats.approved,
+                    total: companyStats.total,
+                    rate: approvalRate,
+                  })}
                 </p>
               </div>
             </div>
@@ -414,9 +478,14 @@ export default function AdminCompaniesPage() {
             <div className="flex items-start gap-3">
               <AlertCircle className="text-purple-500 flex-shrink-0 mt-0.5" size={20} />
               <div>
-                <h4 className="text-purple-500 font-bold mb-1">Company Status</h4>
+                <h4 className="text-purple-500 font-bold mb-1">
+                  {t("adminCompanies.insights.status.title")}
+                </h4>
                 <p className="text-sm text-gray-300">
-                  {companies.filter(c => c.status === "approved").length} approved, {companies.filter(c => c.status === "rejected").length} rejected companies.
+                  {t("adminCompanies.insights.status.description", {
+                    approved: companyStats.approved,
+                    rejected: companyStats.rejected,
+                  })}
                 </p>
               </div>
             </div>
@@ -424,9 +493,13 @@ export default function AdminCompaniesPage() {
             <div className="flex items-start gap-3">
               <Building2 className="text-orange-500 flex-shrink-0 mt-0.5" size={20} />
               <div>
-                <h4 className="text-orange-500 font-bold mb-1">Total Offers</h4>
+                <h4 className="text-orange-500 font-bold mb-1">
+                  {t("adminCompanies.insights.totalOffers.title")}
+                </h4>
                 <p className="text-sm text-gray-300">
-                  Companies have created {companies.reduce((sum, c) => sum + (c.offersCount || 0), 0)} total offers across all registered companies.
+                  {t("adminCompanies.insights.totalOffers.description", {
+                    count: totalOffers,
+                  })}
                 </p>
               </div>
             </div>
