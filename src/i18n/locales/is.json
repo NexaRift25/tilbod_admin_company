@@ -30,7 +30,23 @@
     "price": "Verð",
     "category": "Flokkur",
     "company": "Fyrirtæki",
-    "viewOffer": "Skoða tilboð"
+    "viewOffer": "Skoða tilboð",
+    "months": {
+      "short": {
+        "jan": "jan",
+        "feb": "feb",
+        "mar": "mar",
+        "apr": "apr",
+        "may": "maí",
+        "jun": "jún",
+        "jul": "júl",
+        "aug": "ágú",
+        "sep": "sep",
+        "oct": "okt",
+        "nov": "nóv",
+        "dec": "des"
+      }
+    }
   },
   "companyGiftCards": {
     "title": "Öll gjafabréf",
@@ -811,7 +827,7 @@
       "pendingReview": "Í bið um yfirferð"
     },
     "types": {
-      "active": "Virkt tilboð",
+      "active": "Virk tilboð",
       "weekdays": "Tilboð á virkum dögum",
       "happyHour": "Happy hour",
       "giftCard": "Gjafabréf"
@@ -856,6 +872,453 @@
       "engagement": {
         "title": "Viðskiptavinahengun",
         "description": "Heildarhengun á kerfinu: {{views}} skoðanir, {{purchases}} kaup, {{averageOrder}} kr. meðalkaup."
+      }
+    }
+  },
+  "adminEvents": {
+    "common": {
+      "currency": "{{value}} kr."
+    },
+    "header": {
+      "title": "Viðburðir og árstíðir",
+      "subtitle": "Stjórnaðu árstíðabundnum viðburðum og kynningarherferðum",
+      "createButton": "Búa til viðburð"
+    },
+    "filters": {
+      "timeRangeLabel": "Tímabil",
+      "sortLabel": "Raða eftir",
+      "searchLabel": "Leita að viðburðum",
+      "searchPlaceholder": "Leitaðu eftir nafni eða lýsingu viðburðar...",
+      "timeRange": {
+        "thisWeek": "Þessa viku",
+        "nextMonth": "Næstu 30 daga",
+        "thisYear": "Á þessu ári"
+      },
+      "sort": {
+        "startDate": "Upphafsdagsetning",
+        "createdAt": "Stofnað",
+        "status": "Staða",
+        "offers": "Fjöldi tilboða"
+      }
+    },
+    "stats": {
+      "total": "Fjöldi viðburða",
+      "active": "Virkt",
+      "upcoming": "Yfirvofandi",
+      "offers": "Heildarfjöldi tilboða",
+      "expectedRevenue": "Áætlaðar tekjur",
+      "autoManaged": "Sjálfstýrt"
+    },
+    "data": {
+      "typeLabel": "Tegund",
+      "types": {
+        "holiday": "Hátíð",
+        "seasonal": "Árstíðabundið",
+        "custom": "Sérsniðið"
+      },
+      "statusLabel": "Staða",
+      "statuses": {
+        "active": "Virkt",
+        "upcoming": "Yfirvofandi",
+        "ended": "Lokið"
+      },
+      "statusOrder": {
+        "active": "1",
+        "upcoming": "2",
+        "ended": "3"
+      },
+      "durationLabel": "Tímalengd",
+      "discountRangeLabel": "Afsláttarbil",
+      "affectedOffersLabel": "Tilboð í áhrifum",
+      "expectedRevenueLabel": "Áætlaðar tekjur",
+      "autoManagedLabel": "Sjálfstýrt",
+      "autoManagedOptions": {
+        "yes": "Já",
+        "no": "Nei"
+      }
+    },
+    "management": {
+      "title": "Stjórnun viðburða",
+      "autoManaged": {
+        "title": "Sjálfvirk stjórnun",
+        "description": "Hátíðarviðburðir (Jól, Svartur föstudagur, Nýárshelgi) eru sjálfvirkt stjórnaðir með fyrirfram skilgreindum afsláttarbilum og dagsetningum."
+      },
+      "customEvents": {
+        "title": "Sérsniðnir viðburðir",
+        "description": "Búðu til sérsniðna viðburði eins og Restaurant Week eða Sumarhátíð með sérstöku afsláttar bili og markhópum."
+      },
+      "seasonalEvents": {
+        "title": "Árstíðaviðburðir",
+        "description": "Sumar, vetur, vor og haust með sérsniðnum kynningarstefnum fyrir hvert tímabil."
+      },
+      "impactTracking": {
+        "title": "Eftirlit með áhrifum",
+        "description": "Fylgstu með frammistöðu, tilboðum og tekjuáhrifum til að hagræða framtíðarherferðum."
+      }
+    },
+    "upcoming": {
+      "alertTitle": "Yfirvofandi viðburðir",
+      "none": "Engir yfirvofandi viðburðir eins og er. Fylgstu með nýjum tækifærum.",
+      "summaryItem": "{{name}} hefst eftir {{days}} daga."
+    },
+    "create": {
+      "modalTitle": "Búa til sérsniðinn viðburð",
+      "eventNameLabel": "Nafn viðburðar",
+      "eventNamePlaceholder": "t.d. Restaurant Week, Sumarhátíð",
+      "eventTypeLabel": "Tegund viðburðar",
+      "eventType": {
+        "custom": "Sérsniðinn viðburður",
+        "holiday": "Hátíð",
+        "seasonal": "Árstíðabundið"
+      },
+      "startDateLabel": "Upphafsdagsetning",
+      "endDateLabel": "Loka dagsetning",
+      "descriptionLabel": "Lýsing",
+      "descriptionPlaceholder": "Lýstu viðburðinum og markmiðum hans...",
+      "discountRangeLabel": "Afsláttarbil (valkvætt)",
+      "discountRangePlaceholder": "t.d. 15-30%",
+      "autoManagedLabel": "Sjálfvirk stjórnun (virkjar og lokar sjálfvirkt)",
+      "cancelButton": "Hætta við",
+      "createButton": "Búa til viðburð",
+      "creating": "Bý til...",
+      "validation": "Vinsamlegast fylltu út alla nauðsynlega reiti",
+      "success": "Sérsniðinn viðburður búinn til!"
+    },
+    "events": {
+      "christmasSeason": {
+        "name": "Jólatímabil",
+        "description": "Hátíðartímabil með sérstökum jólaafsláttum og kynningum"
+      },
+      "blackFriday": {
+        "name": "Svartur föstudagur",
+        "description": "Stór innkaupadagur með miklum afslætti"
+      },
+      "summerSeason": {
+        "name": "Sumartímabil",
+        "description": "Kynningar á sumarleyfum og ferðalögum"
+      },
+      "valentinesDay": {
+        "name": "Valentínusardagur",
+        "description": "Rómantísk tilboð fyrir pör og sérstök tilefni"
+      },
+      "restaurantWeek": {
+        "name": "Restaurant Week",
+        "description": "Viðburður sem kynnir veitingastaði og matargerð"
+      }
+    }
+  },
+  "adminAnalytics": {
+    "common": {
+      "currency": "{{value}} kr.",
+      "percentage": "{{value}}%"
+    },
+    "header": {
+      "title": "Greining kerfisins",
+      "subtitle": "Yfirsýn yfir frammistöðu kerfisins",
+      "export": "Flytja út"
+    },
+    "filters": {
+      "title": "Síur gagnarita",
+      "timeRange": {
+        "7d": "Síðustu 7 dagar",
+        "30d": "Síðustu 30 dagar",
+        "90d": "Síðustu 90 dagar",
+        "1y": "Síðasta ár"
+      },
+      "chartType": {
+        "label": "Gerð línurits",
+        "options": {
+          "revenue": "Tekjur",
+          "companies": "Fyrirtæki",
+          "users": "Notendur",
+          "offers": "Tilboð"
+        }
+      },
+      "dateFrom": "Frá dagsetningu",
+      "dateTo": "Til dagsetningar",
+      "metric": {
+        "label": "Mælikvarði",
+        "options": {
+          "all": "Allir mælikvarðar",
+          "revenue": "Aðeins tekjur",
+          "count": "Aðeins fjöldi",
+          "growth": "Aðeins vöxtur"
+        }
+      }
+    },
+    "overview": {
+      "totalRevenue": {
+        "label": "Heildartekjur",
+        "change": "{{value}}"
+      },
+      "activeCompanies": {
+        "label": "Virk fyrirtæki",
+        "change": "{{value}}"
+      },
+      "totalUsers": {
+        "label": "Heildarfjöldi notenda",
+        "change": "{{value}}"
+      },
+      "activeOffers": {
+        "label": "Virk tilboð",
+        "change": "{{value}}"
+      }
+    },
+    "platformMetrics": {
+      "title": "Mælikvarðar kerfisins",
+      "subtitle": "Síðustu {{range}}",
+      "pageViews": {
+        "label": "Síðuheimsóknir",
+        "change": "{{value}}"
+      },
+      "offerViews": {
+        "label": "Skoðanir á tilboðum",
+        "change": "{{value}}"
+      },
+      "conversions": {
+        "label": "Umbreytingar",
+        "change": "{{value}}"
+      },
+      "conversionRate": {
+        "label": "Umbreytingarhlutfall",
+        "change": "{{value}}"
+      }
+    },
+    "charts": {
+      "revenueTrend": {
+        "title": "Tekjuþróun",
+        "last12Months": "Síðustu 12 mánuðir",
+        "totalRevenue": "Heildartekjur: {{value}}",
+        "change": "{{value}} miðað við síðasta ár",
+        "filteredTitle": "Tekjuþróun (síuð)",
+        "datasets": {
+          "revenue": "Tekjur (kr.)",
+          "companies": "Fyrirtæki"
+        }
+      },
+      "userGrowth": {
+        "title": "Vöxtur notenda",
+        "filteredTitle": "Vöxtur notenda (síuð)",
+        "datasets": {
+          "total": "Heildarfjöldi notenda",
+          "new": "Nýir notendur"
+        },
+        "totalUsers": "Heildarfjöldi notenda: {{value}}",
+        "growth": "Vöxtur {{value}}"
+      },
+      "companyCategories": {
+        "title": "Fjöldi fyrirtækja eftir flokkum",
+        "filteredTitle": "Fjöldi fyrirtækja eftir flokkum (síuð)",
+        "dataset": "Fyrirtæki",
+        "count": "{{count}} fyrirtæki"
+      },
+      "offerPerformance": {
+        "title": "Frammistaða tilboða",
+        "count": "{{count}} tilboð"
+      },
+      "conversionFunnel": {
+        "title": "Umbreytingarstigi",
+        "dropoff": "↓ {{value}}% brottfall",
+        "overall": "Heildar umbreytingarhlutfall",
+        "overallDescription": "Frá heimsóknum til kaupa"
+      }
+    },
+    "data": {
+      "categories": {
+        "foodDining": "Veitingar og matsölustaðir",
+        "hotelsAccommodation": "Hótel og gististaðir",
+        "wellnessSpa": "Heilsulindir og spa",
+        "activitiesEntertainment": "Afþreying og skemmtun",
+        "shoppingRetail": "Verslun og smásala",
+        "beautyPersonalCare": "Snyrting og persónuleg þjónusta"
+      },
+      "offerTypes": {
+        "active": "Virk tilboð",
+        "weekdays": "Tilboð á virkum dögum",
+        "happyHour": "Happy hour",
+        "giftCard": "Gjafabréf"
+      },
+      "conversionStages": {
+        "visitors": "Gestir",
+        "offerViews": "Skoðanir á tilboðum",
+        "interested": "Áhugasamir",
+        "purchases": "Kaup"
+      },
+      "companyNames": {
+        "spaRetreat": "Spa Retreat Iceland",
+        "blueLagoon": "Blue Lagoon Spa",
+        "hotelAurora": "Hotel Aurora",
+        "restaurantNordic": "Restaurant Nordic",
+        "adventureTours": "Adventure Tours"
+      },
+      "offers": {
+        "weekendPackage": "Helgarpakki"
+      }
+    },
+    "topCompanies": {
+      "title": "Bestu fyrirtækin",
+      "viewAll": "Skoða allt",
+      "stats": {
+        "offers": "{{count}} tilboð",
+        "conversion": "{{value}} umbreyting"
+      },
+      "growth": "{{value}} vöxtur"
+    },
+    "recentActivity": {
+      "title": "Nýleg virkni",
+      "items": {
+        "registration": "Nýtt fyrirtæki skráð • {{company}}",
+        "approval": "Tilboð samþykkt • {{offer}} • {{company}}",
+        "revenue": "Hátekjuviðvörun • {{company}}",
+        "moderation": "Notandi stöðvaður • {{user}}"
+      },
+      "timestamps": {
+        "twoHoursAgo": "fyrir 2 klukkustundum",
+        "fourHoursAgo": "fyrir 4 klukkustundum",
+        "sixHoursAgo": "fyrir 6 klukkustundum",
+        "eightHoursAgo": "fyrir 8 klukkustundum"
+      },
+      "reasons": {
+        "policyViolation": "Brot á reglum"
+      }
+    },
+    "quickActions": {
+      "company": {
+        "title": "Stjórnun fyrirtækja",
+        "description": "Farðu yfir og stjórnaðu skráningum fyrirtækja",
+        "cta": "Skoða fyrirtæki →"
+      },
+      "offers": {
+        "title": "Stjórnun tilboða",
+        "description": "Fylgstu með og samþykktu tilboð",
+        "cta": "Skoða tilboð →"
+      },
+      "users": {
+        "title": "Stjórnun notenda",
+        "description": "Stjórnaðu aðgangi notenda",
+        "cta": "Skoða notendur →"
+      }
+    }
+  },
+  "adminCommissionPricing": {
+    "header": {
+      "title": "Þóknanir og verðlagning",
+      "subtitle": "Stjórnaðu þóknunum og verðreglum kerfisins"
+    },
+    "cards": {
+      "activeCommissions": "Virkar þóknanir",
+      "commissionRules": "Þóknunarreglur",
+      "activePricing": "Virkar verðreglur",
+      "categoriesAffected": "Flokkar sem hafa áhrif"
+    },
+    "common": {
+      "active": "Virkt",
+      "inactive": "Óvirkt"
+    },
+    "units": {
+      "day": "dagur",
+      "week": "vika",
+      "month": "mánuður"
+    },
+    "updatedBy": {
+      "adminUser": "Kerfisstjóri"
+    },
+    "commissionRules": {
+      "title": "Þóknunarreglur",
+      "addButton": "Bæta við reglu",
+      "description": "Lýsing",
+      "lastUpdatedLabel": "Síðast uppfært",
+      "lastUpdated": "Uppfært {{date}} · {{user}}",
+      "rate": {
+        "label": "Þóknunarhlutfall",
+        "percentage": "{{rate}}% af hverri sölu",
+        "value": "{{rate}} kr. á {{unit}}",
+        "editTooltip": "Breyta þóknunarhlutfalli"
+      },
+      "actions": {
+        "activate": "Virkja",
+        "deactivate": "Gera óvirkt"
+      },
+      "types": {
+        "active": {
+          "title": "Virk tilboð",
+          "description": "1 kr. á dag – þóknun rukkuð daglega fyrir virk kynningartilboð (hámark 1 mánuður)"
+        },
+        "weekdays": {
+          "title": "Tilboð á virkum dögum",
+          "description": "4 kr. á viku – þóknun rukkuð vikulega fyrir veitinga- og afþreyingartilboð á virkum dögum"
+        },
+        "happyHour": {
+          "title": "Happy hour tilboð",
+          "description": "10 kr. á mánuði – þóknun rukkuð mánaðarlega fyrir tímaútbundin bar- og veitingatilboð"
+        },
+        "giftCard": {
+          "title": "Gjafabréf",
+          "description": "5% þóknun af hverri sölu – miðað við heildarsölu gjafabréfs"
+        }
+      }
+    },
+    "pricingRules": {
+      "title": "Verðreglur",
+      "addButton": "Bæta við reglu",
+      "valueLabel": "Gildi",
+      "descriptionLabel": "Lýsing",
+      "applicableLabel": "Gildir fyrir",
+      "valueDisplay": {
+        "percentage": "{{value}}%",
+        "amount": "{{amount}} kr."
+      },
+      "types": {
+        "discount": "Afsláttur",
+        "markup": "Álagning",
+        "fixed": "Fast verð"
+      },
+      "actions": {
+        "activate": "Virkja",
+        "deactivate": "Gera óvirkt"
+      },
+      "names": {
+        "holidayDiscount": "Frídagafsláttur",
+        "premiumMarkup": "Prímium álagning"
+      },
+      "descriptions": {
+        "holidayDiscount": "15% afsláttur yfir hátíðir",
+        "premiumMarkup": "2000 kr. álagning fyrir lúxus hóteltilboð"
+      },
+      "applicable": {
+        "activeOffer": "Virk tilboð",
+        "weekdaysOffer": "Tilboð á virkum dögum",
+        "giftCard": "Gjafabréfatilboð",
+        "hotelsAccommodation": "Hótel og gististaðir",
+        "default": "Öll tilboð"
+      }
+    },
+    "summary": {
+      "title": "Yfirlit þóknunaruppbyggingar"
+    },
+    "calculator": {
+      "title": "Dæmi um þóknunarútreikninga",
+      "examples": {
+        "active": {
+          "title": "Þóknun fyrir virk tilboð",
+          "description": "1 kr. á dag × fjöldi daga",
+          "example": "Dæmi: 30 daga tilboð = 30 kr. þóknun"
+        },
+        "weekdays": {
+          "title": "Þóknun fyrir tilboð á virkum dögum",
+          "description": "4 kr. á viku × fjöldi vikna",
+          "example": "Dæmi: 4 vikur = 16 kr. þóknun"
+        },
+        "happyHour": {
+          "title": "Þóknun fyrir happy hour tilboð",
+          "description": "10 kr. á mánuði × fjöldi mánaða",
+          "example": "Dæmi: 3 mánuðir = 30 kr. þóknun"
+        },
+        "giftCard": {
+          "title": "Þóknun fyrir gjafabréf",
+          "description": "5% af heildarsölu gjafabréfs",
+          "example": "Dæmi: 10.000 kr. gjafabréf = 500 kr. þóknun"
+        }
       }
     }
   },

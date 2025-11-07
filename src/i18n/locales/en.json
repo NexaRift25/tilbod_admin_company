@@ -30,7 +30,23 @@
     "price": "Price",
     "category": "Category",
     "company": "Company",
-    "viewOffer": "View offer"
+    "viewOffer": "View offer",
+    "months": {
+      "short": {
+        "jan": "Jan",
+        "feb": "Feb",
+        "mar": "Mar",
+        "apr": "Apr",
+        "may": "May",
+        "jun": "Jun",
+        "jul": "Jul",
+        "aug": "Aug",
+        "sep": "Sep",
+        "oct": "Oct",
+        "nov": "Nov",
+        "dec": "Dec"
+      }
+    }
   },
   "companyGiftCards": {
     "title": "All Gift Cards",
@@ -856,6 +872,453 @@
       "engagement": {
         "title": "Customer Engagement",
         "description": "Total platform engagement: {{views}} views, {{purchases}} purchases, {{averageOrder}} kr. average order value."
+      }
+    }
+  },
+  "adminEvents": {
+    "common": {
+      "currency": "{{value}} kr."
+    },
+    "header": {
+      "title": "Events & Seasons",
+      "subtitle": "Manage seasonal events and promotional campaigns",
+      "createButton": "Create Event"
+    },
+    "filters": {
+      "timeRangeLabel": "Time Range",
+      "sortLabel": "Sort By",
+      "searchLabel": "Search Events",
+      "searchPlaceholder": "Search by event name or description...",
+      "timeRange": {
+        "thisWeek": "This week",
+        "nextMonth": "Next 30 days",
+        "thisYear": "This year"
+      },
+      "sort": {
+        "startDate": "Start date",
+        "createdAt": "Created date",
+        "status": "Status",
+        "offers": "Affected offers"
+      }
+    },
+    "stats": {
+      "total": "Total Events",
+      "active": "Active",
+      "upcoming": "Upcoming",
+      "offers": "Total Offers",
+      "expectedRevenue": "Expected Revenue",
+      "autoManaged": "Auto Managed"
+    },
+    "data": {
+      "typeLabel": "Type",
+      "types": {
+        "holiday": "Holiday",
+        "seasonal": "Seasonal",
+        "custom": "Custom"
+      },
+      "statusLabel": "Status",
+      "statuses": {
+        "active": "Active",
+        "upcoming": "Upcoming",
+        "ended": "Ended"
+      },
+      "statusOrder": {
+        "active": "1",
+        "upcoming": "2",
+        "ended": "3"
+      },
+      "durationLabel": "Duration",
+      "discountRangeLabel": "Discount Range",
+      "affectedOffersLabel": "Affected Offers",
+      "expectedRevenueLabel": "Expected Revenue",
+      "autoManagedLabel": "Auto Managed",
+      "autoManagedOptions": {
+        "yes": "Yes",
+        "no": "No"
+      }
+    },
+    "management": {
+      "title": "Event Management",
+      "autoManaged": {
+        "title": "Automatic Management",
+        "description": "Holiday events (Christmas, Black Friday, New Year) are automatically managed with predefined discount ranges and durations."
+      },
+      "customEvents": {
+        "title": "Custom Events",
+        "description": "Create bespoke promotional events like Restaurant Week or Summer Festival with specific discount ranges and target categories."
+      },
+      "seasonalEvents": {
+        "title": "Seasonal Events",
+        "description": "Summer, Winter, Spring, and Fall seasons with tailored promotional strategies for each period."
+      },
+      "impactTracking": {
+        "title": "Impact Tracking",
+        "description": "Monitor performance, affected offers, and revenue impact to optimize future campaigns."
+      }
+    },
+    "upcoming": {
+      "alertTitle": "Upcoming Events",
+      "none": "No upcoming events at the moment. Stay tuned for new opportunities.",
+      "summaryItem": "{{name}} starts in {{days}} days."
+    },
+    "create": {
+      "modalTitle": "Create Custom Event",
+      "eventNameLabel": "Event Name",
+      "eventNamePlaceholder": "e.g., Restaurant Week, Summer Festival",
+      "eventTypeLabel": "Event Type",
+      "eventType": {
+        "custom": "Custom Event",
+        "holiday": "Holiday",
+        "seasonal": "Seasonal"
+      },
+      "startDateLabel": "Start Date",
+      "endDateLabel": "End Date",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Describe the event strategy and objectives...",
+      "discountRangeLabel": "Discount Range (Optional)",
+      "discountRangePlaceholder": "e.g., 15-30%",
+      "autoManagedLabel": "Auto-manage this event (automatic activation/deactivation)",
+      "cancelButton": "Cancel",
+      "createButton": "Create Event",
+      "creating": "Creating...",
+      "validation": "Please fill in all required fields",
+      "success": "Custom event created successfully!"
+    },
+    "events": {
+      "christmasSeason": {
+        "name": "Christmas Season",
+        "description": "Holiday season with special Christmas offers and promotions"
+      },
+      "blackFriday": {
+        "name": "Black Friday",
+        "description": "Major shopping event with significant discounts"
+      },
+      "summerSeason": {
+        "name": "Summer Season",
+        "description": "Summer vacation and travel season promotions"
+      },
+      "valentinesDay": {
+        "name": "Valentine's Day",
+        "description": "Romantic offers for couples and special occasions"
+      },
+      "restaurantWeek": {
+        "name": "Restaurant Week",
+        "description": "Custom event promoting local restaurants and dining"
+      }
+    }
+  },
+  "adminAnalytics": {
+    "common": {
+      "currency": "{{value}} kr.",
+      "percentage": "{{value}}%"
+    },
+    "header": {
+      "title": "Platform Analytics",
+      "subtitle": "Comprehensive platform performance metrics",
+      "export": "Export"
+    },
+    "filters": {
+      "title": "Chart Filters",
+      "timeRange": {
+        "7d": "Last 7 days",
+        "30d": "Last 30 days",
+        "90d": "Last 90 days",
+        "1y": "Last year"
+      },
+      "chartType": {
+        "label": "Chart Type",
+        "options": {
+          "revenue": "Revenue",
+          "companies": "Companies",
+          "users": "Users",
+          "offers": "Offers"
+        }
+      },
+      "dateFrom": "Date From",
+      "dateTo": "Date To",
+      "metric": {
+        "label": "Metric",
+        "options": {
+          "all": "All metrics",
+          "revenue": "Revenue only",
+          "count": "Count only",
+          "growth": "Growth only"
+        }
+      }
+    },
+    "overview": {
+      "totalRevenue": {
+        "label": "Total Revenue",
+        "change": "{{value}}"
+      },
+      "activeCompanies": {
+        "label": "Active Companies",
+        "change": "{{value}}"
+      },
+      "totalUsers": {
+        "label": "Total Users",
+        "change": "{{value}}"
+      },
+      "activeOffers": {
+        "label": "Active Offers",
+        "change": "{{value}}"
+      }
+    },
+    "platformMetrics": {
+      "title": "Platform Metrics",
+      "subtitle": "Last {{range}}",
+      "pageViews": {
+        "label": "Page Views",
+        "change": "{{value}}"
+      },
+      "offerViews": {
+        "label": "Offer Views",
+        "change": "{{value}}"
+      },
+      "conversions": {
+        "label": "Conversions",
+        "change": "{{value}}"
+      },
+      "conversionRate": {
+        "label": "Conversion Rate",
+        "change": "{{value}}"
+      }
+    },
+    "charts": {
+      "revenueTrend": {
+        "title": "Revenue Trend",
+        "last12Months": "Last 12 months",
+        "totalRevenue": "Total revenue: {{value}}",
+        "change": "{{value}} vs last year",
+        "filteredTitle": "Revenue Trend (Filtered)",
+        "datasets": {
+          "revenue": "Revenue (kr.)",
+          "companies": "Companies"
+        }
+      },
+      "userGrowth": {
+        "title": "User Growth",
+        "filteredTitle": "User Growth (Filtered)",
+        "datasets": {
+          "total": "Total users",
+          "new": "New users"
+        },
+        "totalUsers": "Total users: {{value}}",
+        "growth": "Growth {{value}}"
+      },
+      "companyCategories": {
+        "title": "Companies by Category",
+        "filteredTitle": "Companies by Category (Filtered)",
+        "dataset": "Companies",
+        "count": "{{count}} companies"
+      },
+      "offerPerformance": {
+        "title": "Offer Performance",
+        "count": "{{count}} offers"
+      },
+      "conversionFunnel": {
+        "title": "Conversion Funnel",
+        "dropoff": "↓ {{value}}% drop-off",
+        "overall": "Overall conversion rate",
+        "overallDescription": "From visitors to purchases"
+      }
+    },
+    "data": {
+      "categories": {
+        "foodDining": "Food & Dining",
+        "hotelsAccommodation": "Hotels & Accommodation",
+        "wellnessSpa": "Wellness & Spa",
+        "activitiesEntertainment": "Activities & Entertainment",
+        "shoppingRetail": "Shopping & Retail",
+        "beautyPersonalCare": "Beauty & Personal Care"
+      },
+      "offerTypes": {
+        "active": "Active Offers",
+        "weekdays": "Weekday Specials",
+        "happyHour": "Happy Hour",
+        "giftCard": "Gift Cards"
+      },
+      "conversionStages": {
+        "visitors": "Visitors",
+        "offerViews": "Offer Views",
+        "interested": "Interested",
+        "purchases": "Purchases"
+      },
+      "companyNames": {
+        "spaRetreat": "Spa Retreat Iceland",
+        "blueLagoon": "Blue Lagoon Spa",
+        "hotelAurora": "Hotel Aurora",
+        "restaurantNordic": "Restaurant Nordic",
+        "adventureTours": "Adventure Tours"
+      },
+      "offers": {
+        "weekendPackage": "Weekend Package"
+      }
+    },
+    "topCompanies": {
+      "title": "Top Performing Companies",
+      "viewAll": "View All",
+      "stats": {
+        "offers": "{{count}} offers",
+        "conversion": "{{value}} conversion"
+      },
+      "growth": "{{value}} growth"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "items": {
+        "registration": "New company registration • {{company}}",
+        "approval": "Offer approved • {{offer}} • {{company}}",
+        "revenue": "High revenue alert • {{company}}",
+        "moderation": "User suspended • {{user}}"
+      },
+      "timestamps": {
+        "twoHoursAgo": "2 hours ago",
+        "fourHoursAgo": "4 hours ago",
+        "sixHoursAgo": "6 hours ago",
+        "eightHoursAgo": "8 hours ago"
+      },
+      "reasons": {
+        "policyViolation": "Policy violation"
+      }
+    },
+    "quickActions": {
+      "company": {
+        "title": "Company Management",
+        "description": "Review and manage company registrations",
+        "cta": "View Companies →"
+      },
+      "offers": {
+        "title": "Offer Management",
+        "description": "Monitor and approve platform offers",
+        "cta": "View Offers →"
+      },
+      "users": {
+        "title": "User Management",
+        "description": "Manage user accounts and permissions",
+        "cta": "View Users →"
+      }
+    }
+  },
+  "adminCommissionPricing": {
+    "header": {
+      "title": "Commission & Pricing",
+      "subtitle": "Manage platform commissions and pricing rules"
+    },
+    "cards": {
+      "activeCommissions": "Active Commissions",
+      "commissionRules": "Commission Rules",
+      "activePricing": "Active Pricing Rules",
+      "categoriesAffected": "Categories Affected"
+    },
+    "common": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "units": {
+      "day": "day",
+      "week": "week",
+      "month": "month"
+    },
+    "updatedBy": {
+      "adminUser": "Admin User"
+    },
+    "commissionRules": {
+      "title": "Commission Rules",
+      "addButton": "Add Rule",
+      "description": "Description",
+      "lastUpdatedLabel": "Last Updated",
+      "lastUpdated": "Last updated {{date}} · {{user}}",
+      "rate": {
+        "label": "Commission Rate",
+        "percentage": "{{rate}}% per sale",
+        "value": "{{rate}} kr. per {{unit}}",
+        "editTooltip": "Edit commission rate"
+      },
+      "actions": {
+        "activate": "Activate",
+        "deactivate": "Deactivate"
+      },
+      "types": {
+        "active": {
+          "title": "Active Offer",
+          "description": "1 kr. per day - Commission charged daily for active promotional offers (max 1 month duration)"
+        },
+        "weekdays": {
+          "title": "Weekdays Offer",
+          "description": "4 kr. per week - Commission charged weekly for restaurant and activity weekday specials"
+        },
+        "happyHour": {
+          "title": "Happy Hour Offer",
+          "description": "10 kr. per month - Commission charged monthly for bar and restaurant time-based promotions"
+        },
+        "giftCard": {
+          "title": "Gift Card",
+          "description": "5% commission per sale - Based on total gift card sale amount"
+        }
+      }
+    },
+    "pricingRules": {
+      "title": "Pricing Rules",
+      "addButton": "Add Rule",
+      "valueLabel": "Value",
+      "descriptionLabel": "Description",
+      "applicableLabel": "Applicable To",
+      "valueDisplay": {
+        "percentage": "{{value}}%",
+        "amount": "{{amount}} kr."
+      },
+      "types": {
+        "discount": "Discount",
+        "markup": "Markup",
+        "fixed": "Fixed"
+      },
+      "actions": {
+        "activate": "Activate",
+        "deactivate": "Deactivate"
+      },
+      "names": {
+        "holidayDiscount": "Holiday Discount",
+        "premiumMarkup": "Premium Markup"
+      },
+      "descriptions": {
+        "holidayDiscount": "15% discount applied during holiday seasons",
+        "premiumMarkup": "2000 kr. markup for premium hotel offers"
+      },
+      "applicable": {
+        "activeOffer": "Active Offers",
+        "weekdaysOffer": "Weekday Offers",
+        "giftCard": "Gift Card Offers",
+        "hotelsAccommodation": "Hotels & Accommodation",
+        "default": "All offers"
+      }
+    },
+    "summary": {
+      "title": "Commission Structure Summary"
+    },
+    "calculator": {
+      "title": "Commission Calculator Examples",
+      "examples": {
+        "active": {
+          "title": "Active Offer Commission",
+          "description": "1 kr. per day × number of days active",
+          "example": "Example: 30-day offer = 30 kr. commission"
+        },
+        "weekdays": {
+          "title": "Weekdays Offer Commission",
+          "description": "4 kr. per week × number of weeks active",
+          "example": "Example: 4-week offer = 16 kr. commission"
+        },
+        "happyHour": {
+          "title": "Happy Hour Commission",
+          "description": "10 kr. per month × number of months active",
+          "example": "Example: 3-month offer = 30 kr. commission"
+        },
+        "giftCard": {
+          "title": "Gift Card Commission",
+          "description": "5% of total gift card sale amount",
+          "example": "Example: 10,000 kr. gift card = 500 kr. commission"
+        }
       }
     }
   },
