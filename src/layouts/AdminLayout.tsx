@@ -22,83 +22,89 @@ import Navigation, { NavItem } from "@/components/ui/Navigation";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/contexts/AuthContext";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
+import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function AdminLayout() {
   const { logout } = useAuth();
+  const { t } = useTranslation();
 
-  const navItems: NavItem[] = [
-    {
-      name: "Dashboard",
-      href: "/admin/dashboard",
-      icon: LayoutDashboard,
-    },
-    {
-      name: "Approval",
-      href: "/admin/approval-queue",
-      icon: Shield,
-      badge: "30min",
-    },
-    {
-      name: "Companies",
-      href: "/admin/companies",
-      icon: Building2,
-    },
-    {
-      name: "Offers",
-      href: "/admin/offers",
-      icon: Tag,
-    },
-    {
-      name: "Users",
-      href: "/admin/users",
-      icon: Users,
-    },
-    {
-      name: "Commission & Price",
-      href: "/admin/commission-pricing",
-      icon: DollarSign,
-    },
-    {
-      name: "Analytics",
-      href: "/admin/analytics",
-      icon: BarChart3,
-    },
-    {
-      name: "Events & Seasons",
-      href: "/admin/events-seasons",
-      icon: Calendar,
-    },
-    {
-      name: "Categories",
-      href: "/admin/categories",
-      icon: FolderOpen,
-    },
-    {
-      name: "Product Categories",
-      href: "/admin/product-categories",
-      icon: Package,
-    },
-    {
-      name: "Discount Labels",
-      href: "/admin/discount-labels",
-      icon: Tag,
-    },
-    {
-      name: "Targeted Discounts",
-      href: "/admin/targeted-discounts",
-      icon: Target,
-    },
-    {
-      name: "Financial",
-      href: "/admin/financial",
-      icon: TrendingUp,
-    },
-    {
-      name: "Settings",
-      href: "/admin/settings",
-      icon: Settings,
-    },
-  ];
+  const navItems: NavItem[] = useMemo(
+    () => [
+      {
+        name: t("adminSidebar.nav.dashboard"),
+        href: "/admin/dashboard",
+        icon: LayoutDashboard,
+      },
+      {
+        name: t("adminSidebar.nav.approval"),
+        href: "/admin/approval-queue",
+        icon: Shield,
+        badge: t("adminSidebar.badges.approval"),
+      },
+      {
+        name: t("adminSidebar.nav.companies"),
+        href: "/admin/companies",
+        icon: Building2,
+      },
+      {
+        name: t("adminSidebar.nav.offers"),
+        href: "/admin/offers",
+        icon: Tag,
+      },
+      {
+        name: t("adminSidebar.nav.users"),
+        href: "/admin/users",
+        icon: Users,
+      },
+      {
+        name: t("adminSidebar.nav.commission"),
+        href: "/admin/commission-pricing",
+        icon: DollarSign,
+      },
+      {
+        name: t("adminSidebar.nav.analytics"),
+        href: "/admin/analytics",
+        icon: BarChart3,
+      },
+      {
+        name: t("adminSidebar.nav.events"),
+        href: "/admin/events-seasons",
+        icon: Calendar,
+      },
+      {
+        name: t("adminSidebar.nav.categories"),
+        href: "/admin/categories",
+        icon: FolderOpen,
+      },
+      {
+        name: t("adminSidebar.nav.productCategories"),
+        href: "/admin/product-categories",
+        icon: Package,
+      },
+      {
+        name: t("adminSidebar.nav.discountLabels"),
+        href: "/admin/discount-labels",
+        icon: Tag,
+      },
+      {
+        name: t("adminSidebar.nav.targetedDiscounts"),
+        href: "/admin/targeted-discounts",
+        icon: Target,
+      },
+      {
+        name: t("adminSidebar.nav.financial"),
+        href: "/admin/financial",
+        icon: TrendingUp,
+      },
+      {
+        name: t("adminSidebar.nav.settings"),
+        href: "/admin/settings",
+        icon: Settings,
+      },
+    ],
+    [t]
+  );
 
   return (
     <ProtectedRoute allowedRoles={["admin"]} requireVerification={true}>
@@ -121,7 +127,7 @@ export default function AdminLayout() {
               <Link
                 to="/"
                 className="w-8 h-8 sm:w-10 sm:h-10 border border-primary rounded-lg flex items-center justify-center bg-transparent hover:bg-primary/10 transition-colors"
-                title="Go to Home"
+                title={t("adminSidebar.actions.goHome")}
               >
                 <Home className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               </Link>
@@ -130,7 +136,7 @@ export default function AdminLayout() {
               <Link
                 to="/admin/settings"
                 className="w-8 h-8 sm:w-10 sm:h-10 bg-primary rounded-lg flex items-center justify-center hover:bg-primary/90 transition-colors"
-                title="Admin Settings"
+                title={t("adminSidebar.actions.settings")}
               >
                 <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-dark" />
               </Link>
@@ -139,7 +145,7 @@ export default function AdminLayout() {
               <button
                 onClick={logout}
                 className="w-8 h-8 sm:w-10 sm:h-10 border border-red-500/50 rounded-lg flex items-center justify-center bg-transparent hover:bg-red-500/10 transition-colors"
-                title="Logout"
+                title={t("adminSidebar.actions.logout")}
               >
                 <LogOut className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
               </button>
@@ -159,7 +165,7 @@ export default function AdminLayout() {
                   <Link
                     to="/"
                     className="text-primary transition-colors p-2"
-                    title="Go to Home"
+                    title={t("adminSidebar.actions.goHome")}
                   >
                     <Home size={20} />
                   </Link>
@@ -167,7 +173,7 @@ export default function AdminLayout() {
                     to="/admin/settings"
                     className="whitespace-nowrap flex items-center gap-3 font-semibold bg-primary text-dark px-4 py-1.5 rounded-3xl hover:bg-primary/90 transition-all"
                   >
-                    Admin Panel
+                    {t("adminSidebar.actions.panelButton")}
                     <span className="text-dark border border-dark rounded-full text-base">
                       <Shield size={16} />
                     </span>
@@ -175,6 +181,7 @@ export default function AdminLayout() {
                   <button
                     onClick={logout}
                     className="text-primary hover:text-red-500 transition-colors p-2"
+                    title={t("adminSidebar.actions.logout")}
                   >
                     <LogOut size={20} />
                   </button>

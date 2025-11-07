@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   User,
@@ -16,9 +16,11 @@ import {
   Plus
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export default function ProfilePage() {
   const { user, companies, updateUser } = useAuth();
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -36,6 +38,23 @@ export default function ProfilePage() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  const companyStats = useMemo(() => {
+    const approved = companies.filter(c => c.status === "approved").length;
+    const pending = companies.filter(c => c.status === "pending" || c.status === "revision").length;
+
+    return {
+      total: companies.length,
+      approved,
+      pending,
+      max: 10,
+    };
+  }, [companies]);
+
+  const getCompanyStatusLabel = (status: string) =>
+    t(`companyProfile.companiesTab.status.${status}`, {
+      defaultValue: t("companyProfile.companiesTab.status.unknown", { status }),
+    });
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -47,23 +66,23 @@ export default function ProfilePage() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.firstName.trim()) newErrors.firstName = "First name is required";
-    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
-    if (!formData.email.trim()) newErrors.email = "Email is required";
+    if (!formData.firstName.trim()) newErrors.firstName = t("companyProfile.validation.firstNameRequired");
+    if (!formData.lastName.trim()) newErrors.lastName = t("companyProfile.validation.lastNameRequired");
+    if (!formData.email.trim()) newErrors.email = t("companyProfile.validation.emailRequired");
     if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email";
+      newErrors.email = t("companyProfile.validation.emailInvalid");
     }
 
     if (activeTab === "security") {
-      if (!formData.currentPassword) newErrors.currentPassword = "Current password is required";
+      if (!formData.currentPassword) newErrors.currentPassword = t("companyProfile.validation.currentPasswordRequired");
       if (formData.newPassword && formData.newPassword.length < 8) {
-        newErrors.newPassword = "Password must be at least 8 characters";
+        newErrors.newPassword = t("companyProfile.validation.passwordMinLength");
       }
       if (formData.newPassword && !formData.confirmPassword) {
-        newErrors.confirmPassword = "Please confirm your new password";
+        newErrors.confirmPassword = t("companyProfile.validation.confirmPasswordRequired");
       }
       if (formData.newPassword && formData.confirmPassword && formData.newPassword !== formData.confirmPassword) {
-        newErrors.confirmPassword = "Passwords do not match";
+        newErrors.confirmPassword = t("companyProfile.validation.passwordMismatch");
       }
     }
 
@@ -86,14 +105,14 @@ export default function ProfilePage() {
           email: formData.email,
           phone: formData.phone,
         });
+        window.alert(t("companyProfile.messages.personalSaved"));
       } else if (activeTab === "security") {
         console.log("Password change requested");
+        window.alert(t("companyProfile.messages.passwordRequested"));
       }
-
-      alert("Changes saved successfully!");
     } catch (error) {
       console.error("Profile update failed", error);
-      setErrors({ general: "Failed to update profile. Please try again." });
+      setErrors({ general: t("companyProfile.errors.updateFailed") });
     } finally {
       setIsLoading(false);
     }
@@ -111,10 +130,10 @@ export default function ProfilePage() {
         </Link>
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-white">
-            Profile Settings
+            {t("companyProfile.title")}
           </h1>
           <p className="text-gray-400 text-sm">
-            Manage your account information and preferences
+            {t("companyProfile.subtitle")}
           </p>
         </div>
       </div>
@@ -137,20 +156,18 @@ export default function ProfilePage() {
             </h2>
             <p className="text-gray-400 mb-2">{user?.email}</p>
             <p className="text-primary font-medium">
-              Company Account • {companies.length} companies registered
+              {t("companyProfile.header.accountSummary", { count: companyStats.total })}
             </p>
           </div>
 
           <div className="flex items-center gap-3">
             <div className="text-center">
-              <p className="text-2xl font-bold text-white">{companies.length}</p>
-              <p className="text-gray-400 text-sm">Companies</p>
+              <p className="text-2xl font-bold text-white">{companyStats.total}</p>
+              <p className="text-gray-400 text-sm">{t("companyProfile.header.companiesLabel")}</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-white">
-                {companies.filter(c => c.status === "approved").length}
-              </p>
-              <p className="text-gray-400 text-sm">Active</p>
+              <p className="text-2xl font-bold text-white">{companyStats.approved}</p>
+              <p className="text-gray-400 text-sm">{t("companyProfile.header.activeLabel")}</p>
             </div>
           </div>
         </div>
@@ -167,7 +184,7 @@ export default function ProfilePage() {
                 : "text-gray-400 hover:text-white"
             }`}
           >
-            Personal Information
+            {t("companyProfile.tabs.personal")}
           </button>
           <button
             onClick={() => setActiveTab("security")}
@@ -177,7 +194,7 @@ export default function ProfilePage() {
                 : "text-gray-400 hover:text-white"
             }`}
           >
-            Security
+            {t("companyProfile.tabs.security")}
           </button>
           <button
             onClick={() => setActiveTab("companies")}
@@ -187,7 +204,7 @@ export default function ProfilePage() {
                 : "text-gray-400 hover:text-white"
             }`}
           >
-            My Companies
+            {t("companyProfile.tabs.companies")}
           </button>
         </div>
 
@@ -203,7 +220,7 @@ export default function ProfilePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="text-gray-400 text-sm mb-2 block">
-                  First Name *
+                  {t("companyProfile.personal.firstNameLabel")}
                 </label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -215,7 +232,7 @@ export default function ProfilePage() {
                     className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                       errors.firstName ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                     }`}
-                    placeholder="Enter first name"
+                    placeholder={t("companyProfile.personal.firstNamePlaceholder")}
                   />
                 </div>
                 {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
@@ -223,7 +240,7 @@ export default function ProfilePage() {
 
               <div>
                 <label className="text-gray-400 text-sm mb-2 block">
-                  Last Name *
+                  {t("companyProfile.personal.lastNameLabel")}
                 </label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -235,7 +252,7 @@ export default function ProfilePage() {
                     className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                       errors.lastName ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                     }`}
-                    placeholder="Enter last name"
+                    placeholder={t("companyProfile.personal.lastNamePlaceholder")}
                   />
                 </div>
                 {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
@@ -243,7 +260,7 @@ export default function ProfilePage() {
 
               <div>
                 <label className="text-gray-400 text-sm mb-2 block">
-                  Email Address *
+                  {t("companyProfile.personal.emailLabel")}
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -255,7 +272,7 @@ export default function ProfilePage() {
                     className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                       errors.email ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                     }`}
-                    placeholder="Enter email address"
+                    placeholder={t("companyProfile.personal.emailPlaceholder")}
                   />
                 </div>
                 {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
@@ -263,7 +280,7 @@ export default function ProfilePage() {
 
               <div>
                 <label className="text-gray-400 text-sm mb-2 block">
-                  Phone Number
+                  {t("companyProfile.personal.phoneLabel")}
                 </label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -273,7 +290,7 @@ export default function ProfilePage() {
                     value={formData.phone}
                     onChange={handleInputChange}
                     className="w-full pl-10 pr-4 py-3 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all"
-                    placeholder="+354 XXX XXXX"
+                    placeholder={t("companyProfile.personal.phonePlaceholder")}
                   />
                 </div>
               </div>
@@ -290,7 +307,7 @@ export default function ProfilePage() {
                 ) : (
                   <>
                     <Save size={20} />
-                    Save Changes
+                    {t("companyProfile.personal.saveButton")}
                   </>
                 )}
               </button>
@@ -310,7 +327,7 @@ export default function ProfilePage() {
             <div className="space-y-6">
               <div>
                 <label className="text-gray-400 text-sm mb-2 block">
-                  Current Password *
+                  {t("companyProfile.security.currentPasswordLabel")}
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -322,7 +339,7 @@ export default function ProfilePage() {
                     className={`w-full pl-10 pr-12 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                       errors.currentPassword ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                     }`}
-                    placeholder="Enter current password"
+                    placeholder={t("companyProfile.security.currentPasswordPlaceholder")}
                   />
                   <button
                     type="button"
@@ -337,7 +354,7 @@ export default function ProfilePage() {
 
               <div>
                 <label className="text-gray-400 text-sm mb-2 block">
-                  New Password
+                  {t("companyProfile.security.newPasswordLabel")}
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -349,7 +366,7 @@ export default function ProfilePage() {
                     className={`w-full pl-10 pr-12 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                       errors.newPassword ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                     }`}
-                    placeholder="Enter new password (min 8 characters)"
+                    placeholder={t("companyProfile.security.newPasswordPlaceholder")}
                   />
                   <button
                     type="button"
@@ -364,7 +381,7 @@ export default function ProfilePage() {
 
               <div>
                 <label className="text-gray-400 text-sm mb-2 block">
-                  Confirm New Password
+                  {t("companyProfile.security.confirmPasswordLabel")}
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -376,7 +393,7 @@ export default function ProfilePage() {
                     className={`w-full pl-10 pr-12 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                       errors.confirmPassword ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                     }`}
-                    placeholder="Confirm new password"
+                    placeholder={t("companyProfile.security.confirmPasswordPlaceholder")}
                   />
                   <button
                     type="button"
@@ -401,7 +418,7 @@ export default function ProfilePage() {
                 ) : (
                   <>
                     <Save size={20} />
-                    Update Password
+                    {t("companyProfile.security.updateButton")}
                   </>
                 )}
               </button>
@@ -416,51 +433,49 @@ export default function ProfilePage() {
               <div className="bg-background border border-primary/50 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
                   <Building2 className="text-primary" size={20} />
-                  <span className="text-xs text-gray-400">Registered</span>
+                  <span className="text-xs text-gray-400">{t("companyProfile.companiesTab.registeredLabel")}</span>
                 </div>
-                <p className="text-2xl font-bold text-white">{companies.length}</p>
-                <p className="text-gray-400 text-sm">of 10 max</p>
+                <p className="text-2xl font-bold text-white">{companyStats.total}</p>
+                <p className="text-gray-400 text-sm">
+                  {t("companyProfile.companiesTab.registeredSummary", { count: companyStats.total, max: companyStats.max })}
+                </p>
               </div>
 
               <div className="bg-background border border-green/30 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
                   <CheckCircle className="text-green" size={20} />
-                  <span className="text-xs text-gray-400">Approved</span>
+                  <span className="text-xs text-gray-400">{t("companyProfile.companiesTab.approvedLabel")}</span>
                 </div>
-                <p className="text-2xl font-bold text-white">
-                  {companies.filter(c => c.status === "approved").length}
-                </p>
-                <p className="text-gray-400 text-sm">Ready for offers</p>
+                <p className="text-2xl font-bold text-white">{companyStats.approved}</p>
+                <p className="text-gray-400 text-sm">{t("companyProfile.companiesTab.approvedDescription")}</p>
               </div>
 
               <div className="bg-background border border-yellow-500/30 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
                   <AlertTriangle className="text-yellow" size={20} />
-                  <span className="text-xs text-gray-400">Pending</span>
+                  <span className="text-xs text-gray-400">{t("companyProfile.companiesTab.pendingLabel")}</span>
                 </div>
-                <p className="text-2xl font-bold text-white">
-                  {companies.filter(c => c.status === "pending" || c.status === "revision").length}
-                </p>
-                <p className="text-gray-400 text-sm">Under review</p>
+                <p className="text-2xl font-bold text-white">{companyStats.pending}</p>
+                <p className="text-gray-400 text-sm">{t("companyProfile.companiesTab.pendingDescription")}</p>
               </div>
             </div>
 
             <div className="space-y-4">
-              <h3 className="text-lg font-bold text-white">Registered Companies</h3>
+              <h3 className="text-lg font-bold text-white">{t("companyProfile.companiesTab.title")}</h3>
 
               {companies.length === 0 ? (
                 <div className="bg-background border border-primary/50 rounded-lg p-8 text-center">
                   <Building2 className="mx-auto text-gray-400 mb-4" size={48} />
-                  <h4 className="text-xl font-bold text-white mb-2">No companies registered</h4>
+                  <h4 className="text-xl font-bold text-white mb-2">{t("companyProfile.companiesTab.emptyTitle")}</h4>
                   <p className="text-gray-400 mb-4">
-                    Register your first company to start creating offers
+                    {t("companyProfile.companiesTab.emptyDescription")}
                   </p>
                   <Link
                     to="/company/companies/new"
                     className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-dark font-semibold rounded-full hover:bg-primary/90 transition-all"
                   >
                     <Plus size={20} />
-                    Register Company
+                    {t("companyProfile.companiesTab.registerButton")}
                   </Link>
                 </div>
               ) : (
@@ -488,9 +503,12 @@ export default function ProfilePage() {
                             company.status === "revision" ? "bg-orange-500/10 text-orange-500" :
                             "bg-red-500/10 text-red-500"
                           }`}>
-                            {company.status}
+                            {getCompanyStatusLabel(company.status)}
                           </span>
-                          <button className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all">
+                          <button
+                            className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+                            title={t("companyProfile.companiesTab.viewDetails")}
+                          >
                             <Eye size={20} />
                           </button>
                         </div>

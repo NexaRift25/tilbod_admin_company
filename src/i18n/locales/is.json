@@ -131,6 +131,122 @@
       "copy": "Afrita OTP"
     }
   },
+  "companySidebar": {
+    "nav": {
+      "dashboard": "Yfirlit",
+      "companies": "Fyrirtækin mín",
+      "createOffer": "Búa til tilboð",
+      "offers": "Tilboðin mín",
+      "sales": "Sala og greiðslur",
+      "giftCards": "Öll gjafabréf",
+      "analytics": "Greiningar",
+      "profile": "Prófíll"
+    },
+    "actions": {
+      "goHome": "Fara á forsíðu",
+      "profile": "Prófíll fyrirtækis",
+      "logout": "Skrá út",
+      "accountButton": "Fyrirtækjareikningur"
+    }
+  },
+  "companyProfile": {
+    "title": "Stillingar prófíls",
+    "subtitle": "Stjórnaðu upplýsingum og stillingum reikningsins",
+    "header": {
+      "accountSummary": "Fyrirtækjareikningur • {{count}} fyrirtæki skráð",
+      "companiesLabel": "Fyrirtæki",
+      "activeLabel": "Virk"
+    },
+    "tabs": {
+      "personal": "Persónuupplýsingar",
+      "security": "Öryggi",
+      "companies": "Fyrirtækin mín"
+    },
+    "personal": {
+      "firstNameLabel": "Fornafn *",
+      "lastNameLabel": "Eftirnafn *",
+      "emailLabel": "Netfang *",
+      "phoneLabel": "Símanúmer",
+      "firstNamePlaceholder": "Sláðu inn fornafn",
+      "lastNamePlaceholder": "Sláðu inn eftirnafn",
+      "emailPlaceholder": "Sláðu inn netfang",
+      "phonePlaceholder": "+354 XXX XXXX",
+      "saveButton": "Vista breytingar"
+    },
+    "security": {
+      "currentPasswordLabel": "Núverandi lykilorð *",
+      "newPasswordLabel": "Nýtt lykilorð",
+      "confirmPasswordLabel": "Staðfestu nýtt lykilorð",
+      "currentPasswordPlaceholder": "Sláðu inn núverandi lykilorð",
+      "newPasswordPlaceholder": "Sláðu inn nýtt lykilorð (minnst 8 stafir)",
+      "confirmPasswordPlaceholder": "Staðfestu nýtt lykilorð",
+      "updateButton": "Uppfæra lykilorð"
+    },
+    "validation": {
+      "firstNameRequired": "Fornafn er áskilið",
+      "lastNameRequired": "Eftirnafn er áskilið",
+      "emailRequired": "Netfang er áskilið",
+      "emailInvalid": "Vinsamlegast sláðu inn gilt netfang",
+      "currentPasswordRequired": "Núverandi lykilorð er áskilið",
+      "passwordMinLength": "Lykilorð verður að vera minnst 8 stafir",
+      "confirmPasswordRequired": "Vinsamlegast staðfestu nýja lykilorðið",
+      "passwordMismatch": "Lykilorðin stemma ekki"
+    },
+    "messages": {
+      "personalSaved": "Persónuupplýsingar uppfærðar!",
+      "passwordRequested": "Beiðni um breytingu á lykilorði send."
+    },
+    "errors": {
+      "updateFailed": "Ekki tókst að uppfæra prófíl. Reyndu aftur."
+    },
+    "companiesTab": {
+      "title": "Skráð fyrirtæki",
+      "registeredLabel": "Skráð",
+      "registeredSummary": "af {{max}} hámarki",
+      "approvedLabel": "Samþykkt",
+      "approvedDescription": "Tilbúið fyrir tilboð",
+      "pendingLabel": "Í bið",
+      "pendingDescription": "Í yfirferð",
+      "emptyTitle": "Engin fyrirtæki skráð",
+      "emptyDescription": "Skráðu þitt fyrsta fyrirtæki til að geta búið til tilboð",
+      "registerButton": "Skrá fyrirtæki",
+      "viewDetails": "Skoða nánar",
+      "status": {
+        "approved": "Samþykkt",
+        "pending": "Í bið",
+        "revision": "Þarfnast leiðréttingar",
+        "rejected": "Hafnað",
+        "unknown": "{{status}}"
+      }
+    }
+  },
+  "adminSidebar": {
+    "nav": {
+      "dashboard": "Yfirlit",
+      "approval": "Samþykktir",
+      "companies": "Fyrirtæki",
+      "offers": "Tilboð",
+      "users": "Notendur",
+      "commission": "Þóknun og verð",
+      "analytics": "Greiningar",
+      "events": "Viðburðir og árstíðir",
+      "categories": "Flokkar",
+      "productCategories": "Vöruflokkar",
+      "discountLabels": "Afsláttarskilti",
+      "targetedDiscounts": "Sértækir afslættir",
+      "financial": "Fjármál",
+      "settings": "Stillingar"
+    },
+    "badges": {
+      "approval": "30m"
+    },
+    "actions": {
+      "goHome": "Fara á forsíðu",
+      "settings": "Stillingar stjórnanda",
+      "logout": "Skrá út",
+      "panelButton": "Stjórnborð"
+    }
+  },
   "companyAnalytics": {
     "title": "Greiningar",
     "subtitle": "Fylgstu með árangri tilboðanna þinna og innsýn",

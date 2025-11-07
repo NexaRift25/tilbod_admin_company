@@ -131,6 +131,122 @@
       "copy": "Copy OTP"
     }
   },
+  "companySidebar": {
+    "nav": {
+      "dashboard": "Dashboard",
+      "companies": "My Companies",
+      "createOffer": "Create Offer",
+      "offers": "My Offers",
+      "sales": "Sales & Payments",
+      "giftCards": "All Gift Cards",
+      "analytics": "Analytics",
+      "profile": "Profile"
+    },
+    "actions": {
+      "goHome": "Go to Home",
+      "profile": "Company Profile",
+      "logout": "Logout",
+      "accountButton": "Company Account"
+    }
+  },
+  "companyProfile": {
+    "title": "Profile Settings",
+    "subtitle": "Manage your account information and preferences",
+    "header": {
+      "accountSummary": "Company Account • {{count}} companies registered",
+      "companiesLabel": "Companies",
+      "activeLabel": "Active"
+    },
+    "tabs": {
+      "personal": "Personal Information",
+      "security": "Security",
+      "companies": "My Companies"
+    },
+    "personal": {
+      "firstNameLabel": "First Name *",
+      "lastNameLabel": "Last Name *",
+      "emailLabel": "Email Address *",
+      "phoneLabel": "Phone Number",
+      "firstNamePlaceholder": "Enter first name",
+      "lastNamePlaceholder": "Enter last name",
+      "emailPlaceholder": "Enter email address",
+      "phonePlaceholder": "+354 XXX XXXX",
+      "saveButton": "Save Changes"
+    },
+    "security": {
+      "currentPasswordLabel": "Current Password *",
+      "newPasswordLabel": "New Password",
+      "confirmPasswordLabel": "Confirm New Password",
+      "currentPasswordPlaceholder": "Enter current password",
+      "newPasswordPlaceholder": "Enter new password (min 8 characters)",
+      "confirmPasswordPlaceholder": "Confirm new password",
+      "updateButton": "Update Password"
+    },
+    "validation": {
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email",
+      "currentPasswordRequired": "Current password is required",
+      "passwordMinLength": "Password must be at least 8 characters",
+      "confirmPasswordRequired": "Please confirm your new password",
+      "passwordMismatch": "Passwords do not match"
+    },
+    "messages": {
+      "personalSaved": "Profile information updated successfully!",
+      "passwordRequested": "Password update requested."
+    },
+    "errors": {
+      "updateFailed": "Failed to update profile. Please try again."
+    },
+    "companiesTab": {
+      "title": "Registered Companies",
+      "registeredLabel": "Registered",
+      "registeredSummary": "of {{max}} max",
+      "approvedLabel": "Approved",
+      "approvedDescription": "Ready for offers",
+      "pendingLabel": "Pending",
+      "pendingDescription": "Under review",
+      "emptyTitle": "No companies registered",
+      "emptyDescription": "Register your first company to start creating offers",
+      "registerButton": "Register Company",
+      "viewDetails": "View company details",
+      "status": {
+        "approved": "Approved",
+        "pending": "Pending",
+        "revision": "Needs Revision",
+        "rejected": "Rejected",
+        "unknown": "{{status}}"
+      }
+    }
+  },
+  "adminSidebar": {
+    "nav": {
+      "dashboard": "Dashboard",
+      "approval": "Approval",
+      "companies": "Companies",
+      "offers": "Offers",
+      "users": "Users",
+      "commission": "Commission & Price",
+      "analytics": "Analytics",
+      "events": "Events & Seasons",
+      "categories": "Categories",
+      "productCategories": "Product Categories",
+      "discountLabels": "Discount Labels",
+      "targetedDiscounts": "Targeted Discounts",
+      "financial": "Financial",
+      "settings": "Settings"
+    },
+    "badges": {
+      "approval": "30m"
+    },
+    "actions": {
+      "goHome": "Go to Home",
+      "settings": "Admin Settings",
+      "logout": "Logout",
+      "panelButton": "Admin Panel"
+    }
+  },
   "companyAnalytics": {
     "title": "Analytics",
     "subtitle": "Track your offers' performance and insights",

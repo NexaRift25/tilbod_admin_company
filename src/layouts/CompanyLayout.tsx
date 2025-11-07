@@ -17,52 +17,58 @@ import Navigation, { NavItem } from "@/components/ui/Navigation";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/contexts/AuthContext";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
+import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function CompanyLayout() {
   const { logout } = useAuth();
+  const { t } = useTranslation();
 
-  const navItems = [
-    {
-      name: "Dashboard",
-      href: "/company/dashboard",
-      icon: LayoutDashboard,
-    },
-    {
-      name: "My Companies",
-      href: "/company/companies",
-      icon: Store,
-    },
-    {
-      name: "Create Offer",
-      href: "/company/create-offer",
-      icon: Tag,
-    },
-    {
-      name: "My Offers",
-      href: "/company/offers",
-      icon: Tag,
-    },
-    {
-      name: "Sales & Payments",
-      href: "/company/sales",
-      icon: CreditCard,
-    },
-    {
-      name: "All Gift Cards",
-      href: "/company/gift-cards",
-      icon: Gift,
-    },
-    {
-      name: "Analytics",
-      href: "/company/analytics",
-      icon: BarChart3,
-    },
-    {
-      name: "Profile",
-      href: "/company/profile",
-      icon: User,
-    },
-  ];
+  const navItems = useMemo<NavItem[]>(
+    () => [
+      {
+        name: t("companySidebar.nav.dashboard"),
+        href: "/company/dashboard",
+        icon: LayoutDashboard,
+      },
+      {
+        name: t("companySidebar.nav.companies"),
+        href: "/company/companies",
+        icon: Store,
+      },
+      {
+        name: t("companySidebar.nav.createOffer"),
+        href: "/company/create-offer",
+        icon: Tag,
+      },
+      {
+        name: t("companySidebar.nav.offers"),
+        href: "/company/offers",
+        icon: Tag,
+      },
+      {
+        name: t("companySidebar.nav.sales"),
+        href: "/company/sales",
+        icon: CreditCard,
+      },
+      {
+        name: t("companySidebar.nav.giftCards"),
+        href: "/company/gift-cards",
+        icon: Gift,
+      },
+      {
+        name: t("companySidebar.nav.analytics"),
+        href: "/company/analytics",
+        icon: BarChart3,
+      },
+      {
+        name: t("companySidebar.nav.profile"),
+        href: "/company/profile",
+        icon: User,
+      },
+    ],
+    [t]
+  );
 
 
   return (
@@ -86,7 +92,7 @@ export default function CompanyLayout() {
               <Link
                 to="/"
                 className="w-8 h-8 sm:w-10 sm:h-10 border border-primary rounded-lg flex items-center justify-center bg-transparent hover:bg-primary/10 transition-colors"
-                title="Go to Home"
+                title={t("companySidebar.actions.goHome")}
               >
                 <Home className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               </Link>
@@ -95,7 +101,7 @@ export default function CompanyLayout() {
               <Link
                 to="/company/profile"
                 className="w-8 h-8 sm:w-10 sm:h-10 bg-primary rounded-lg flex items-center justify-center hover:bg-primary/90 transition-colors"
-                title="Company Profile"
+                title={t("companySidebar.actions.profile")}
               >
                 <Building2 className="w-4 h-4 sm:w-5 sm:h-5 text-dark" />
               </Link>
@@ -104,7 +110,7 @@ export default function CompanyLayout() {
               <button
                 onClick={logout}
                 className="w-8 h-8 sm:w-10 sm:h-10 border border-red-500/50 rounded-lg flex items-center justify-center bg-transparent hover:bg-red-500/10 transition-colors"
-                title="Logout"
+                title={t("companySidebar.actions.logout")}
               >
                 <LogOut className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
               </button>
@@ -124,7 +130,7 @@ export default function CompanyLayout() {
                   <Link
                     to="/"
                     className="text-primary transition-colors p-2"
-                    title="Go to Home"
+                    title={t("companySidebar.actions.goHome")}
                   >
                     <Home size={20} />
                   </Link>
@@ -132,7 +138,7 @@ export default function CompanyLayout() {
                     to="/company/profile"
                     className="whitespace-nowrap flex items-center gap-3 font-semibold bg-primary text-dark px-4 py-1.5 rounded-3xl hover:bg-primary/90 transition-all"
                   >
-                    Company Account
+                    {t("companySidebar.actions.accountButton")}
                     <span className="text-dark border border-dark rounded-full text-base">
                       <Building2 size={16} />
                     </span>
@@ -140,6 +146,7 @@ export default function CompanyLayout() {
                   <button
                     onClick={logout}
                     className="text-primary hover:text-red-500 transition-colors p-2"
+                    title={t("companySidebar.actions.logout")}
                   >
                     <LogOut size={20} />
                   </button>
@@ -150,7 +157,7 @@ export default function CompanyLayout() {
         </header>
 
         {/* Navigation Component */}
-        <Navigation navItems={navItems as NavItem[]} />
+        <Navigation navItems={navItems} />
 
         {/* Main Content */}
         <div className="lg:ml-64 pb-20 lg:pb-0">
