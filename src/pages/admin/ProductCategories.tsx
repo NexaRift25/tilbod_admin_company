@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import {
   Package,
@@ -13,6 +13,7 @@ import {
   AlertCircle,
   Save,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import Modal from "@/components/ui/modal";
 
 interface ProductCategory {
@@ -28,6 +29,9 @@ interface ProductCategory {
 const PRODUCT_CATEGORIES_STORAGE_KEY = "tilbod_product_categories";
 
 export default function ProductCategoriesPage() {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language === "is" ? "is-IS" : "en-US";
+
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [showModal, setShowModal] = useState(false);
@@ -35,7 +39,6 @@ export default function ProductCategoriesPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
 
-  // Load from localStorage on mount
   const [categories, setCategories] = useState<ProductCategory[]>(() => {
     const stored = localStorage.getItem(PRODUCT_CATEGORIES_STORAGE_KEY);
     if (stored) {
@@ -45,7 +48,6 @@ export default function ProductCategoriesPage() {
         return [];
       }
     }
-    // Default product categories
     return [
       {
         id: "1",
@@ -104,7 +106,6 @@ export default function ProductCategoriesPage() {
     ];
   });
 
-  // Save to localStorage whenever categories change
   useEffect(() => {
     localStorage.setItem(PRODUCT_CATEGORIES_STORAGE_KEY, JSON.stringify(categories));
   }, [categories]);
@@ -115,12 +116,24 @@ export default function ProductCategoriesPage() {
     status: "active" as "active" | "inactive",
   });
 
-  const filteredCategories = categories.filter(category => {
-    const matchesSearch = category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         category.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || category.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const statusFilterOptions = useMemo(
+    () => [
+      { value: "all", label: t("adminProductCategories.filters.status.all") },
+      { value: "active", label: t("adminProductCategories.filters.status.active") },
+      { value: "inactive", label: t("adminProductCategories.filters.status.inactive") },
+    ],
+    [t]
+  );
+
+  const filteredCategories = useMemo(() => {
+    return categories.filter((category) => {
+      const matchesSearch =
+        category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        category.description.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === "all" || category.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [categories, searchTerm, statusFilter]);
 
   const handleOpenModal = (category?: ProductCategory) => {
     if (category) {
@@ -153,27 +166,28 @@ export default function ProductCategoriesPage() {
 
   const handleSave = async () => {
     if (!formData.name.trim()) {
+      window.alert(t("adminProductCategories.notifications.validation"));
       return;
     }
 
     setIsSaving(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     if (editingCategory) {
-      // Update existing category
-      setCategories(prev => prev.map(cat =>
-        cat.id === editingCategory.id
-          ? {
-              ...cat,
-              name: formData.name,
-              description: formData.description,
-              status: formData.status,
-              updatedAt: new Date().toISOString(),
-            }
-          : cat
-      ));
+      setCategories((prev) =>
+        prev.map((cat) =>
+          cat.id === editingCategory.id
+            ? {
+                ...cat,
+                name: formData.name,
+                description: formData.description,
+                status: formData.status,
+                updatedAt: new Date().toISOString(),
+              }
+            : cat
+        )
+      );
     } else {
-      // Add new category
       const newCategory: ProductCategory = {
         id: Date.now().toString(),
         name: formData.name,
@@ -183,7 +197,7 @@ export default function ProductCategoriesPage() {
         updatedAt: new Date().toISOString(),
         offersCount: 0,
       };
-      setCategories(prev => [...prev, newCategory]);
+      setCategories((prev) => [...prev, newCategory]);
     }
 
     setIsSaving(false);
@@ -191,34 +205,52 @@ export default function ProductCategoriesPage() {
   };
 
   const handleDelete = (id: string) => {
-    setCategories(prev => prev.filter(cat => cat.id !== id));
+    setCategories((prev) => prev.filter((cat) => cat.id !== id));
     setShowDeleteConfirm(null);
   };
 
   const handleToggleStatus = (id: string) => {
-    setCategories(prev => prev.map(cat =>
-      cat.id === id
-        ? {
-            ...cat,
-            status: cat.status === "active" ? "inactive" : "active",
-            updatedAt: new Date().toISOString(),
-          }
-        : cat
-    ));
+    setCategories((prev) =>
+      prev.map((cat) =>
+        cat.id === id
+          ? {
+              ...cat,
+              status: cat.status === "active" ? "inactive" : "active",
+              updatedAt: new Date().toISOString(),
+            }
+          : cat
+      )
+    );
   };
 
-  const getStatusColor = (status: string) => {
-    return status === "active"
+  const getStatusColor = (status: string) =>
+    status === "active"
       ? "bg-green/10 text-green border-green"
       : "bg-gray-500/10 text-gray-400 border-gray-500";
-  };
 
-  const categoryStats = {
-    total: categories.length,
-    active: categories.filter(c => c.status === "active").length,
-    inactive: categories.filter(c => c.status === "inactive").length,
-    totalOffers: categories.reduce((sum, c) => sum + (c.offersCount || 0), 0),
-  };
+  const getStatusLabel = (status: ProductCategory["status"]) =>
+    t(`adminProductCategories.status.${status}`);
+
+  const categoryStats = useMemo(
+    () => ({
+      total: categories.length,
+      active: categories.filter((c) => c.status === "active").length,
+      inactive: categories.filter((c) => c.status === "inactive").length,
+      totalOffers: categories.reduce((sum, c) => sum + (c.offersCount || 0), 0),
+    }),
+    [categories]
+  );
+
+  const formatDate = (value: string) =>
+    new Date(value).toLocaleDateString(locale, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+
+  const selectedCategory = showDeleteConfirm
+    ? categories.find((c) => c.id === showDeleteConfirm)
+    : null;
 
   return (
     <div className="space-y-6">
@@ -233,10 +265,10 @@ export default function ProductCategoriesPage() {
           </Link>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white">
-              Product Categories
+              {t("adminProductCategories.header.title")}
             </h1>
             <p className="text-gray-400 text-sm">
-              Manage product categories for offers (unlimited)
+              {t("adminProductCategories.header.subtitle")}
             </p>
           </div>
         </div>
@@ -246,7 +278,7 @@ export default function ProductCategoriesPage() {
           className="flex items-center gap-2 px-6 py-3 bg-primary text-dark font-semibold rounded-full hover:bg-primary/90 transition-all"
         >
           <Plus size={20} />
-          Add Category
+          {t("adminProductCategories.header.addButton")}
         </button>
       </div>
 
@@ -255,7 +287,9 @@ export default function ProductCategoriesPage() {
         <div className="bg-card-background border border-primary rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Total Categories</p>
+              <p className="text-gray-400 text-sm">
+                {t("adminProductCategories.stats.total")}
+              </p>
               <p className="text-white text-2xl font-bold">{categoryStats.total}</p>
             </div>
             <Package className="text-primary" size={24} />
@@ -265,7 +299,9 @@ export default function ProductCategoriesPage() {
         <div className="bg-card-background border border-green rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Active</p>
+              <p className="text-gray-400 text-sm">
+                {t("adminProductCategories.stats.active")}
+              </p>
               <p className="text-white text-2xl font-bold">{categoryStats.active}</p>
             </div>
             <CheckCircle className="text-green" size={24} />
@@ -275,7 +311,9 @@ export default function ProductCategoriesPage() {
         <div className="bg-card-background border border-gray-500 rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Inactive</p>
+              <p className="text-gray-400 text-sm">
+                {t("adminProductCategories.stats.inactive")}
+              </p>
               <p className="text-white text-2xl font-bold">{categoryStats.inactive}</p>
             </div>
             <XCircle className="text-gray-400" size={24} />
@@ -285,7 +323,9 @@ export default function ProductCategoriesPage() {
         <div className="bg-card-background border border-blue-500 rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Total Offers</p>
+              <p className="text-gray-400 text-sm">
+                {t("adminProductCategories.stats.totalOffers")}
+              </p>
               <p className="text-white text-2xl font-bold">{categoryStats.totalOffers}</p>
             </div>
             <AlertCircle className="text-blue-500" size={24} />
@@ -298,10 +338,13 @@ export default function ProductCategoriesPage() {
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <Search
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                size={20}
+              />
               <input
                 type="text"
-                placeholder="Search product categories..."
+                placeholder={t("adminProductCategories.filters.searchPlaceholder") ?? ""}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary"
@@ -316,9 +359,11 @@ export default function ProductCategoriesPage() {
               onChange={(e) => setStatusFilter(e.target.value)}
               className="px-3 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
             >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
+              {statusFilterOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -329,11 +374,13 @@ export default function ProductCategoriesPage() {
         {filteredCategories.length === 0 ? (
           <div className="p-8 text-center">
             <Package className="mx-auto text-gray-400 mb-4" size={48} />
-            <h3 className="text-xl font-bold text-white mb-2">No product categories found</h3>
+            <h3 className="text-xl font-bold text-white mb-2">
+              {t("adminProductCategories.empty.title")}
+            </h3>
             <p className="text-gray-400">
               {searchTerm || statusFilter !== "all"
-                ? "Try adjusting your search or filter criteria"
-                : "Create your first product category to get started"}
+                ? t("adminProductCategories.empty.searchAdjust")
+                : t("adminProductCategories.empty.createFirst")}
             </p>
           </div>
         ) : (
@@ -341,12 +388,12 @@ export default function ProductCategoriesPage() {
             <table className="w-full">
               <thead>
                 <tr className="text-left text-gray-400 text-sm border-b border-primary/50">
-                  <th className="pb-3">Category Name</th>
-                  <th className="pb-3">Description</th>
-                  <th className="pb-3">Status</th>
-                  <th className="pb-3">Offers</th>
-                  <th className="pb-3">Last Updated</th>
-                  <th className="pb-3">Actions</th>
+                  <th className="pb-3">{t("adminProductCategories.table.name")}</th>
+                  <th className="pb-3">{t("adminProductCategories.table.description")}</th>
+                  <th className="pb-3">{t("adminProductCategories.table.status")}</th>
+                  <th className="pb-3">{t("adminProductCategories.table.offers")}</th>
+                  <th className="pb-3">{t("adminProductCategories.table.updated")}</th>
+                  <th className="pb-3">{t("adminProductCategories.table.actions")}</th>
                 </tr>
               </thead>
               <tbody className="text-white">
@@ -359,27 +406,32 @@ export default function ProductCategoriesPage() {
                       </div>
                     </td>
                     <td className="py-4">
-                      <p className="text-sm text-gray-300 max-w-xs truncate" title={category.description}>
+                      <p
+                        className="text-sm text-gray-300 max-w-xs truncate"
+                        title={category.description}
+                      >
                         {category.description}
                       </p>
                     </td>
                     <td className="py-4">
-                      <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold border ${getStatusColor(category.status)}`}>
+                      <span
+                        className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold border ${getStatusColor(
+                          category.status
+                        )}`}
+                      >
                         {category.status === "active" ? (
                           <CheckCircle className="text-green" size={12} />
                         ) : (
                           <XCircle className="text-gray-400" size={12} />
                         )}
-                        <span className="capitalize">{category.status}</span>
+                        <span>{getStatusLabel(category.status)}</span>
                       </span>
                     </td>
                     <td className="py-4">
                       <p className="text-sm font-medium">{category.offersCount || 0}</p>
                     </td>
                     <td className="py-4">
-                      <p className="text-sm text-gray-300">
-                        {new Date(category.updatedAt).toLocaleDateString()}
-                      </p>
+                      <p className="text-sm text-gray-300">{formatDate(category.updatedAt)}</p>
                     </td>
                     <td className="py-4">
                       <div className="flex items-center gap-2">
@@ -390,7 +442,11 @@ export default function ProductCategoriesPage() {
                               ? "text-gray-400 hover:text-yellow hover:bg-yellow/10"
                               : "text-gray-400 hover:text-green hover:bg-green/10"
                           }`}
-                          title={category.status === "active" ? "Deactivate" : "Activate"}
+                          title={
+                            category.status === "active"
+                              ? t("adminProductCategories.actions.deactivate")
+                              : t("adminProductCategories.actions.activate")
+                          }
                         >
                           {category.status === "active" ? (
                             <XCircle size={16} />
@@ -401,14 +457,14 @@ export default function ProductCategoriesPage() {
                         <button
                           onClick={() => handleOpenModal(category)}
                           className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
-                          title="Edit Category"
+                          title={t("adminProductCategories.actions.edit")}
                         >
                           <Edit size={16} />
                         </button>
                         <button
                           onClick={() => setShowDeleteConfirm(category.id)}
                           className="p-2 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
-                          title="Delete Category"
+                          title={t("adminProductCategories.actions.delete")}
                         >
                           <Trash2 size={16} />
                         </button>
@@ -426,7 +482,11 @@ export default function ProductCategoriesPage() {
       <Modal
         isOpen={showModal}
         onClose={handleCloseModal}
-        title={editingCategory ? "Edit Product Category" : "Add New Product Category"}
+        title={
+          editingCategory
+            ? t("adminProductCategories.modal.editTitle")
+            : t("adminProductCategories.modal.addTitle")
+        }
         size="2xl"
         footer={
           <div className="flex items-center justify-end gap-3">
@@ -434,7 +494,7 @@ export default function ProductCategoriesPage() {
               onClick={handleCloseModal}
               className="px-6 py-2 text-gray-400 hover:text-white hover:bg-primary/10 rounded-lg transition-all"
             >
-              Cancel
+              {t("adminProductCategories.modal.cancel")}
             </button>
             <button
               onClick={handleSave}
@@ -444,12 +504,14 @@ export default function ProductCategoriesPage() {
               {isSaving ? (
                 <>
                   <div className="w-4 h-4 border-2 border-dark border-t-transparent rounded-full animate-spin" />
-                  Saving...
+                  {t("adminProductCategories.modal.saving")}
                 </>
               ) : (
                 <>
                   <Save size={16} />
-                  {editingCategory ? "Update Category" : "Create Category"}
+                  {editingCategory
+                    ? t("adminProductCategories.modal.updateButton")
+                    : t("adminProductCategories.modal.createButton")}
                 </>
               )}
             </button>
@@ -459,25 +521,27 @@ export default function ProductCategoriesPage() {
         <div className="space-y-6">
           <div>
             <label className="text-gray-400 text-sm mb-2 block">
-              Product Category Name <span className="text-red-500">*</span>
+              {t("adminProductCategories.form.nameLabel")} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-              placeholder="e.g., Clothing, Jewelry, Electronics"
+              onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+              placeholder={t("adminProductCategories.form.namePlaceholder") ?? ""}
               className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary"
             />
           </div>
 
           <div>
             <label className="text-gray-400 text-sm mb-2 block">
-              Description
+              {t("adminProductCategories.form.descriptionLabel")}
             </label>
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              placeholder="Enter category description"
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, description: e.target.value }))
+              }
+              placeholder={t("adminProductCategories.form.descriptionPlaceholder") ?? ""}
               rows={4}
               className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary resize-none"
             />
@@ -485,39 +549,49 @@ export default function ProductCategoriesPage() {
 
           <div>
             <label className="text-gray-400 text-sm mb-2 block">
-              Status
+              {t("adminProductCategories.form.statusLabel")}
             </label>
             <div className="flex items-center gap-4">
-              <label className={`flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg transition-all ${
-                formData.status === "active"
-                  ? "bg-green/10"
-                  : "bg-background"
-              }`}>
+              <label
+                className={`flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg transition-all ${
+                  formData.status === "active" ? "bg-green/10" : "bg-background"
+                }`}
+              >
                 <input
                   type="radio"
                   name="status"
                   value="active"
                   checked={formData.status === "active"}
-                  onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as "active" | "inactive" }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      status: e.target.value as "active" | "inactive",
+                    }))
+                  }
                   className="w-4 h-4 text-green bg-background border-green focus:ring-green focus:ring-2"
                 />
-                <span className={`flex items-center gap-2 font-medium text-green`}>
+                <span className="flex items-center gap-2 font-medium text-green">
                   <CheckCircle className="text-green" size={16} />
-                  Active
+                  {t("adminProductCategories.form.statusOptions.active")}
                 </span>
               </label>
-              <label className={`flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg transition-all`}>
+              <label className="flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg transition-all">
                 <input
                   type="radio"
                   name="status"
                   value="inactive"
                   checked={formData.status === "inactive"}
-                  onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as "active" | "inactive" }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      status: e.target.value as "active" | "inactive",
+                    }))
+                  }
                   className="w-4 h-4 text-red-500 bg-background border-red-500 focus:ring-red-500 focus:ring-2"
                 />
-                <span className={`flex items-center gap-2 font-medium text-red-500`}>
+                <span className="flex items-center gap-2 font-medium text-red-500">
                   <XCircle className="text-red-500" size={16} />
-                  Inactive
+                  {t("adminProductCategories.form.statusOptions.inactive")}
                 </span>
               </label>
             </div>
@@ -536,13 +610,13 @@ export default function ProductCategoriesPage() {
               onClick={() => setShowDeleteConfirm(null)}
               className="px-6 py-2 text-gray-400 hover:text-white hover:bg-primary/10 rounded-lg transition-all"
             >
-              Cancel
+              {t("adminProductCategories.delete.cancel")}
             </button>
             <button
               onClick={() => handleDelete(showDeleteConfirm!)}
               className="px-6 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-500/90 transition-all"
             >
-              Delete Category
+              {t("adminProductCategories.delete.confirmButton")}
             </button>
           </div>
         }
@@ -552,17 +626,19 @@ export default function ProductCategoriesPage() {
             <AlertCircle className="text-red-500" size={24} />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-white">Delete Product Category</h3>
-            <p className="text-gray-400 text-sm">This action cannot be undone</p>
+            <h3 className="text-xl font-bold text-white">
+              {t("adminProductCategories.delete.title")}
+            </h3>
+            <p className="text-gray-400 text-sm">
+              {t("adminProductCategories.delete.subtitle")}
+            </p>
           </div>
         </div>
 
         <p className="text-gray-300">
-          Are you sure you want to delete{" "}
-          <span className="text-white font-semibold">
-            {categories.find(c => c.id === showDeleteConfirm)?.name}
-          </span>
-          ? This will affect all offers using this product category.
+          {t("adminProductCategories.delete.message", {
+            name: selectedCategory?.name ?? "",
+          })}
         </p>
       </Modal>
     </div>

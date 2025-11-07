@@ -574,6 +574,154 @@
       }
     }
   },
+  "adminCategories": {
+    "header": {
+      "title": "Stjórnun flokka",
+      "subtitle": "Stjórnaðu flokkum og flokkunum kerfisins",
+      "addButton": "Bæta við flokki"
+    },
+    "stats": {
+      "total": "Heildarfjöldi flokka",
+      "active": "Virkir",
+      "inactive": "Óvirkir",
+      "totalOffers": "Heildarfjöldi tilboða",
+      "totalCompanies": "Heildarfjöldi fyrirtækja"
+    },
+    "filters": {
+      "searchPlaceholder": "Leita að flokkum...",
+      "status": {
+        "all": "Allar stöður",
+        "active": "Virkir",
+        "inactive": "Óvirkir"
+      }
+    },
+    "status": {
+      "active": "Virkt",
+      "inactive": "Óvirkt"
+    },
+    "actions": {
+      "activate": "Virkja",
+      "deactivate": "Gera óvirkan",
+      "edit": "Breyta flokki",
+      "delete": "Eyða flokki"
+    },
+    "table": {
+      "name": "Heiti flokks",
+      "description": "Lýsing",
+      "status": "Staða",
+      "companies": "Fyrirtæki",
+      "offers": "Tilboð",
+      "updated": "Síðast uppfært",
+      "actions": "Aðgerðir"
+    },
+    "empty": {
+      "title": "Engir flokkar fundust",
+      "searchAdjust": "Reyndu að breyta leitinni eða síunni",
+      "createFirst": "Búðu til fyrsta flokkinn til að byrja"
+    },
+    "form": {
+      "nameLabel": "Heiti flokks",
+      "namePlaceholder": "Sláðu inn heiti flokks",
+      "descriptionLabel": "Lýsing",
+      "descriptionPlaceholder": "Sláðu inn lýsingu á flokknum",
+      "statusLabel": "Staða",
+      "statusOptions": {
+        "active": "Virkt",
+        "inactive": "Óvirkt"
+      }
+    },
+    "modal": {
+      "addTitle": "Bæta við nýjum flokki",
+      "editTitle": "Breyta flokki",
+      "cancel": "Hætta við",
+      "saving": "Vista...",
+      "createButton": "Búa til flokk",
+      "updateButton": "Uppfæra flokk"
+    },
+    "delete": {
+      "title": "Eyða flokki",
+      "subtitle": "Ekki er hægt að afturkalla þessa aðgerð",
+      "message": "Ertu viss um að þú viljir eyða {{name}}? Þetta hefur áhrif á öll tengd fyrirtæki og tilboð.",
+      "cancel": "Hætta við",
+      "confirmButton": "Eyða flokki"
+    },
+    "notifications": {
+      "validation": "Vinsamlegast sláðu inn heiti flokks"
+    }
+  },
+  "adminProductCategories": {
+    "header": {
+      "title": "Vöru flokkar",
+      "subtitle": "Stjórnaðu vöruflokkum fyrir tilboð (óháður fjöldi)",
+      "addButton": "Bæta við flokki"
+    },
+    "stats": {
+      "total": "Heildarfjöldi flokka",
+      "active": "Virkir",
+      "inactive": "Óvirkir",
+      "totalOffers": "Heildarfjöldi tilboða"
+    },
+    "filters": {
+      "searchPlaceholder": "Leita að vöruflokkum...",
+      "status": {
+        "all": "Allar stöður",
+        "active": "Virkir",
+        "inactive": "Óvirkir"
+      }
+    },
+    "status": {
+      "active": "Virkt",
+      "inactive": "Óvirkt"
+    },
+    "actions": {
+      "activate": "Virkja",
+      "deactivate": "Gera óvirkan",
+      "edit": "Breyta flokki",
+      "delete": "Eyða flokki"
+    },
+    "table": {
+      "name": "Heiti flokks",
+      "description": "Lýsing",
+      "status": "Staða",
+      "offers": "Tilboð",
+      "updated": "Síðast uppfært",
+      "actions": "Aðgerðir"
+    },
+    "empty": {
+      "title": "Engir vöruflokkar fundust",
+      "searchAdjust": "Reyndu að breyta leitinni eða síunni",
+      "createFirst": "Búðu til fyrsta vöruflokkinn til að byrja"
+    },
+    "form": {
+      "nameLabel": "Heiti vöruflokks",
+      "namePlaceholder": "t.d. Föt, Skartgripir, Rafmagnstæki",
+      "descriptionLabel": "Lýsing",
+      "descriptionPlaceholder": "Sláðu inn lýsingu á flokknum",
+      "statusLabel": "Staða",
+      "statusOptions": {
+        "active": "Virkt",
+        "inactive": "Óvirkt"
+      }
+    },
+    "modal": {
+      "addTitle": "Bæta við nýjum vöruflokki",
+      "editTitle": "Breyta vöruflokki",
+      "cancel": "Hætta við",
+      "saving": "Vista...",
+      "createButton": "Búa til flokk",
+      "updateButton": "Uppfæra flokk"
+    },
+    "delete": {
+      "title": "Eyða vöruflokki",
+      "subtitle": "Ekki er hægt að afturkalla þessa aðgerð",
+      "message": "Ertu viss um að þú viljir eyða {{name}}? Þetta hefur áhrif á öll tilboð sem nota þennan vöruflokk.",
+      "cancel": "Hætta við",
+      "confirmButton": "Eyða flokki"
+    },
+    "notifications": {
+      "validation": "Vinsamlegast sláðu inn heiti vöruflokks"
+    }
+  },
   "adminCompanyDetails": {
     "notFound": {
       "title": "Fyrirtæki fannst ekki",

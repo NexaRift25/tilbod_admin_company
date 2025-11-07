@@ -574,6 +574,154 @@
       }
     }
   },
+  "adminCategories": {
+    "header": {
+      "title": "Category Management",
+      "subtitle": "Manage platform categories and classifications",
+      "addButton": "Add Category"
+    },
+    "stats": {
+      "total": "Total Categories",
+      "active": "Active",
+      "inactive": "Inactive",
+      "totalOffers": "Total Offers",
+      "totalCompanies": "Total Companies"
+    },
+    "filters": {
+      "searchPlaceholder": "Search categories...",
+      "status": {
+        "all": "All Status",
+        "active": "Active",
+        "inactive": "Inactive"
+      }
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "actions": {
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "edit": "Edit Category",
+      "delete": "Delete Category"
+    },
+    "table": {
+      "name": "Category Name",
+      "description": "Description",
+      "status": "Status",
+      "companies": "Companies",
+      "offers": "Offers",
+      "updated": "Last Updated",
+      "actions": "Actions"
+    },
+    "empty": {
+      "title": "No categories found",
+      "searchAdjust": "Try adjusting your search or filter criteria",
+      "createFirst": "Create your first category to get started"
+    },
+    "form": {
+      "nameLabel": "Category Name",
+      "namePlaceholder": "Enter category name",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Enter category description",
+      "statusLabel": "Status",
+      "statusOptions": {
+        "active": "Active",
+        "inactive": "Inactive"
+      }
+    },
+    "modal": {
+      "addTitle": "Add New Category",
+      "editTitle": "Edit Category",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "createButton": "Create Category",
+      "updateButton": "Update Category"
+    },
+    "delete": {
+      "title": "Delete Category",
+      "subtitle": "This action cannot be undone",
+      "message": "Are you sure you want to delete {{name}}? This will affect all associated companies and offers.",
+      "cancel": "Cancel",
+      "confirmButton": "Delete Category"
+    },
+    "notifications": {
+      "validation": "Please enter a category name"
+    }
+  },
+  "adminProductCategories": {
+    "header": {
+      "title": "Product Categories",
+      "subtitle": "Manage product categories for offers (unlimited)",
+      "addButton": "Add Category"
+    },
+    "stats": {
+      "total": "Total Categories",
+      "active": "Active",
+      "inactive": "Inactive",
+      "totalOffers": "Total Offers"
+    },
+    "filters": {
+      "searchPlaceholder": "Search product categories...",
+      "status": {
+        "all": "All Status",
+        "active": "Active",
+        "inactive": "Inactive"
+      }
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "actions": {
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "edit": "Edit Category",
+      "delete": "Delete Category"
+    },
+    "table": {
+      "name": "Category Name",
+      "description": "Description",
+      "status": "Status",
+      "offers": "Offers",
+      "updated": "Last Updated",
+      "actions": "Actions"
+    },
+    "empty": {
+      "title": "No product categories found",
+      "searchAdjust": "Try adjusting your search or filter criteria",
+      "createFirst": "Create your first product category to get started"
+    },
+    "form": {
+      "nameLabel": "Product Category Name",
+      "namePlaceholder": "e.g., Clothing, Jewelry, Electronics",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Enter category description",
+      "statusLabel": "Status",
+      "statusOptions": {
+        "active": "Active",
+        "inactive": "Inactive"
+      }
+    },
+    "modal": {
+      "addTitle": "Add New Product Category",
+      "editTitle": "Edit Product Category",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "createButton": "Create Category",
+      "updateButton": "Update Category"
+    },
+    "delete": {
+      "title": "Delete Product Category",
+      "subtitle": "This action cannot be undone",
+      "message": "Are you sure you want to delete {{name}}? This will affect all offers using this product category.",
+      "cancel": "Cancel",
+      "confirmButton": "Delete Category"
+    },
+    "notifications": {
+      "validation": "Please enter a product category name"
+    }
+  },
   "adminCompanyDetails": {
     "notFound": {
       "title": "Company Not Found",
