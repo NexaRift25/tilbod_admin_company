@@ -14,6 +14,7 @@ import {
   FolderOpen,
   Package,
   TrendingUp,
+  Target,
 } from "lucide-react";
 import Container from "@/components/ui/Container";
 import { Logo, MobileLogo } from "@/components/ui/Header";
@@ -80,6 +81,11 @@ export default function AdminLayout() {
       name: "Discount Labels",
       href: "/admin/discount-labels",
       icon: Tag,
+    },
+    {
+      name: "Targeted Discounts",
+      href: "/admin/targeted-discounts",
+      icon: Target,
     },
     {
       name: "Financial",
