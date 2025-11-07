@@ -29,7 +29,107 @@
     "description": "Description",
     "price": "Price",
     "category": "Category",
-    "company": "Company"
+    "company": "Company",
+    "viewOffer": "View offer"
+  },
+  "companyGiftCards": {
+    "title": "All Gift Cards",
+    "subtitle": "View and manage your approved gift cards",
+    "stats": {
+      "total": "Total Gift Cards",
+      "totalPurchases": "Total Purchases",
+      "totalRevenue": "Total Revenue"
+    },
+    "filters": {
+      "searchPlaceholder": "Search gift cards...",
+      "status": {
+        "approved": "Approved Only",
+        "all": "All Status",
+        "pending": "Pending",
+        "rejected": "Rejected"
+      }
+    },
+    "table": {
+      "headers": {
+        "giftCard": "Gift Card",
+        "value": "Value",
+        "discount": "Discount",
+        "purchases": "Purchases",
+        "revenue": "Revenue",
+        "validPeriod": "Valid Period",
+        "actions": "Actions"
+      },
+      "discountValue": "{{value}}% OFF",
+      "noDiscount": "—",
+      "viewDetails": "View details",
+      "emptyTitle": "No gift cards found",
+      "emptyFiltered": "Try adjusting your search or filter criteria",
+      "emptyDefault": "You don't have any approved gift cards yet"
+    }
+  },
+  "companyGiftCardDetails": {
+    "title": "Gift Card Details",
+    "subtitle": "View details and manage gift card purchases",
+    "notFoundTitle": "Gift Card Not Found",
+    "notFoundDescription": "The requested gift card could not be found.",
+    "notFoundHint": "Return to the gift card list and try selecting another card.",
+    "info": {
+      "approved": "Approved",
+      "cardValue": "Card Value",
+      "discount": "Discount",
+      "discountValue": "{{value}}% OFF",
+      "totalPurchases": "Total Purchases",
+      "validFrom": "Valid From",
+      "validUntil": "Valid Until",
+      "terms": "Terms & Conditions"
+    },
+    "preview": {
+      "title": "Gift Card Preview",
+      "discount": "{{value}}% OFF",
+      "noDiscount": "Exclusive Offer",
+      "purchases": "Total purchases: {{count}}"
+    },
+    "stats": {
+      "totalPurchases": "Total Purchases",
+      "activeCards": "Active Cards",
+      "usedCards": "Used Cards",
+      "totalRevenue": "Total Revenue"
+    },
+    "purchases": {
+      "title": "Gift Card Purchases ({{count}})",
+      "emptyTitle": "No purchases yet",
+      "emptyDescription": "This gift card hasn't been purchased by anyone yet.",
+      "table": {
+        "customer": "Customer",
+        "purchaseDate": "Purchase Date",
+        "amount": "Amount",
+        "status": "Status",
+        "otp": "OTP",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "used": "Used",
+        "expired": "Expired"
+      },
+      "notGenerated": "Not generated",
+      "generate": "Generate OTP",
+      "regenerate": "Regenerate",
+      "generateTooltip": "Generate OTP",
+      "inactiveTooltip": "Only active cards can generate OTP",
+      "copyOtp": "Copy OTP"
+    },
+    "modal": {
+      "title": "OTP Generated Successfully",
+      "customerLabel": "Customer",
+      "emailLabel": "Email",
+      "valueLabel": "Gift Card Value",
+      "generatedLabel": "Generated OTP",
+      "shareHint": "Share this OTP with the customer. They can use it to redeem their gift card.",
+      "validityHint": "OTP is valid for redemption. Regenerating will invalidate the previous one.",
+      "close": "Close",
+      "copy": "Copy OTP"
+    }
   },
   "offerDetails": {
     "title": "Offer Details",
@@ -262,6 +362,461 @@
     "revisionRequired": "Revision Required",
     "revisionNotice": "You have items that need revision. You have up to 3 attempts to update companies and 2 attempts for offers.",
     "revisionBadge": "Revision {{count}}/3"
+  },
+  "pendingItemDetails": {
+    "itemNotFound": "Item Not Found",
+    "itemNotFoundMessage": "The requested item could not be found.",
+    "underReview": "Under Review",
+    "needsRevision": "Needs Revision",
+    "submitted": "Submitted {{time}}",
+    "revisionRequired": "Revision Required",
+    "revisionMessage": "This item requires revision. You're on revision {{count}} of {{max}} maximum attempts.",
+    "companyInformation": "Company Information",
+    "category": "Category",
+    "registrationNumber": "Registration Number",
+    "taxId": "Tax ID",
+    "contactInformation": "Contact Information",
+    "address": "Address",
+    "phone": "Phone",
+    "email": "Email",
+    "website": "Website",
+    "description": "Description",
+    "offerDetails": "Offer Details",
+    "company": "Company",
+    "offerType": "Offer Type",
+    "pricingInformation": "Pricing Information",
+    "originalPrice": "Original Price",
+    "discountPrice": "Discount Price",
+    "discount": "Discount",
+    "off": "OFF",
+    "offerPeriod": "Offer Period",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "notAvailable": "N/A",
+    "submission": "Submission",
+    "submittedLabel": "Submitted",
+    "status": "Status",
+    "itemType": "Item Type"
+  },
+  "companies": {
+    "title": "My Companies",
+    "subtitle": "Manage your registered businesses ({{count}}/10 companies)",
+    "registerCompany": "Register Company",
+    "total": "Total",
+    "approved": "Approved",
+    "pending": "Pending",
+    "revision": "Revision",
+    "rejected": "Rejected",
+    "searchPlaceholder": "Search companies...",
+    "allStatus": "All Status",
+    "needsRevision": "Needs Revision",
+    "noCompaniesFound": "No companies found",
+    "tryAdjustingFilters": "Try adjusting your search or filter criteria",
+    "noCompaniesYet": "You haven't registered any companies yet",
+    "registerFirstCompany": "Register Your First Company",
+    "companyName": "Company Name",
+    "status": "Status",
+    "category": "Category",
+    "registrationNumber": "Registration #",
+    "taxId": "Tax ID",
+    "registered": "Registered",
+    "actions": "Actions",
+    "revisionAttempt": "Revision (Attempt {{count}}/3)",
+    "pendingReview": "Pending Review",
+    "viewDetails": "View Details",
+    "editCompany": "Edit Company",
+    "limitWarning": "Company Registration Limit Warning",
+    "limitWarningMessage": "You have registered {{count}}/10 companies. You have {{remaining}} company registrations remaining."
+  },
+  "companyDetails": {
+    "companyNotFound": "Company Not Found",
+    "companyNotFoundMessage": "The requested company could not be found.",
+    "registered": "Registered {{date}}",
+    "edit": "Edit",
+    "revisionRequired": "Revision Required",
+    "revisionMessage": "This company requires revision. You're on revision {{count}} of {{max}} maximum attempts. Please update the requested information and resubmit.",
+    "companyRejected": "Company Rejected",
+    "rejectionMessage": "This company registration has been rejected. Please review the feedback and register a new company if needed.",
+    "companyInformation": "Company Information",
+    "category": "Category",
+    "registrationNumber": "Registration Number",
+    "taxId": "Tax ID",
+    "registeredDate": "Registered Date",
+    "contactInformation": "Contact Information",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "website": "Website",
+    "description": "Description",
+    "status": "Status",
+    "registeredLabel": "Registered",
+    "revisionAttempts": "Revision Attempts",
+    "quickActions": "Quick Actions",
+    "editCompany": "Edit Company",
+    "createOffer": "Create Offer"
+  },
+  "companySales": {
+    "title": "Sales & Payments",
+    "subtitle": "Track your sales, payments, and financial performance",
+    "stats": {
+      "totalSales": "Total Sales",
+      "revenue": "Revenue",
+      "pending": "Pending",
+      "completed": "Completed",
+      "averageOrder": "Avg Order"
+    },
+    "filters": {
+      "searchPlaceholder": "Search sales...",
+      "statusOptions": {
+        "all": "All Status",
+        "completed": "Completed",
+        "pending": "Pending",
+        "refunded": "Refunded"
+      },
+      "dateRanges": {
+        "7": "Last 7 days",
+        "30": "Last 30 days",
+        "90": "Last 90 days",
+        "365": "Last year"
+      }
+    },
+    "offerTypes": {
+      "active": "Active Offer",
+      "gift_card": "Gift Card",
+      "happy_hour": "Happy Hour"
+    },
+    "status": {
+      "completed": "Completed",
+      "pending": "Pending",
+      "refunded": "Refunded"
+    },
+    "paymentStatus": {
+      "paid": "Paid",
+      "pending": "Pending",
+      "overdue": "Overdue"
+    },
+    "paymentMethods": {
+      "credit_card": "Credit Card",
+      "bank_transfer": "Bank Transfer",
+      "cash": "Cash"
+    },
+    "salesTable": {
+      "title": "Recent Sales",
+      "headers": {
+        "offer": "Offer",
+        "customer": "Customer",
+        "date": "Date",
+        "amount": "Amount",
+        "status": "Status",
+        "paymentMethod": "Payment Method",
+        "actions": "Actions"
+      },
+      "viewDetails": "View details"
+    },
+    "paymentsTable": {
+      "title": "Payment History",
+      "headers": {
+        "period": "Period",
+        "totalSales": "Total Sales",
+        "commission": "Commission",
+        "netAmount": "Net Amount",
+        "status": "Status",
+        "dueDate": "Due Date",
+        "paidDate": "Paid Date",
+        "actions": "Actions"
+      }
+    },
+    "commissionInfo": {
+      "title": "Commission Structure",
+      "points": [
+        "Active Offers: 1 kr. per day",
+        "Weekday Offers: 4 kr. per week",
+        "Happy Hour Offers: 10 kr. per month",
+        "Gift Cards: Percentage of sale amount"
+      ]
+    },
+    "detail": {
+      "title": "Sale Details",
+      "subtitle": "View complete information about {{offer}}",
+      "notFoundTitle": "Sale not found",
+      "notFoundDescription": "The sale you are looking for could not be located.",
+      "notFoundHint": "Please return to the sales list and try selecting another record.",
+      "offerSection": {
+        "title": "Offer information"
+      },
+      "customerSection": {
+        "title": "Customer information"
+      },
+      "paymentSection": {
+        "title": "Payment details"
+      },
+      "fields": {
+        "purchaseDate": "Purchase date",
+        "transactionId": "Transaction ID",
+        "amount": "Total amount",
+        "offerType": "Offer type",
+        "customerName": "Customer name",
+        "customerEmail": "Customer email",
+        "paymentMethod": "Payment method",
+        "status": "Status"
+      },
+      "supportText": "Need to make changes or resend the receipt? Contact support and include the transaction ID."
+    }
+  },
+  "editOffer": {
+    "title": "Edit Offer",
+    "subtitle": "Update your offer details and settings",
+    "offerNotFound": "Offer not found",
+    "backToOffers": "Back to Offers",
+    "offerType": "Offer Type",
+    "editOfferType": "Edit {{type}}",
+    "offerTitle": "Offer Title",
+    "offerTitlePlaceholder": "Enter offer title",
+    "productCategory": "Product Category *",
+    "productCategoryPlaceholder": "Search or type product category...",
+    "productCategoryHint": "Type or search to find a product category (e.g., Clothing, Jewelry)",
+    "noMatchingCategories": "No matching categories",
+    "description": "Description *",
+    "descriptionPlaceholder": "Describe your offer in detail...",
+    "pricingInformation": "Pricing Information",
+    "originalPrice": "Original Price (kr.) *",
+    "originalPricePlaceholder": "1000",
+    "discountedPrice": "Discounted Price (kr.) *",
+    "discountedPricePlaceholder": "800",
+    "discountPercent": "Discount %",
+    "discountPercentPlaceholder": "20",
+    "offerDuration": "Offer Duration",
+    "startDate": "Start Date *",
+    "endDate": "End Date *",
+    "selectWeekdays": "Select Weekdays",
+    "timeRange": "Time Range",
+    "startTime": "Start Time *",
+    "endTime": "End Time *",
+    "location": "Location",
+    "restaurantAddress": "Restaurant/Address *",
+    "restaurantAddressPlaceholder": "Enter restaurant address or location",
+    "happyHourDetails": "Happy Hour Details",
+    "locationLabel": "Location *",
+    "locationPlaceholder": "Bar/Restaurant name",
+    "offerLink": "Offer Website Link",
+    "offerLinkPlaceholder": "https://your-website.com/offer",
+    "offerLinkHint": "Link to your original offer or website",
+    "termsConditions": "Terms & Conditions (Optional)",
+    "termsPlaceholder": "Any specific terms or conditions for this offer...",
+    "offerImage": "Offer Image (Optional)",
+    "uploadImage": "Click to upload or drag and drop",
+    "imageFormat": "PNG, JPG or SVG (max. 2MB)",
+    "saveChanges": "Save Changes",
+    "previewTitle": "Preview",
+    "previewDescription": "See how your offer card will look to customers",
+    "validation": {
+      "titleRequired": "Offer title is required",
+      "descriptionRequired": "Description is required",
+      "categoryRequired": "Category is required",
+      "originalPriceRequired": "Original price is required",
+      "discountPriceRequired": "Discounted price is required",
+      "startDateRequired": "Start date is required",
+      "endDateRequired": "End date is required",
+      "weekdaysRequired": "At least one weekday must be selected",
+      "startTimeRequired": "Start time is required",
+      "endTimeRequired": "End time is required",
+      "weekdayAddressRequired": "Restaurant address is required",
+      "locationRequired": "Location is required",
+      "updateFailed": "Failed to update offer. Please try again."
+    },
+    "timeLeft": {
+      "endsSoon": "Ends soon",
+      "ended": "Ended",
+      "dayLeft": "{{count}} day left",
+      "daysLeft": "{{count}} days left",
+      "hourLeft": "{{count}} hour left",
+      "hoursLeft": "{{count}} hours left",
+      "minLeft": "{{count}} min left"
+    },
+    "preview": {
+      "yourOfferTitle": "Your offer title",
+      "yourOfferDescription": "Your offer description will appear here",
+      "specialOffer": "Special Offer",
+      "yourWeeklyOfferTitle": "Your weekly offer title",
+      "yourWeeklyOfferDescription": "Your weekly offer description",
+      "discountAvailable": "Discount Available",
+      "weeklySpecial": "Weekly Special",
+      "availableAllDay": "Available all day",
+      "happyHourTime": "Happy Hour Time",
+      "openNow": "Open now",
+      "closed": "Closed",
+      "specialPricing": "Special pricing",
+      "yourGiftCardTitle": "Your gift card title",
+      "yourGiftCardDescription": "Your gift card description"
+    }
+  },
+  "adminFinancial": {
+    "title": "Financial Overview",
+    "subtitle": "Monitor platform revenue, commissions, and transactions",
+    "exportReport": "Export Report",
+    "timeRanges": {
+      "week": "Last Week",
+      "month": "Last Month",
+      "quarter": "Last Quarter",
+      "year": "Last Year",
+      "all": "All Time"
+    },
+    "summary": {
+      "totalRevenue": "Total Revenue",
+      "platformCommission": "Platform Commission",
+      "netIncome": "Net Income",
+      "totalTransactions": "Total Transactions"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "transactions": "Transactions",
+      "commissions": "Commissions",
+      "payouts": "Payouts"
+    },
+    "overview": {
+      "monthlyRevenueTitle": "Monthly Revenue Breakdown",
+      "month": "Month",
+      "revenue": "Revenue",
+      "commission": "Commission",
+      "netIncome": "Net Income",
+      "transactions": "Transactions",
+      "growth": "Growth"
+    },
+    "months": {
+      "jul2024": "Jul 2024",
+      "aug2024": "Aug 2024",
+      "sep2024": "Sep 2024",
+      "oct2024": "Oct 2024",
+      "nov2024": "Nov 2024",
+      "dec2024": "Dec 2024",
+      "jan2025": "Jan 2025"
+    },
+    "offerTypes": {
+      "activeOffer": "Active Offer",
+      "weekdayOffer": "Weekday Offer",
+      "happyHour": "Happy Hour",
+      "giftCard": "Gift Card"
+    },
+    "commissions": {
+      "commissionByOfferTitle": "Commission by Offer Type",
+      "transactionCount": "{{count}} transactions",
+      "baseFeePerDay": "{{fee}} kr. per day",
+      "baseFeePerWeek": "{{fee}} kr. per week",
+      "baseFeePerMonth": "{{fee}} kr. per month",
+      "baseFeePerSale": "{{fee}} kr. per sale",
+      "structureTitle": "Commission Structure",
+      "baseFeeLabel": "Base Fee",
+      "transactionsTitle": "Transactions",
+      "summaryTitle": "Commission Summary",
+      "totalCommissionEarned": "Total Commission Earned",
+      "averagePerTransaction": "Average per Transaction",
+      "totalTransactions": "Total Transactions"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "viewReportTitle": "View Financial Report",
+      "viewReportDescription": "Generate detailed PDF report",
+      "exportDataTitle": "Export Data",
+      "exportDataDescription": "Download CSV/Excel file",
+      "companyReportsTitle": "Company Reports",
+      "companyReportsDescription": "View per-company breakdown"
+    },
+    "transactionsTab": {
+      "title": "Recent Transactions",
+      "table": {
+        "date": "Date",
+        "type": "Type",
+        "description": "Description",
+        "company": "Company",
+        "amount": "Amount",
+        "status": "Status"
+      },
+      "types": {
+        "revenue": "Revenue",
+        "commission": "Commission",
+        "refund": "Refund",
+        "payout": "Payout"
+      },
+      "status": {
+        "completed": "Completed",
+        "pending": "Pending",
+        "failed": "Failed"
+      },
+      "descriptions": {
+        "activeOfferCommission": "Active Offer commission",
+        "giftCardSale": "Gift Card sale",
+        "weekdayOfferCommission": "Weekday Offer commission",
+        "happyHourCommission": "Happy Hour commission",
+        "giftCardRefund": "Gift Card refund"
+      }
+    },
+    "payouts": {
+      "title": "Payout Management",
+      "comingSoon": "Payout functionality will be available soon"
+    }
+  },
+  "editCompany": {
+    "title": "Edit Company",
+    "subtitle": "Update your company information below",
+    "notFoundTitle": "Edit Company",
+    "notFoundMessage": "The company you're trying to edit could not be found.",
+    "companyNotFound": "Company Not Found",
+    "backToCompanies": "Back to Companies",
+    "revisionNotice": {
+      "title": "Revision Required",
+      "points": [
+        "Your company requires revision (Attempt {{count}}/3)",
+        "Please update the requested information and resubmit",
+        "Changes will be reviewed by our team"
+      ]
+    },
+    "approvedNotice": {
+      "title": "Company Already Approved",
+      "description": "Your company is already approved. Changes made here may require re-approval."
+    },
+    "basicInformation": "Basic Information",
+    "companyName": "Company Name",
+    "companyNamePlaceholder": "Enter company name",
+    "registrationNumber": "Registration Number",
+    "registrationPlaceholder": "e.g., 550289-2349",
+    "taxId": "Tax ID / VAT Number",
+    "taxIdPlaceholder": "Enter tax ID",
+    "businessCategory": "Business Category",
+    "selectCategory": "Select category",
+    "companyDescription": "Company Description",
+    "companyDescriptionPlaceholder": "Describe your business, services, and what makes you unique...",
+    "contactInformation": "Contact Information",
+    "businessEmail": "Business Email",
+    "businessEmailPlaceholder": "company@example.com",
+    "phoneNumber": "Phone Number",
+    "phoneNumberPlaceholder": "+354 XXX XXXX",
+    "streetAddress": "Street Address",
+    "streetAddressPlaceholder": "Street address",
+    "city": "City",
+    "cityPlaceholder": "City",
+    "postalCode": "Postal Code",
+    "postalCodePlaceholder": "Postal code",
+    "websiteOptional": "Website (Optional)",
+    "websitePlaceholder": "https://www.yourcompany.com",
+    "companyLogo": "Company Logo (Optional)",
+    "uploadPrompt": "Click to upload or drag and drop",
+    "uploadFormats": "PNG, JPG or SVG (max. 2MB)",
+    "updateCompany": "Update Company",
+    "successMessage": "Company updated successfully! Changes will be reviewed if the status is pending or requires revision.",
+    "updateFailed": "Failed to update company. Please try again.",
+    "validation": {
+      "nameRequired": "Company name is required",
+      "registrationRequired": "Registration number is required",
+      "taxIdRequired": "Tax ID is required",
+      "categoryRequired": "Category is required",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email",
+      "phoneRequired": "Phone number is required",
+      "addressRequired": "Address is required",
+      "cityRequired": "City is required",
+      "postalCodeRequired": "Postal code is required",
+      "descriptionRequired": "Company description is required"
+    }
   }
 }
 

@@ -1,8 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const AnimatedButton = ({ link }: { link: string }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   
   const handleClick = () => {
     if (link.startsWith('http://') || link.startsWith('https://')) {
@@ -23,7 +25,7 @@ const AnimatedButton = ({ link }: { link: string }) => {
           className="hidden md:block text-green"
         />
         <div className="">
-          <span className="text-lg lg:text-2xl font-semibold">View offer</span>
+          <span className="text-lg lg:text-2xl font-semibold">{t("common.viewOffer")}</span>
         </div>
         <ArrowRight
           size={32}

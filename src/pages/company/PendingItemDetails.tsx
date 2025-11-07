@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, Building2, Tag, Clock, AlertCircle, MapPin, Phone, Mail, Globe, FileText, Calendar, DollarSign, Hash, TrendingDown } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface PendingItemDetails {
   id: number;
@@ -32,6 +33,7 @@ interface PendingItemDetails {
 export default function PendingItemDetailsPage() {
   const { id, type } = useParams<{ id: string; type: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [item, setItem] = useState<PendingItemDetails | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -115,12 +117,12 @@ export default function PendingItemDetailsPage() {
           </Link>
           <div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">
-              Item Not Found
+              {t("pendingItemDetails.itemNotFound")}
             </h1>
           </div>
         </div>
         <div className="bg-card-background border border-primary rounded-2xl p-6 text-center">
-          <p className="text-gray-400">The requested item could not be found.</p>
+          <p className="text-gray-400">{t("pendingItemDetails.itemNotFoundMessage")}</p>
         </div>
       </div>
     );
@@ -155,11 +157,11 @@ export default function PendingItemDetailsPage() {
                     <div className="flex items-center gap-3 text-sm text-gray-300">
                       <span className="flex items-center gap-1">
                         <FileText size={14} />
-                        {item.type}
+                        {item.type === "Company" ? t("common.company") : t("offerTypes.offer")}
                       </span>
                       <span className="flex items-center gap-1">
                         <Clock size={14} />
-                        Submitted {item.submittedAt}
+                        {t("pendingItemDetails.submitted", { time: item.submittedAt })}
                       </span>
                     </div>
                   </div>
@@ -171,7 +173,7 @@ export default function PendingItemDetailsPage() {
                       : "bg-orange-500/20 text-orange-400 border border-orange-500/30"
                   }`}
                 >
-                  {item.status === "pending" ? "Under Review" : "Needs Revision"}
+                  {item.status === "pending" ? t("pendingItemDetails.underReview") : t("pendingItemDetails.needsRevision")}
                 </span>
               </div>
             </div>
@@ -187,10 +189,12 @@ export default function PendingItemDetailsPage() {
               <AlertCircle className="text-orange-500" size={20} />
             </div>
             <div className="flex-1">
-              <h3 className="text-orange-400 font-bold text-lg mb-2">Revision Required</h3>
+              <h3 className="text-orange-400 font-bold text-lg mb-2">{t("pendingItemDetails.revisionRequired")}</h3>
               <p className="text-sm text-gray-300 leading-relaxed">
-                This item requires revision. You're on revision <span className="font-semibold text-orange-400">{item.revisionCount}</span> of{" "}
-                <span className="font-semibold">{item.type === "Company" ? "3" : "2"}</span> maximum attempts.
+                {t("pendingItemDetails.revisionMessage", { 
+                  count: item.revisionCount, 
+                  max: item.type === "Company" ? "3" : "2" 
+                })}
               </p>
             </div>
           </div>
@@ -209,25 +213,25 @@ export default function PendingItemDetailsPage() {
                   <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center">
                     <Building2 className="text-primary" size={20} />
                   </div>
-                  <h2 className="text-xl font-bold text-white">Company Information</h2>
+                  <h2 className="text-xl font-bold text-white">{t("pendingItemDetails.companyInformation")}</h2>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
                   <div className="bg-background/50 rounded-xl p-4 border border-primary/30">
-                    <p className="text-gray-400 text-xs uppercase tracking-wide mb-2">Category</p>
+                    <p className="text-gray-400 text-xs uppercase tracking-wide mb-2">{t("pendingItemDetails.category")}</p>
                     <p className="text-white font-semibold text-lg">{item.category}</p>
                   </div>
                   <div className="bg-background/50 rounded-xl p-4 border border-primary/30">
                     <p className="text-gray-400 text-xs uppercase tracking-wide mb-2 flex items-center gap-2">
                       <Hash size={14} />
-                      Registration Number
+                      {t("pendingItemDetails.registrationNumber")}
                     </p>
                     <p className="text-white font-semibold text-lg">{item.registrationNumber}</p>
                   </div>
                   <div className="bg-background/50 rounded-xl p-4 border border-primary/30">
                     <p className="text-gray-400 text-xs uppercase tracking-wide mb-2 flex items-center gap-2">
                       <Hash size={14} />
-                      Tax ID
+                      {t("pendingItemDetails.taxId")}
                     </p>
                     <p className="text-white font-semibold text-lg">{item.taxId}</p>
                   </div>
@@ -235,14 +239,14 @@ export default function PendingItemDetailsPage() {
 
                 {/* Contact Information */}
                 <div>
-                  <h3 className="text-lg font-semibold text-white mb-4">Contact Information</h3>
+                  <h3 className="text-lg font-semibold text-white mb-4">{t("pendingItemDetails.contactInformation")}</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="bg-background/50 rounded-xl p-4 border border-primary/30 hover:border-primary/50 transition-all">
                       <div className="flex items-center gap-3 mb-2">
                         <div className="w-8 h-8 bg-primary/20 rounded-lg flex items-center justify-center">
                           <MapPin className="text-primary" size={16} />
                         </div>
-                        <p className="text-gray-400 text-xs uppercase tracking-wide">Address</p>
+                        <p className="text-gray-400 text-xs uppercase tracking-wide">{t("pendingItemDetails.address")}</p>
                       </div>
                       <p className="text-white font-medium">{item.address}</p>
                     </div>
@@ -251,7 +255,7 @@ export default function PendingItemDetailsPage() {
                         <div className="w-8 h-8 bg-primary/20 rounded-lg flex items-center justify-center">
                           <Phone className="text-primary" size={16} />
                         </div>
-                        <p className="text-gray-400 text-xs uppercase tracking-wide">Phone</p>
+                        <p className="text-gray-400 text-xs uppercase tracking-wide">{t("pendingItemDetails.phone")}</p>
                       </div>
                       <p className="text-white font-medium">{item.phone}</p>
                     </div>
@@ -260,7 +264,7 @@ export default function PendingItemDetailsPage() {
                         <div className="w-8 h-8 bg-primary/20 rounded-lg flex items-center justify-center">
                           <Mail className="text-primary" size={16} />
                         </div>
-                        <p className="text-gray-400 text-xs uppercase tracking-wide">Email</p>
+                        <p className="text-gray-400 text-xs uppercase tracking-wide">{t("pendingItemDetails.email")}</p>
                       </div>
                       <p className="text-white font-medium">{item.email}</p>
                     </div>
@@ -269,7 +273,7 @@ export default function PendingItemDetailsPage() {
                         <div className="w-8 h-8 bg-primary/20 rounded-lg flex items-center justify-center">
                           <Globe className="text-primary" size={16} />
                         </div>
-                        <p className="text-gray-400 text-xs uppercase tracking-wide">Website</p>
+                        <p className="text-gray-400 text-xs uppercase tracking-wide">{t("pendingItemDetails.website")}</p>
                       </div>
                       <a
                         href={item.website}
@@ -286,7 +290,7 @@ export default function PendingItemDetailsPage() {
                 {/* Description */}
                 {item.description && (
                   <div className="mt-6 pt-6 border-t border-primary/30">
-                    <h3 className="text-lg font-semibold text-white mb-3">Description</h3>
+                    <h3 className="text-lg font-semibold text-white mb-3">{t("pendingItemDetails.description")}</h3>
                     <p className="text-gray-300 leading-relaxed bg-background/30 rounded-xl p-4 border border-primary/20">
                       {item.description}
                     </p>
@@ -302,21 +306,21 @@ export default function PendingItemDetailsPage() {
                   <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center">
                     <Tag className="text-primary" size={20} />
                   </div>
-                  <h2 className="text-xl font-bold text-white">Offer Details</h2>
+                  <h2 className="text-xl font-bold text-white">{t("pendingItemDetails.offerDetails")}</h2>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
                   <div className="bg-background/50 rounded-xl p-4 border border-primary/30">
                     <p className="text-gray-400 text-xs uppercase tracking-wide mb-2 flex items-center gap-2">
                       <Building2 size={14} />
-                      Company
+                      {t("pendingItemDetails.company")}
                     </p>
                     <p className="text-white font-semibold text-lg">{item.companyName}</p>
                   </div>
                   <div className="bg-background/50 rounded-xl p-4 border border-primary/30">
                     <p className="text-gray-400 text-xs uppercase tracking-wide mb-2 flex items-center gap-2">
                       <FileText size={14} />
-                      Offer Type
+                      {t("pendingItemDetails.offerType")}
                     </p>
                     <p className="text-white font-semibold text-lg">{item.offerType}</p>
                   </div>
@@ -326,23 +330,23 @@ export default function PendingItemDetailsPage() {
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                     <DollarSign className="text-primary" size={20} />
-                    Pricing Information
+                    {t("pendingItemDetails.pricingInformation")}
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="bg-background/50 rounded-xl p-4 border border-primary/30">
-                      <p className="text-gray-400 text-xs uppercase tracking-wide mb-2">Original Price</p>
+                      <p className="text-gray-400 text-xs uppercase tracking-wide mb-2">{t("pendingItemDetails.originalPrice")}</p>
                       <p className="text-white font-bold text-xl">{item.originalPrice?.toLocaleString()} kr.</p>
                     </div>
                     <div className="bg-background/50 rounded-xl p-4 border border-primary/30">
-                      <p className="text-gray-400 text-xs uppercase tracking-wide mb-2">Discount Price</p>
+                      <p className="text-gray-400 text-xs uppercase tracking-wide mb-2">{t("pendingItemDetails.discountPrice")}</p>
                       <p className="text-primary font-bold text-xl">{item.discountPrice?.toLocaleString()} kr.</p>
                     </div>
                     <div className="bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl p-4 border border-primary/50">
                       <p className="text-gray-300 text-xs uppercase tracking-wide mb-2 flex items-center gap-2">
                         <TrendingDown size={14} />
-                        Discount
+                        {t("pendingItemDetails.discount")}
                       </p>
-                      <p className="text-primary font-bold text-2xl">{item.discountPercentage}% OFF</p>
+                      <p className="text-primary font-bold text-2xl">{item.discountPercentage}% {t("pendingItemDetails.off")}</p>
                     </div>
                   </div>
                 </div>
@@ -351,11 +355,11 @@ export default function PendingItemDetailsPage() {
                 <div>
                   <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                     <Calendar className="text-primary" size={20} />
-                    Offer Period
+                    {t("pendingItemDetails.offerPeriod")}
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="bg-background/50 rounded-xl p-4 border border-primary/30">
-                      <p className="text-gray-400 text-xs uppercase tracking-wide mb-2">Start Date</p>
+                      <p className="text-gray-400 text-xs uppercase tracking-wide mb-2">{t("pendingItemDetails.startDate")}</p>
                       <p className="text-white font-semibold">
                         {item.startDate
                           ? new Date(item.startDate).toLocaleDateString("en-US", {
@@ -363,11 +367,11 @@ export default function PendingItemDetailsPage() {
                               month: "long",
                               day: "numeric",
                             })
-                          : "N/A"}
+                          : t("pendingItemDetails.notAvailable")}
                       </p>
                     </div>
                     <div className="bg-background/50 rounded-xl p-4 border border-primary/30">
-                      <p className="text-gray-400 text-xs uppercase tracking-wide mb-2">End Date</p>
+                      <p className="text-gray-400 text-xs uppercase tracking-wide mb-2">{t("pendingItemDetails.endDate")}</p>
                       <p className="text-white font-semibold">
                         {item.endDate
                           ? new Date(item.endDate).toLocaleDateString("en-US", {
@@ -375,7 +379,7 @@ export default function PendingItemDetailsPage() {
                               month: "long",
                               day: "numeric",
                             })
-                          : "N/A"}
+                          : t("pendingItemDetails.notAvailable")}
                       </p>
                     </div>
                   </div>
@@ -392,19 +396,19 @@ export default function PendingItemDetailsPage() {
               <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center">
                 <FileText className="text-primary" size={20} />
               </div>
-              <h2 className="text-xl font-bold text-white">Submission</h2>
+              <h2 className="text-xl font-bold text-white">{t("pendingItemDetails.submission")}</h2>
             </div>
             
             <div className="space-y-4">
               <div className="bg-background/50 rounded-xl p-4 border border-primary/30">
                 <p className="text-gray-400 text-xs uppercase tracking-wide mb-2 flex items-center gap-2">
                   <Clock size={14} />
-                  Submitted
+                  {t("pendingItemDetails.submittedLabel")}
                 </p>
                 <p className="text-white font-semibold">{item.submittedAt}</p>
               </div>
               <div className="bg-background/50 rounded-xl p-4 border border-primary/30">
-                <p className="text-gray-400 text-xs uppercase tracking-wide mb-2">Status</p>
+                <p className="text-gray-400 text-xs uppercase tracking-wide mb-2">{t("pendingItemDetails.status")}</p>
                 <span
                   className={`inline-block px-4 py-2 rounded-lg text-sm font-semibold ${
                     item.status === "pending"
@@ -412,18 +416,18 @@ export default function PendingItemDetailsPage() {
                       : "bg-orange-500/20 text-orange-400 border border-orange-500/30"
                   }`}
                 >
-                  {item.status === "pending" ? "Under Review" : "Needs Revision"}
+                  {item.status === "pending" ? t("pendingItemDetails.underReview") : t("pendingItemDetails.needsRevision")}
                 </span>
               </div>
               <div className="bg-background/50 rounded-xl p-4 border border-primary/30">
-                <p className="text-gray-400 text-xs uppercase tracking-wide mb-2">Item Type</p>
+                <p className="text-gray-400 text-xs uppercase tracking-wide mb-2">{t("pendingItemDetails.itemType")}</p>
                 <p className="text-white font-semibold flex items-center gap-2">
                   {item.type === "Company" ? (
                     <Building2 className="text-primary" size={18} />
                   ) : (
                     <Tag className="text-primary" size={18} />
                   )}
-                  {item.type}
+                  {item.type === "Company" ? t("common.company") : t("offerTypes.offer")}
                 </p>
               </div>
             </div>

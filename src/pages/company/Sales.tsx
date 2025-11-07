@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   TrendingUp,
@@ -14,6 +14,7 @@ import {
   AlertCircle,
   CheckCircle
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface Sale {
   id: string;
@@ -24,7 +25,7 @@ interface Sale {
   purchaseDate: string;
   amount: number;
   status: "completed" | "pending" | "refunded";
-  paymentMethod: string;
+  paymentMethod: "credit_card" | "bank_transfer" | "cash";
   transactionId: string;
 }
 
@@ -40,6 +41,7 @@ interface Payment {
 }
 
 export default function SalesPage() {
+  const { t } = useTranslation();
   const [sales] = useState<Sale[]>([
     {
       id: "1",
@@ -50,7 +52,7 @@ export default function SalesPage() {
       purchaseDate: "2025-01-15",
       amount: 35000,
       status: "completed",
-      paymentMethod: "Credit Card",
+      paymentMethod: "credit_card",
       transactionId: "TXN-20250115-001"
     },
     {
@@ -62,7 +64,7 @@ export default function SalesPage() {
       purchaseDate: "2025-01-14",
       amount: 8500,
       status: "completed",
-      paymentMethod: "Bank Transfer",
+      paymentMethod: "bank_transfer",
       transactionId: "TXN-20250114-002"
     },
     {
@@ -74,7 +76,7 @@ export default function SalesPage() {
       purchaseDate: "2025-01-13",
       amount: 1000,
       status: "pending",
-      paymentMethod: "Credit Card",
+      paymentMethod: "credit_card",
       transactionId: "TXN-20250113-003"
     }
   ]);
@@ -161,6 +163,84 @@ export default function SalesPage() {
     averageOrderValue: sales.length > 0 ? Math.round(sales.filter(s => s.status === "completed").reduce((sum, s) => sum + s.amount, 0) / sales.filter(s => s.status === "completed").length) : 0,
   };
 
+  const statsCards = useMemo(
+    () => [
+      {
+        labelKey: "companySales.stats.totalSales",
+        value: stats.totalSales.toLocaleString(),
+        icon: ShoppingBag,
+        borderClass: "border-primary",
+        iconColor: "text-primary",
+      },
+      {
+        labelKey: "companySales.stats.revenue",
+        value: `${stats.totalRevenue.toLocaleString()} kr.`,
+        icon: DollarSign,
+        borderClass: "border-green",
+        iconColor: "text-green",
+      },
+      {
+        labelKey: "companySales.stats.pending",
+        value: stats.pendingPayments.toLocaleString(),
+        icon: AlertCircle,
+        borderClass: "border-yellow-500",
+        iconColor: "text-yellow",
+      },
+      {
+        labelKey: "companySales.stats.completed",
+        value: stats.completedPayments.toLocaleString(),
+        icon: CheckCircle,
+        borderClass: "border-blue-500",
+        iconColor: "text-blue-500",
+      },
+      {
+        labelKey: "companySales.stats.averageOrder",
+        value: `${stats.averageOrderValue.toLocaleString()} kr.`,
+        icon: TrendingUp,
+        borderClass: "border-purple-500",
+        iconColor: "text-purple-500",
+      },
+    ],
+    [stats.averageOrderValue, stats.completedPayments, stats.pendingPayments, stats.totalRevenue, stats.totalSales]
+  );
+
+  const statusOptions = useMemo(
+    () => [
+      { value: "all", label: t("companySales.filters.statusOptions.all") },
+      { value: "completed", label: t("companySales.filters.statusOptions.completed") },
+      { value: "pending", label: t("companySales.filters.statusOptions.pending") },
+      { value: "refunded", label: t("companySales.filters.statusOptions.refunded") },
+    ],
+    [t]
+  );
+
+  const dateRangeOptions = useMemo(
+    () => [
+      { value: "7", label: t("companySales.filters.dateRanges.7") },
+      { value: "30", label: t("companySales.filters.dateRanges.30") },
+      { value: "90", label: t("companySales.filters.dateRanges.90") },
+      { value: "365", label: t("companySales.filters.dateRanges.365") },
+    ],
+    [t]
+  );
+
+  const commissionStructurePoints = useMemo(
+    () => t("companySales.commissionInfo.points", { returnObjects: true }) as string[],
+    [t]
+  );
+
+  const getOfferTypeLabel = (type: string) =>
+    t(`companySales.offerTypes.${type}`, { defaultValue: type.replace("_", " ") });
+
+  const getStatusLabel = (status: Sale["status"]) =>
+    t(`companySales.status.${status}`);
+
+  const getPaymentStatusLabel = (status: Payment["status"]) =>
+    t(`companySales.paymentStatus.${status}`);
+
+  const getPaymentMethodLabel = (method: Sale["paymentMethod"]) =>
+    t(`companySales.paymentMethods.${method}`);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -174,10 +254,10 @@ export default function SalesPage() {
           </Link>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white">
-              Sales & Payments
+              {t("companySales.title")}
             </h1>
             <p className="text-gray-400 text-sm">
-              Track your sales, payments, and financial performance
+              {t("companySales.subtitle")}
             </p>
           </div>
         </div>
@@ -191,55 +271,20 @@ export default function SalesPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <div className="bg-card-background border border-primary rounded-2xl p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Total Sales</p>
-              <p className="text-white text-2xl font-bold">{stats.totalSales}</p>
+        {statsCards.map((card, index) => {
+          const Icon = card.icon;
+          return (
+            <div key={index} className={`bg-card-background border ${card.borderClass} rounded-2xl p-4`}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-400 text-sm">{t(card.labelKey)}</p>
+                  <p className="text-white text-2xl font-bold">{card.value}</p>
+                </div>
+                <Icon className={card.iconColor} size={24} />
+              </div>
             </div>
-            <ShoppingBag className="text-primary" size={24} />
-          </div>
-        </div>
-
-        <div className="bg-card-background border border-green rounded-2xl p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Revenue</p>
-              <p className="text-white text-2xl font-bold">{stats.totalRevenue.toLocaleString()} kr.</p>
-            </div>
-            <DollarSign className="text-green" size={24} />
-          </div>
-        </div>
-
-        <div className="bg-card-background border border-yellow-500 rounded-2xl p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Pending</p>
-              <p className="text-white text-2xl font-bold">{stats.pendingPayments}</p>
-            </div>
-            <AlertCircle className="text-yellow" size={24} />
-          </div>
-        </div>
-
-        <div className="bg-card-background border border-blue-500 rounded-2xl p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Completed</p>
-              <p className="text-white text-2xl font-bold">{stats.completedPayments}</p>
-            </div>
-            <CheckCircle className="text-blue-500" size={24} />
-          </div>
-        </div>
-
-        <div className="bg-card-background border border-purple-500 rounded-2xl p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Avg Order</p>
-              <p className="text-white text-2xl font-bold">{stats.averageOrderValue.toLocaleString()} kr.</p>
-            </div>
-            <TrendingUp className="text-purple-500" size={24} />
-          </div>
-        </div>
+          );
+        })}
       </div>
 
       {/* Filters */}
@@ -250,7 +295,7 @@ export default function SalesPage() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
               <input
                 type="text"
-                placeholder="Search sales..."
+                placeholder={t("companySales.filters.searchPlaceholder")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary"
@@ -265,10 +310,11 @@ export default function SalesPage() {
               onChange={(e) => setStatusFilter(e.target.value)}
               className="px-3 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
             >
-              <option value="all">All Status</option>
-              <option value="completed">Completed</option>
-              <option value="pending">Pending</option>
-              <option value="refunded">Refunded</option>
+              {statusOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -279,10 +325,11 @@ export default function SalesPage() {
               onChange={(e) => setDateRange(e.target.value)}
               className="px-3 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
             >
-              <option value="7">Last 7 days</option>
-              <option value="30">Last 30 days</option>
-              <option value="90">Last 90 days</option>
-              <option value="365">Last year</option>
+              {dateRangeOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -290,19 +337,19 @@ export default function SalesPage() {
 
       {/* Sales Table */}
       <div className="bg-card-background border border-primary rounded-2xl p-6">
-        <h3 className="text-lg font-bold text-white mb-4">Recent Sales</h3>
+        <h3 className="text-lg font-bold text-white mb-4">{t("companySales.salesTable.title")}</h3>
 
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="text-left text-gray-400 text-sm border-b border-primary/50">
-                <th className="pb-3">Offer</th>
-                <th className="pb-3">Customer</th>
-                <th className="pb-3">Date</th>
-                <th className="pb-3">Amount</th>
-                <th className="pb-3">Status</th>
-                <th className="pb-3">Payment Method</th>
-                <th className="pb-3">Actions</th>
+                <th className="pb-3">{t("companySales.salesTable.headers.offer")}</th>
+                <th className="pb-3">{t("companySales.salesTable.headers.customer")}</th>
+                <th className="pb-3">{t("companySales.salesTable.headers.date")}</th>
+                <th className="pb-3">{t("companySales.salesTable.headers.amount")}</th>
+                <th className="pb-3">{t("companySales.salesTable.headers.status")}</th>
+                <th className="pb-3">{t("companySales.salesTable.headers.paymentMethod")}</th>
+                <th className="pb-3">{t("companySales.salesTable.headers.actions")}</th>
               </tr>
             </thead>
             <tbody className="text-white">
@@ -311,7 +358,7 @@ export default function SalesPage() {
                   <td className="py-4">
                     <div>
                       <p className="font-medium">{sale.offerTitle}</p>
-                      <p className="text-sm text-gray-400 capitalize">{sale.offerType.replace("_", " ")}</p>
+                      <p className="text-sm text-gray-400 capitalize">{getOfferTypeLabel(sale.offerType)}</p>
                     </div>
                   </td>
                   <td className="py-4">
@@ -332,16 +379,20 @@ export default function SalesPage() {
                   <td className="py-4">
                     <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(sale.status)}`}>
                       {getStatusIcon(sale.status)}
-                      <span className="capitalize">{sale.status}</span>
+                      <span className="capitalize">{getStatusLabel(sale.status)}</span>
                     </span>
                   </td>
                   <td className="py-4">
-                    <p className="text-sm">{sale.paymentMethod}</p>
+                    <p className="text-sm">{getPaymentMethodLabel(sale.paymentMethod)}</p>
                   </td>
                   <td className="py-4">
-                    <button className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all">
+                    <Link
+                      to={`/company/sales/${sale.id}`}
+                      className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+                      aria-label={t("companySales.salesTable.viewDetails")}
+                    >
                       <Eye size={16} />
-                    </button>
+                    </Link>
                   </td>
                 </tr>
               ))}
@@ -352,20 +403,20 @@ export default function SalesPage() {
 
       {/* Payments Section */}
       <div className="bg-card-background border border-primary rounded-2xl p-6">
-        <h3 className="text-lg font-bold text-white mb-4">Payment History</h3>
+        <h3 className="text-lg font-bold text-white mb-4">{t("companySales.paymentsTable.title")}</h3>
 
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="text-left text-gray-400 text-sm border-b border-primary/50">
-                <th className="pb-3">Period</th>
-                <th className="pb-3">Total Sales</th>
-                <th className="pb-3">Commission</th>
-                <th className="pb-3">Net Amount</th>
-                <th className="pb-3">Status</th>
-                <th className="pb-3">Due Date</th>
-                <th className="pb-3">Paid Date</th>
-                <th className="pb-3">Actions</th>
+                <th className="pb-3">{t("companySales.paymentsTable.headers.period")}</th>
+                <th className="pb-3">{t("companySales.paymentsTable.headers.totalSales")}</th>
+                <th className="pb-3">{t("companySales.paymentsTable.headers.commission")}</th>
+                <th className="pb-3">{t("companySales.paymentsTable.headers.netAmount")}</th>
+                <th className="pb-3">{t("companySales.paymentsTable.headers.status")}</th>
+                <th className="pb-3">{t("companySales.paymentsTable.headers.dueDate")}</th>
+                <th className="pb-3">{t("companySales.paymentsTable.headers.paidDate")}</th>
+                <th className="pb-3">{t("companySales.paymentsTable.headers.actions")}</th>
               </tr>
             </thead>
             <tbody className="text-white">
@@ -389,9 +440,8 @@ export default function SalesPage() {
                   <td className="py-4">
                     <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${getPaymentStatusColor(payment.status)}`}>
                       {payment.status === "paid" && <CheckCircle size={12} />}
-                      {payment.status === "pending" && <AlertCircle size={12} />}
-                      {payment.status === "overdue" && <AlertCircle size={12} />}
-                      <span className="capitalize">{payment.status}</span>
+                      {payment.status !== "paid" && <AlertCircle size={12} />}
+                      <span className="capitalize">{getPaymentStatusLabel(payment.status)}</span>
                     </span>
                   </td>
                   <td className="py-4">
@@ -421,15 +471,12 @@ export default function SalesPage() {
         <div className="flex items-start gap-3">
           <AlertCircle className="text-blue-500 flex-shrink-0 mt-0.5" size={20} />
           <div>
-            <h3 className="text-blue-500 font-bold mb-1">
-              Commission Structure
-            </h3>
-            <div className="text-sm text-gray-300 space-y-1">
-              <p>• Active Offers: 1 kr. per day</p>
-              <p>• Weekdays Offers: 4 kr. per week</p>
-              <p>• Happy Hour Offers: 10 kr. per month</p>
-              <p>• Gift Cards: Percentage of sale amount</p>
-            </div>
+            <h3 className="text-blue-500 font-bold mb-1">{t("companySales.commissionInfo.title")}</h3>
+            <ul className="text-sm text-gray-300 space-y-1 list-disc pl-5">
+              {commissionStructurePoints.map((point, index) => (
+                <li key={index}>{point}</li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>

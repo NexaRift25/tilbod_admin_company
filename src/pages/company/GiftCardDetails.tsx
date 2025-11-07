@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   ArrowLeft,
@@ -14,6 +14,7 @@ import {
   Phone,
 } from "lucide-react";
 import Modal from "@/components/ui/modal";
+import { useTranslation } from "react-i18next";
 
 interface GiftCardPurchase {
   id: string;
@@ -154,6 +155,7 @@ const mockPurchases: Record<string, GiftCardPurchase[]> = {
 
 export default function GiftCardDetailsPage() {
   const { id } = useParams<{ id: string }>();
+  const { t } = useTranslation();
   const [giftCard, setGiftCard] = useState<GiftCard | null>(null);
   const [purchases, setPurchases] = useState<GiftCardPurchase[]>([]);
   const [loading, setLoading] = useState(true);
@@ -161,6 +163,16 @@ export default function GiftCardDetailsPage() {
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [generatedOtp, setGeneratedOtp] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState(false);
+
+  const stats = useMemo(
+    () => ({
+      totalPurchases: purchases.length,
+      activeCards: purchases.filter((p) => p.status === "active").length,
+      usedCards: purchases.filter((p) => p.status === "used").length,
+      totalRevenue: purchases.reduce((sum, p) => sum + p.purchaseAmount, 0),
+    }),
+    [purchases]
+  );
 
   useEffect(() => {
     // Simulate API call
@@ -221,6 +233,65 @@ export default function GiftCardDetailsPage() {
     }
   };
 
+  const getPurchaseStatusLabel = (status: GiftCardPurchase["status"]) =>
+    t(`companyGiftCardDetails.purchases.status.${status}`);
+
+  const infoStats = useMemo(
+    () => [
+      {
+        labelKey: "companyGiftCardDetails.info.cardValue",
+        value: `${giftCard?.value.toLocaleString()} kr.`,
+      },
+      giftCard?.discountPercentage !== undefined
+        ? {
+            labelKey: "companyGiftCardDetails.info.discount",
+            value: t("companyGiftCardDetails.info.discountValue", {
+              value: giftCard.discountPercentage,
+            }),
+          }
+        : null,
+      {
+        labelKey: "companyGiftCardDetails.info.totalPurchases",
+        value: stats.totalPurchases.toLocaleString(),
+      },
+    ].filter(Boolean) as { labelKey: string; value: string }[],
+    [giftCard?.discountPercentage, giftCard?.value, stats.totalPurchases, t]
+  );
+
+  const summaryStats = useMemo(
+    () => [
+      {
+        labelKey: "companyGiftCardDetails.stats.totalPurchases",
+        value: stats.totalPurchases.toLocaleString(),
+        icon: Users,
+        borderClass: "border-primary",
+        iconColor: "text-primary",
+      },
+      {
+        labelKey: "companyGiftCardDetails.stats.activeCards",
+        value: stats.activeCards.toLocaleString(),
+        icon: CheckCircle,
+        borderClass: "border-green",
+        iconColor: "text-green",
+      },
+      {
+        labelKey: "companyGiftCardDetails.stats.usedCards",
+        value: stats.usedCards.toLocaleString(),
+        icon: Gift,
+        borderClass: "border-blue-500",
+        iconColor: "text-blue-500",
+      },
+      {
+        labelKey: "companyGiftCardDetails.stats.totalRevenue",
+        value: `${stats.totalRevenue.toLocaleString()} kr.`,
+        icon: DollarSign,
+        borderClass: "border-purple-500",
+        iconColor: "text-purple-500",
+      },
+    ],
+    [stats.activeCards, stats.totalPurchases, stats.totalRevenue, stats.usedCards]
+  );
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -250,24 +321,17 @@ export default function GiftCardDetailsPage() {
           </Link>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-              Gift Card Not Found
+              {t("companyGiftCardDetails.notFoundTitle")}
             </h1>
           </div>
         </div>
         <div className="bg-card-background border border-primary rounded-2xl p-6 text-center">
-          <p className="text-gray-400">The requested gift card could not be found.</p>
+          <p className="text-gray-400">{t("companyGiftCardDetails.notFoundDescription")}</p>
+          <p className="text-gray-500 text-sm mt-2">{t("companyGiftCardDetails.notFoundHint")}</p>
         </div>
       </div>
     );
   }
-
-  const stats = {
-    totalPurchases: purchases.length,
-    activeCards: purchases.filter(p => p.status === "active").length,
-    usedCards: purchases.filter(p => p.status === "used").length,
-    totalRevenue: purchases.reduce((sum, p) => sum + p.purchaseAmount, 0),
-  };
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -280,10 +344,10 @@ export default function GiftCardDetailsPage() {
         </Link>
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-white">
-            Gift Card Details
+            {t("companyGiftCardDetails.title")}
           </h1>
           <p className="text-gray-400 text-sm">
-            View details and manage gift card purchases
+            {t("companyGiftCardDetails.subtitle")}
           </p>
         </div>
       </div>
@@ -306,33 +370,27 @@ export default function GiftCardDetailsPage() {
               <h2 className="text-2xl font-bold text-white">{giftCard.title}</h2>
               <span className="px-3 py-1 bg-green/10 text-green border border-green rounded-full text-xs font-semibold">
                 <CheckCircle size={12} className="inline mr-1" />
-                Approved
+                {t("companyGiftCardDetails.info.approved")}
               </span>
             </div>
             <p className="text-gray-300 mb-4">{giftCard.description}</p>
             
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-background rounded-lg p-4">
-                <p className="text-gray-400 text-sm mb-1">Card Value</p>
-                <p className="text-white text-xl font-bold">{giftCard.value.toLocaleString()} kr.</p>
-              </div>
-              {giftCard.discountPercentage && (
-                <div className="bg-background rounded-lg p-4">
-                  <p className="text-gray-400 text-sm mb-1">Discount</p>
-                  <p className="text-green text-xl font-bold">{giftCard.discountPercentage}% OFF</p>
+              {infoStats.map((item, index) => (
+                <div key={index} className="bg-background rounded-lg p-4">
+                  <p className="text-gray-400 text-sm mb-1">{t(item.labelKey)}</p>
+                  <p className="text-white text-xl font-bold">{item.value}</p>
                 </div>
-              )}
-              <div className="bg-background rounded-lg p-4">
-                <p className="text-gray-400 text-sm mb-1">Total Purchases</p>
-                <p className="text-white text-xl font-bold">{stats.totalPurchases}</p>
-              </div>
+              ))}
             </div>
+
+   
 
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <p className="text-gray-400 text-sm mb-1 flex items-center gap-2">
                   <Calendar size={16} />
-                  Valid From
+                  {t("companyGiftCardDetails.info.validFrom")}
                 </p>
                 <p className="text-white font-semibold">
                   {new Date(giftCard.validFrom).toLocaleDateString()}
@@ -341,7 +399,7 @@ export default function GiftCardDetailsPage() {
               <div>
                 <p className="text-gray-400 text-sm mb-1 flex items-center gap-2">
                   <Calendar size={16} />
-                  Valid Until
+                  {t("companyGiftCardDetails.info.validUntil")}
                 </p>
                 <p className="text-white font-semibold">
                   {new Date(giftCard.validUntil).toLocaleDateString()}
@@ -351,7 +409,7 @@ export default function GiftCardDetailsPage() {
 
             {giftCard.terms && (
               <div className="mt-4">
-                <p className="text-gray-400 text-sm mb-2">Terms & Conditions</p>
+                <p className="text-gray-400 text-sm mb-2">{t("companyGiftCardDetails.info.terms")}</p>
                 <p className="text-gray-300 text-sm">{giftCard.terms}</p>
               </div>
             )}
@@ -361,71 +419,46 @@ export default function GiftCardDetailsPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <div className="bg-card-background border border-primary rounded-2xl p-4">
+        {summaryStats.map((item, index) => {
+          const Icon = item.icon;
+          return (
+            <div key={index} className={`bg-card-background border ${item.borderClass} rounded-2xl p-4`}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Total Purchases</p>
-              <p className="text-white text-2xl font-bold">{stats.totalPurchases}</p>
+                  <p className="text-gray-400 text-sm">{t(item.labelKey)}</p>
+                  <p className="text-white text-2xl font-bold">{item.value}</p>
             </div>
-            <Users className="text-primary" size={24} />
-          </div>
+                <Icon className={item.iconColor} size={24} />
         </div>
-
-        <div className="bg-card-background border border-green rounded-2xl p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Active Cards</p>
-              <p className="text-white text-2xl font-bold">{stats.activeCards}</p>
             </div>
-            <CheckCircle className="text-green" size={24} />
-          </div>
-        </div>
-
-        <div className="bg-card-background border border-blue-500 rounded-2xl p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Used Cards</p>
-              <p className="text-white text-2xl font-bold">{stats.usedCards}</p>
-            </div>
-            <Gift className="text-blue-500" size={24} />
-          </div>
-        </div>
-
-        <div className="bg-card-background border border-purple-500 rounded-2xl p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Total Revenue</p>
-              <p className="text-white text-2xl font-bold">{stats.totalRevenue.toLocaleString()} kr.</p>
-            </div>
-            <DollarSign className="text-purple-500" size={24} />
-          </div>
-        </div>
+          );
+        })}
       </div>
 
       {/* Purchases List */}
       <div className="bg-card-background border border-primary rounded-2xl p-6">
         <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
           <Users className="text-primary" size={20} />
-          Gift Card Purchases ({purchases.length})
+          {t("companyGiftCardDetails.purchases.title", { count: purchases.length })}
         </h3>
 
         {purchases.length === 0 ? (
           <div className="p-8 text-center">
             <Gift className="mx-auto text-gray-400 mb-4" size={48} />
-            <h3 className="text-xl font-bold text-white mb-2">No purchases yet</h3>
-            <p className="text-gray-400">This gift card hasn't been purchased by anyone yet.</p>
+            <h3 className="text-xl font-bold text-white mb-2">{t("companyGiftCardDetails.purchases.emptyTitle")}</h3>
+            <p className="text-gray-400">{t("companyGiftCardDetails.purchases.emptyDescription")}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="text-left text-gray-400 text-sm border-b border-primary/50">
-                  <th className="pb-3">Customer</th>
-                  <th className="pb-3">Purchase Date</th>
-                  <th className="pb-3">Amount</th>
-                  <th className="pb-3">Status</th>
-                  <th className="pb-3">OTP</th>
-                  <th className="pb-3">Actions</th>
+                  <th className="pb-3">{t("companyGiftCardDetails.purchases.table.customer")}</th>
+                  <th className="pb-3">{t("companyGiftCardDetails.purchases.table.purchaseDate")}</th>
+                  <th className="pb-3">{t("companyGiftCardDetails.purchases.table.amount")}</th>
+                  <th className="pb-3">{t("companyGiftCardDetails.purchases.table.status")}</th>
+                  <th className="pb-3">{t("companyGiftCardDetails.purchases.table.otp")}</th>
+                  <th className="pb-3">{t("companyGiftCardDetails.purchases.table.actions")}</th>
                 </tr>
               </thead>
               <tbody className="text-white">
@@ -457,7 +490,7 @@ export default function GiftCardDetailsPage() {
                     <td className="py-4">
                       <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold border ${getStatusColor(purchase.status)}`}>
                         {purchase.status === "active" && <CheckCircle size={12} />}
-                        <span className="capitalize">{purchase.status}</span>
+                        <span className="capitalize">{getPurchaseStatusLabel(purchase.status)}</span>
                       </span>
                     </td>
                     <td className="py-4">
@@ -469,13 +502,13 @@ export default function GiftCardDetailsPage() {
                           <button
                             onClick={() => copyToClipboard(purchase.otp!)}
                             className="p-1 text-gray-400 hover:text-primary hover:bg-primary/10 rounded transition-all"
-                            title="Copy OTP"
+                            title={t("companyGiftCardDetails.purchases.copyOtp")}
                           >
                             <Copy size={14} />
                           </button>
                         </div>
                       ) : (
-                        <span className="text-sm text-gray-500">Not generated</span>
+                        <span className="text-sm text-gray-500">{t("companyGiftCardDetails.purchases.notGenerated")}</span>
                       )}
                     </td>
                     <td className="py-4">
@@ -483,10 +516,14 @@ export default function GiftCardDetailsPage() {
                         onClick={() => handleGenerateOTP(purchase)}
                         disabled={purchase.status !== "active" || isGenerating}
                         className="flex items-center gap-2 px-3 py-2 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-                        title={purchase.status !== "active" ? "Only active cards can generate OTP" : "Generate OTP"}
+                        title={purchase.status !== "active"
+                          ? t("companyGiftCardDetails.purchases.inactiveTooltip")
+                          : t("companyGiftCardDetails.purchases.generateTooltip")}
                       >
                         <Key size={14} />
-                        {purchase.otp ? "Regenerate" : "Generate OTP"}
+                        {purchase.otp
+                          ? t("companyGiftCardDetails.purchases.regenerate")
+                          : t("companyGiftCardDetails.purchases.generate")}
                       </button>
                     </td>
                   </tr>
@@ -505,7 +542,7 @@ export default function GiftCardDetailsPage() {
           setSelectedPurchase(null);
           setGeneratedOtp("");
         }}
-        title="OTP Generated Successfully"
+        title={t("companyGiftCardDetails.modal.title")}
         size="md"
         footer={
           <div className="flex items-center justify-end gap-3">
@@ -517,7 +554,7 @@ export default function GiftCardDetailsPage() {
               }}
               className="px-6 py-2 text-gray-400 hover:text-white hover:bg-primary/10 rounded-lg transition-all"
             >
-              Close
+              {t("companyGiftCardDetails.modal.close")}
             </button>
             <button
               onClick={() => {
@@ -528,7 +565,7 @@ export default function GiftCardDetailsPage() {
               className="px-6 py-2 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all flex items-center gap-2"
             >
               <Copy size={16} />
-              Copy OTP
+              {t("companyGiftCardDetails.modal.copy")}
             </button>
           </div>
         }
@@ -538,15 +575,15 @@ export default function GiftCardDetailsPage() {
             <div className="bg-background/50 border border-primary/30 rounded-lg p-4">
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-400 text-sm">Customer</span>
+                  <span className="text-gray-400 text-sm">{t("companyGiftCardDetails.modal.customerLabel")}</span>
                   <span className="text-white font-semibold">{selectedPurchase.customerName}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-400 text-sm">Email</span>
+                  <span className="text-gray-400 text-sm">{t("companyGiftCardDetails.modal.emailLabel")}</span>
                   <span className="text-white text-sm">{selectedPurchase.customerEmail}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-400 text-sm">Gift Card Value</span>
+                  <span className="text-gray-400 text-sm">{t("companyGiftCardDetails.modal.valueLabel")}</span>
                   <span className="text-white font-semibold">{selectedPurchase.purchaseAmount.toLocaleString()} kr.</span>
                 </div>
               </div>
@@ -555,7 +592,7 @@ export default function GiftCardDetailsPage() {
 
           <div className="bg-primary/10 border border-primary rounded-lg p-6 text-center">
             <Key className="mx-auto text-primary mb-3" size={32} />
-            <p className="text-gray-400 text-sm mb-2">Generated OTP</p>
+            <p className="text-gray-400 text-sm mb-2">{t("companyGiftCardDetails.modal.generatedLabel")}</p>
             <div className="flex items-center justify-center gap-3">
               <code className="text-3xl font-mono font-bold text-white bg-background px-4 py-2 rounded border border-primary">
                 {generatedOtp}
@@ -563,22 +600,18 @@ export default function GiftCardDetailsPage() {
               <button
                 onClick={() => copyToClipboard(generatedOtp)}
                 className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
-                title="Copy OTP"
+                title={t("companyGiftCardDetails.purchases.copyOtp")}
               >
                 <Copy size={20} />
               </button>
             </div>
-            <p className="text-gray-500 text-xs mt-3">
-              Share this OTP with the customer. They can use it to redeem their gift card.
-            </p>
+            <p className="text-gray-500 text-xs mt-3">{t("companyGiftCardDetails.modal.shareHint")}</p>
           </div>
 
           <div className="bg-blue-500/10 border border-blue-500 rounded-lg p-3">
             <div className="flex items-start gap-2">
               <RefreshCw className="text-blue-500 flex-shrink-0 mt-0.5" size={16} />
-              <p className="text-blue-500 text-xs">
-                OTP is valid for redemption. You can regenerate a new OTP if needed, which will invalidate the previous one.
-              </p>
+              <p className="text-blue-500 text-xs">{t("companyGiftCardDetails.modal.validityHint")}</p>
             </div>
           </div>
         </div>

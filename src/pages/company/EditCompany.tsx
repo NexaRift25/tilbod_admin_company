@@ -12,11 +12,13 @@ import {
   AlertCircle
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export default function EditCompanyPage() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { companies, updateCompany } = useAuth();
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [company, setCompany] = useState<any>(null);
@@ -84,19 +86,19 @@ export default function EditCompanyPage() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.name.trim()) newErrors.name = "Company name is required";
-    if (!formData.registrationNumber.trim()) newErrors.registrationNumber = "Registration number is required";
-    if (!formData.taxId.trim()) newErrors.taxId = "Tax ID is required";
-    if (!formData.category) newErrors.category = "Category is required";
-    if (!formData.email.trim()) newErrors.email = "Email is required";
+    if (!formData.name.trim()) newErrors.name = t("editCompany.validation.nameRequired");
+    if (!formData.registrationNumber.trim()) newErrors.registrationNumber = t("editCompany.validation.registrationRequired");
+    if (!formData.taxId.trim()) newErrors.taxId = t("editCompany.validation.taxIdRequired");
+    if (!formData.category) newErrors.category = t("editCompany.validation.categoryRequired");
+    if (!formData.email.trim()) newErrors.email = t("editCompany.validation.emailRequired");
     if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email";
+      newErrors.email = t("editCompany.validation.emailInvalid");
     }
-    if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
-    if (!formData.address.trim()) newErrors.address = "Address is required";
-    if (!formData.city.trim()) newErrors.city = "City is required";
-    if (!formData.postalCode.trim()) newErrors.postalCode = "Postal code is required";
-    if (!formData.description.trim()) newErrors.description = "Company description is required";
+    if (!formData.phone.trim()) newErrors.phone = t("editCompany.validation.phoneRequired");
+    if (!formData.address.trim()) newErrors.address = t("editCompany.validation.addressRequired");
+    if (!formData.city.trim()) newErrors.city = t("editCompany.validation.cityRequired");
+    if (!formData.postalCode.trim()) newErrors.postalCode = t("editCompany.validation.postalCodeRequired");
+    if (!formData.description.trim()) newErrors.description = t("editCompany.validation.descriptionRequired");
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -125,13 +127,13 @@ export default function EditCompanyPage() {
       });
 
       // Show success message
-      alert("Company updated successfully! Changes will be reviewed if the status is pending or requires revision.");
+      window.alert(t("editCompany.successMessage"));
 
       // Redirect to companies list
       navigate("/company/companies");
     } catch (error) {
       console.error("Company update failed", error);
-      setErrors({ general: "Failed to update company. Please try again." });
+      setErrors({ general: t("editCompany.updateFailed") });
     } finally {
       setIsLoading(false);
     }
@@ -149,27 +151,32 @@ export default function EditCompanyPage() {
           </Link>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white">
-              Edit Company
+              {t("editCompany.title")}
             </h1>
           </div>
         </div>
 
         <div className="bg-red-500/10 border border-red-500 rounded-2xl p-8 text-center">
           <AlertCircle className="mx-auto text-red-500 mb-4" size={48} />
-          <h3 className="text-xl font-bold text-white mb-2">Company Not Found</h3>
+          <h3 className="text-xl font-bold text-white mb-2">{t("editCompany.companyNotFound")}</h3>
           <p className="text-gray-300 mb-4">
-            The company you're trying to edit could not be found.
+            {t("editCompany.notFoundMessage")}
           </p>
           <Link
             to="/company/companies"
             className="inline-block px-6 py-3 bg-primary text-dark font-semibold rounded-full hover:bg-primary/90 transition-all"
           >
-            Back to Companies
+            {t("editCompany.backToCompanies")}
           </Link>
         </div>
       </div>
     );
   }
+
+  const revisionPoints = t("editCompany.revisionNotice.points", {
+    count: company?.revisionCount ?? 0,
+    returnObjects: true
+  }) as string[];
 
   return (
     <div className="space-y-6">
@@ -183,10 +190,10 @@ export default function EditCompanyPage() {
         </Link>
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-white">
-            Edit Company
+            {t("editCompany.title")}
           </h1>
           <p className="text-gray-400 text-sm">
-            Update your company information below
+            {t("editCompany.subtitle")}
           </p>
         </div>
       </div>
@@ -197,12 +204,12 @@ export default function EditCompanyPage() {
           <div className="flex items-start gap-3">
             <AlertCircle className="text-orange-500 flex-shrink-0 mt-0.5" size={20} />
             <div>
-              <h3 className="text-orange-500 font-bold mb-1">Revision Required</h3>
-              <div className="text-sm text-gray-300 space-y-1">
-                <p>• Your company requires revision (Attempt {company.revisionCount}/3)</p>
-                <p>• Please update the requested information and resubmit</p>
-                <p>• Changes will be reviewed by our team</p>
-              </div>
+              <h3 className="text-orange-500 font-bold mb-1">{t("editCompany.revisionNotice.title")}</h3>
+              <ul className="list-disc pl-5 space-y-1 text-sm text-gray-300">
+                {revisionPoints.map((point, index) => (
+                  <li key={index}>{point}</li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
@@ -213,9 +220,9 @@ export default function EditCompanyPage() {
           <div className="flex items-start gap-3">
             <AlertCircle className="text-blue-500 flex-shrink-0 mt-0.5" size={20} />
             <div>
-              <h3 className="text-blue-500 font-bold mb-1">Company Already Approved</h3>
+              <h3 className="text-blue-500 font-bold mb-1">{t("editCompany.approvedNotice.title")}</h3>
               <p className="text-sm text-gray-300">
-                Your company is already approved. Changes made here may require re-approval.
+                {t("editCompany.approvedNotice.description")}
               </p>
             </div>
           </div>
@@ -233,12 +240,12 @@ export default function EditCompanyPage() {
 
         {/* Basic Information */}
         <div className="bg-card-background border border-primary rounded-2xl p-6">
-          <h3 className="text-lg font-bold text-white mb-4">Basic Information</h3>
+          <h3 className="text-lg font-bold text-white mb-4">{t("editCompany.basicInformation")}</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
               <label className="text-gray-400 text-sm mb-2 block">
-                Company Name *
+                {t("editCompany.companyName")} *
               </label>
               <div className="relative">
                 <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -250,7 +257,7 @@ export default function EditCompanyPage() {
                   className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                     errors.name ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                   }`}
-                  placeholder="Enter company name"
+                  placeholder={t("editCompany.companyNamePlaceholder")}
                 />
               </div>
               {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
@@ -258,7 +265,7 @@ export default function EditCompanyPage() {
 
             <div>
               <label className="text-gray-400 text-sm mb-2 block">
-                Registration Number *
+                {t("editCompany.registrationNumber")} *
               </label>
               <div className="relative">
                 <FileText className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -270,7 +277,7 @@ export default function EditCompanyPage() {
                   className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                     errors.registrationNumber ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                   }`}
-                  placeholder="e.g., 550289-2349"
+                  placeholder={t("editCompany.registrationPlaceholder")}
                 />
               </div>
               {errors.registrationNumber && <p className="text-red-500 text-xs mt-1">{errors.registrationNumber}</p>}
@@ -278,7 +285,7 @@ export default function EditCompanyPage() {
 
             <div>
               <label className="text-gray-400 text-sm mb-2 block">
-                Tax ID / VAT Number *
+                {t("editCompany.taxId")} *
               </label>
               <div className="relative">
                 <FileText className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -290,7 +297,7 @@ export default function EditCompanyPage() {
                   className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                     errors.taxId ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                   }`}
-                  placeholder="Enter tax ID"
+                  placeholder={t("editCompany.taxIdPlaceholder")}
                 />
               </div>
               {errors.taxId && <p className="text-red-500 text-xs mt-1">{errors.taxId}</p>}
@@ -298,7 +305,7 @@ export default function EditCompanyPage() {
 
             <div className="md:col-span-2">
               <label className="text-gray-400 text-sm mb-2 block">
-                Business Category *
+                {t("editCompany.businessCategory")} *
               </label>
               <select
                 name="category"
@@ -308,7 +315,7 @@ export default function EditCompanyPage() {
                   errors.category ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                 }`}
               >
-                <option value="">Select category</option>
+                <option value="">{t("editCompany.selectCategory")}</option>
                 {categories.map(category => (
                   <option key={category} value={category}>{category}</option>
                 ))}
@@ -318,7 +325,7 @@ export default function EditCompanyPage() {
 
             <div className="md:col-span-2">
               <label className="text-gray-400 text-sm mb-2 block">
-                Company Description *
+                {t("editCompany.companyDescription")} *
               </label>
               <textarea
                 name="description"
@@ -328,7 +335,7 @@ export default function EditCompanyPage() {
                 className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all resize-none ${
                   errors.description ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                 }`}
-                placeholder="Describe your business, services, and what makes you unique..."
+                placeholder={t("editCompany.companyDescriptionPlaceholder")}
               />
               {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description}</p>}
             </div>
@@ -337,12 +344,12 @@ export default function EditCompanyPage() {
 
         {/* Contact Information */}
         <div className="bg-card-background border border-primary rounded-2xl p-6">
-          <h3 className="text-lg font-bold text-white mb-4">Contact Information</h3>
+          <h3 className="text-lg font-bold text-white mb-4">{t("editCompany.contactInformation")}</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="text-gray-400 text-sm mb-2 block">
-                Business Email *
+                {t("editCompany.businessEmail")} *
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -354,7 +361,7 @@ export default function EditCompanyPage() {
                   className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                     errors.email ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                   }`}
-                  placeholder="company@example.com"
+                  placeholder={t("editCompany.businessEmailPlaceholder")}
                 />
               </div>
               {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
@@ -362,7 +369,7 @@ export default function EditCompanyPage() {
 
             <div>
               <label className="text-gray-400 text-sm mb-2 block">
-                Phone Number *
+                {t("editCompany.phoneNumber")} *
               </label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -374,7 +381,7 @@ export default function EditCompanyPage() {
                   className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                     errors.phone ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                   }`}
-                  placeholder="+354 XXX XXXX"
+                  placeholder={t("editCompany.phoneNumberPlaceholder")}
                 />
               </div>
               {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
@@ -382,7 +389,7 @@ export default function EditCompanyPage() {
 
             <div className="md:col-span-2">
               <label className="text-gray-400 text-sm mb-2 block">
-                Street Address *
+                {t("editCompany.streetAddress")} *
               </label>
               <div className="relative">
                 <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -394,7 +401,7 @@ export default function EditCompanyPage() {
                   className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                     errors.address ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                   }`}
-                  placeholder="Street address"
+                  placeholder={t("editCompany.streetAddressPlaceholder")}
                 />
               </div>
               {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
@@ -402,7 +409,7 @@ export default function EditCompanyPage() {
 
             <div>
               <label className="text-gray-400 text-sm mb-2 block">
-                City *
+                {t("editCompany.city")} *
               </label>
               <input
                 type="text"
@@ -412,14 +419,14 @@ export default function EditCompanyPage() {
                 className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                   errors.city ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                 }`}
-                placeholder="City"
+                placeholder={t("editCompany.cityPlaceholder")}
               />
               {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
             </div>
 
             <div>
               <label className="text-gray-400 text-sm mb-2 block">
-                Postal Code *
+                {t("editCompany.postalCode")} *
               </label>
               <input
                 type="text"
@@ -429,14 +436,14 @@ export default function EditCompanyPage() {
                 className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                   errors.postalCode ? "border-red-500 focus:border-red-500" : "border-primary/50 focus:border-primary"
                 }`}
-                placeholder="Postal code"
+                placeholder={t("editCompany.postalCodePlaceholder")}
               />
               {errors.postalCode && <p className="text-red-500 text-xs mt-1">{errors.postalCode}</p>}
             </div>
 
             <div className="md:col-span-2">
               <label className="text-gray-400 text-sm mb-2 block">
-                Website (Optional)
+                {t("editCompany.websiteOptional")}
               </label>
               <input
                 type="url"
@@ -444,7 +451,7 @@ export default function EditCompanyPage() {
                 value={formData.website}
                 onChange={handleInputChange}
                 className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all"
-                placeholder="https://www.yourcompany.com"
+                placeholder={t("editCompany.websitePlaceholder")}
               />
             </div>
           </div>
@@ -452,12 +459,12 @@ export default function EditCompanyPage() {
 
         {/* Company Logo */}
         <div className="bg-card-background border border-primary rounded-2xl p-6">
-          <h3 className="text-lg font-bold text-white mb-4">Company Logo (Optional)</h3>
+          <h3 className="text-lg font-bold text-white mb-4">{t("editCompany.companyLogo")}</h3>
           
           <div className="border-2 border-dashed border-primary/50 rounded-lg p-8 text-center hover:border-primary/60 transition-all cursor-pointer">
             <Upload className="mx-auto text-gray-400 mb-4" size={48} />
-            <p className="text-white font-medium mb-2">Click to upload or drag and drop</p>
-            <p className="text-gray-400 text-sm">PNG, JPG or SVG (max. 2MB)</p>
+            <p className="text-white font-medium mb-2">{t("editCompany.uploadPrompt")}</p>
+            <p className="text-gray-400 text-sm">{t("editCompany.uploadFormats")}</p>
             <input type="file" className="hidden" accept="image/*" />
           </div>
         </div>
@@ -468,7 +475,7 @@ export default function EditCompanyPage() {
             to="/company/companies"
             className="px-6 py-3 bg-background border border-primary/50 text-white font-semibold rounded-full hover:bg-primary/10 transition-all"
           >
-            Cancel
+            {t("common.cancel")}
           </Link>
           <button
             type="submit"
@@ -480,7 +487,7 @@ export default function EditCompanyPage() {
             ) : (
               <>
                 <Save size={20} />
-                Update Company
+                {t("editCompany.updateCompany")}
               </>
             )}
           </button>

@@ -10,6 +10,7 @@ import {
   Save,
   Search
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import ActiveOfferCard from "@/components/offerCards/active-offer-card";
 import WeeklyOfferCard from "@/components/offerCards/weeklyOfferCard";
 import HappyHourOfferCard from "@/components/offerCards/happyHour";
@@ -38,36 +39,7 @@ interface OfferFormData {
   offerLink: string;
 }
 
-const offerTypes = [
-  {
-    id: "active",
-    name: "Active Offer",
-    description: "Daily promotional deals available year-round",
-    icon: Tag,
-    color: "bg-yellow/10 text-yellow border-yellow"
-  },
-  {
-    id: "weekdays",
-    name: "Weekdays Offer",
-    description: "Special deals for restaurants and activities",
-    icon: Calendar,
-    color: "bg-pink/10 text-pink border-pink"
-  },
-  {
-    id: "happy_hour",
-    name: "Happy Hour Offer",
-    description: "Time-based promotions for bars & restaurants",
-    icon: Clock,
-    color: "bg-green/10 text-green border-green"
-  },
-  {
-    id: "gift_card",
-    name: "Gift Card",
-    description: "Prepaid value cards for hotels & services",
-    icon: DollarSign,
-    color: "bg-orange-500/10 text-orange-500 border-orange-500"
-  }
-];
+// offerTypes will be defined inside component to use translations
 
 // Fallback categories if no product categories are stored
 const fallbackCategories = [
@@ -83,15 +55,7 @@ const fallbackCategories = [
   "Professional Services"
 ];
 
-const weekdays = [
-  { id: "monday", name: "Monday" },
-  { id: "tuesday", name: "Tuesday" },
-  { id: "wednesday", name: "Wednesday" },
-  { id: "thursday", name: "Thursday" },
-  { id: "friday", name: "Friday" },
-  { id: "saturday", name: "Saturday" },
-  { id: "sunday", name: "Sunday" }
-];
+// weekdays will be defined inside component to use translations
 
 // Mock offer data - in real app, fetch from API based on ID
 const mockOffers = [
@@ -180,11 +144,53 @@ const mockOffers = [
 export default function EditOfferPage() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
   const [categorySearchTerm, setCategorySearchTerm] = useState("");
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+
+  const offerTypes = [
+    {
+      id: "active",
+      name: t("offerTypes.active"),
+      description: t("createOffer.activeOfferDescription"),
+      icon: Tag,
+      color: "bg-yellow/10 text-yellow border-yellow"
+    },
+    {
+      id: "weekdays",
+      name: t("offerTypes.weekdays"),
+      description: t("createOffer.weekdaysOfferDescription"),
+      icon: Calendar,
+      color: "bg-pink/10 text-pink border-pink"
+    },
+    {
+      id: "happy_hour",
+      name: t("offerTypes.happyHour"),
+      description: t("createOffer.happyHourOfferDescription"),
+      icon: Clock,
+      color: "bg-green/10 text-green border-green"
+    },
+    {
+      id: "gift_card",
+      name: t("offerTypes.giftCard"),
+      description: t("createOffer.giftCardDescription"),
+      icon: DollarSign,
+      color: "bg-orange-500/10 text-orange-500 border-orange-500"
+    }
+  ];
+
+  const weekdays = [
+    { id: "monday", name: t("weekdays.monday") },
+    { id: "tuesday", name: t("weekdays.tuesday") },
+    { id: "wednesday", name: t("weekdays.wednesday") },
+    { id: "thursday", name: t("weekdays.thursday") },
+    { id: "friday", name: t("weekdays.friday") },
+    { id: "saturday", name: t("weekdays.saturday") },
+    { id: "sunday", name: t("weekdays.sunday") }
+  ];
   
   // Fetch offer data based on ID (mock for now)
   const offerData = mockOffers.find(offer => offer.id === id);
@@ -271,21 +277,21 @@ export default function EditOfferPage() {
 
   // Calculate time left for preview
   const calculateTimeLeft = (endDate: string) => {
-    if (!endDate) return "Ends soon";
+    if (!endDate) return t("editOffer.timeLeft.endsSoon");
     const end = new Date(endDate + "T23:59:59");
     const now = new Date();
     const diff = end.getTime() - now.getTime();
     
-    if (diff <= 0) return "Ended";
+    if (diff <= 0) return t("editOffer.timeLeft.ended");
     
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     
-    if (days > 0) return `${days} day${days > 1 ? 's' : ''} left`;
-    if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} left`;
-    if (minutes > 0) return `${minutes} min left`;
-    return "Ends soon";
+    if (days > 0) return t("editOffer.timeLeft.daysLeft", { count: days });
+    if (hours > 0) return t("editOffer.timeLeft.hoursLeft", { count: hours });
+    if (minutes > 0) return t("editOffer.timeLeft.minLeft", { count: minutes });
+    return t("editOffer.timeLeft.endsSoon");
   };
 
   // Transform form data for ActiveOfferCard preview
@@ -293,18 +299,18 @@ export default function EditOfferPage() {
     return {
       id: 0,
       offerType: "active",
-      title: formData.title || "Your offer title",
-      discount: formData.discountPercentage ? `${formData.discountPercentage}% OFF` : "Special Offer",
-      description: formData.description || "Your offer description will appear here",
+      title: formData.title || t("editOffer.preview.yourOfferTitle"),
+      discount: formData.discountPercentage ? `${formData.discountPercentage}% OFF` : t("editOffer.preview.specialOffer"),
+      description: formData.description || t("editOffer.preview.yourOfferDescription"),
       image: previewImageUrl || formData.image || "/placeholder-image.jpg",
-      category: formData.category || "Category",
+      category: formData.category || t("common.category"),
       timeLeft: calculateTimeLeft(formData.endDate),
       location: "",
       price: formData.originalPrice || null,
       discountPrice: formData.discountPrice || null,
       link: formData.offerLink || "#"
     };
-  }, [formData, previewImageUrl]);
+  }, [formData, previewImageUrl, t]);
 
   // Transform form data for WeeklyOfferCard preview
   const previewWeeklyOffer = useMemo(() => {
@@ -323,22 +329,22 @@ export default function EditOfferPage() {
     return {
       id: 0,
       offerType: "weekdays",
-      title: formData.title || "Your weekly offer title",
-      discount: formData.discountPercentage ? `${formData.discountPercentage}% Discount` : "Discount Available",
-      description: formData.description || "Your weekly offer description",
+      title: formData.title || t("editOffer.preview.yourWeeklyOfferTitle"),
+      discount: formData.discountPercentage ? `${formData.discountPercentage}% Discount` : t("editOffer.preview.discountAvailable"),
+      description: formData.description || t("editOffer.preview.yourWeeklyOfferDescription"),
       image: previewImageUrl || formData.image || "/placeholder-image.jpg",
-      badge: formData.category || "Weekly Special",
-      location: formData.weekdayAddress || "Location",
-      time: formData.startTime && formData.endTime ? `${formData.startTime} - ${formData.endTime}` : "Available all day",
+      badge: formData.category || t("editOffer.preview.weeklySpecial"),
+      location: formData.weekdayAddress || t("common.location"),
+      time: formData.startTime && formData.endTime ? `${formData.startTime} - ${formData.endTime}` : t("editOffer.preview.availableAllDay"),
       availableDays: availableDays.length > 0 ? availableDays : ["Mon", "Tue", "Wed", "Thu", "Fri"],
       link: formData.offerLink || "#"
     };
-  }, [formData, previewImageUrl]);
+  }, [formData, previewImageUrl, t]);
 
   // Transform form data for HappyHourOfferCard preview
   const previewHappyHourOffer = useMemo(() => {
     const calculateStatus = () => {
-      if (!formData.startTime || !formData.endTime) return "Closed";
+      if (!formData.startTime || !formData.endTime) return t("editOffer.preview.closed");
       const now = new Date();
       const hours = now.getHours();
       const minutes = now.getMinutes();
@@ -350,9 +356,9 @@ export default function EditOfferPage() {
       const endDecimal = endHour + endMin / 60;
       
       if (currentTime >= startDecimal && currentTime < endDecimal) {
-        return "Open now";
+        return t("editOffer.preview.openNow");
       }
-      return "Closed";
+      return t("editOffer.preview.closed");
     };
 
     const formatTimeRange = () => {
@@ -366,39 +372,39 @@ export default function EditOfferPage() {
         };
         return `${formatTo12Hour(formData.startTime)} - ${formatTo12Hour(formData.endTime)}`;
       }
-      return "Happy Hour Time";
+      return t("editOffer.preview.happyHourTime");
     };
 
     return {
       id: 0,
       offerType: "happy_hour",
-      title: formData.title || "Your happy hour title",
+      title: formData.title || t("editOffer.preview.yourOfferTitle"),
       time: formatTimeRange(),
-      description: formData.description || "Your happy hour description",
+      description: formData.description || t("editOffer.preview.yourOfferDescription"),
       image: previewImageUrl || formData.image || "/placeholder-image.jpg",
       status: calculateStatus(),
-      location: formData.location || "Location",
-      pricing: formData.discountPrice ? `${formData.discountPrice} kr.` : "Special pricing",
+      location: formData.location || t("common.location"),
+      pricing: formData.discountPrice ? `${formData.discountPrice} kr.` : t("editOffer.preview.specialPricing"),
       availableDays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
       link: formData.offerLink || "#"
     };
-  }, [formData, previewImageUrl]);
+  }, [formData, previewImageUrl, t]);
 
   // Transform form data for GiftOfferCard preview
   const previewGiftOffer = useMemo(() => {
     return {
       id: 0,
       offerType: "gift_card",
-      title: formData.title || "Your gift card title",
+      title: formData.title || t("editOffer.preview.yourGiftCardTitle"),
       price: formData.discountPrice || "0",
-      description: formData.description || "Your gift card description",
+      description: formData.description || t("editOffer.preview.yourGiftCardDescription"),
       image: previewImageUrl || formData.image || "/placeholder-image.jpg",
-      category: formData.category || "Category",
+      category: formData.category || t("common.category"),
       timeLeft: calculateTimeLeft(formData.endDate),
       purchaseCount: 0,
       link: "#"
     };
-  }, [formData, previewImageUrl]);
+  }, [formData, previewImageUrl, t]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -430,27 +436,27 @@ export default function EditOfferPage() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.title.trim()) newErrors.title = "Offer title is required";
-    if (!formData.description.trim()) newErrors.description = "Description is required";
-    if (!formData.category) newErrors.category = "Category is required";
-    if (!formData.originalPrice) newErrors.originalPrice = "Original price is required";
-    if (!formData.discountPrice) newErrors.discountPrice = "Discounted price is required";
-    if (!formData.startDate) newErrors.startDate = "Start date is required";
-    if (!formData.endDate) newErrors.endDate = "End date is required";
+    if (!formData.title.trim()) newErrors.title = t("editOffer.validation.titleRequired");
+    if (!formData.description.trim()) newErrors.description = t("editOffer.validation.descriptionRequired");
+    if (!formData.category) newErrors.category = t("editOffer.validation.categoryRequired");
+    if (!formData.originalPrice) newErrors.originalPrice = t("editOffer.validation.originalPriceRequired");
+    if (!formData.discountPrice) newErrors.discountPrice = t("editOffer.validation.discountPriceRequired");
+    if (!formData.startDate) newErrors.startDate = t("editOffer.validation.startDateRequired");
+    if (!formData.endDate) newErrors.endDate = t("editOffer.validation.endDateRequired");
 
     // Type-specific validations
     if (selectedType === "weekdays") {
       if (formData.weekdays.length === 0) {
-        newErrors.weekdays = "At least one weekday must be selected";
+        newErrors.weekdays = t("editOffer.validation.weekdaysRequired");
       }
-      if (!formData.startTime) newErrors.startTime = "Start time is required";
-      if (!formData.endTime) newErrors.endTime = "End time is required";
-      if (!formData.weekdayAddress.trim()) newErrors.weekdayAddress = "Restaurant address is required";
+      if (!formData.startTime) newErrors.startTime = t("editOffer.validation.startTimeRequired");
+      if (!formData.endTime) newErrors.endTime = t("editOffer.validation.endTimeRequired");
+      if (!formData.weekdayAddress.trim()) newErrors.weekdayAddress = t("editOffer.validation.weekdayAddressRequired");
     }
     if (selectedType === "happy_hour") {
-      if (!formData.startTime) newErrors.startTime = "Start time is required";
-      if (!formData.endTime) newErrors.endTime = "End time is required";
-      if (!formData.location.trim()) newErrors.location = "Location is required";
+      if (!formData.startTime) newErrors.startTime = t("editOffer.validation.startTimeRequired");
+      if (!formData.endTime) newErrors.endTime = t("editOffer.validation.endTimeRequired");
+      if (!formData.location.trim()) newErrors.location = t("editOffer.validation.locationRequired");
     }
 
     setErrors(newErrors);
@@ -475,7 +481,7 @@ export default function EditOfferPage() {
       navigate("/company/offers");
     } catch (error) {
       console.error("Offer update failed", error);
-      setErrors({ general: "Failed to update offer. Please try again." });
+      setErrors({ general: t("editOffer.validation.updateFailed") });
     } finally {
       setIsLoading(false);
     }
@@ -493,13 +499,13 @@ export default function EditOfferPage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <p className="text-white text-xl mb-4">Offer not found</p>
+          <p className="text-white text-xl mb-4">{t("editOffer.offerNotFound")}</p>
           <Link
             to="/company/offers"
             className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-dark font-semibold rounded-full hover:bg-primary/90 transition-all"
           >
             <ArrowLeft size={20} />
-            Back to Offers
+            {t("editOffer.backToOffers")}
           </Link>
         </div>
       </div>
@@ -518,17 +524,17 @@ export default function EditOfferPage() {
         </Link>
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-white">
-            Edit Offer
+            {t("editOffer.title")}
           </h1>
           <p className="text-gray-400 text-sm">
-            Update your offer details and settings
+            {t("editOffer.subtitle")}
           </p>
         </div>
       </div>
 
       {/* Offer Type Selection */}
       <div className="bg-card-background border border-primary rounded-2xl p-6">
-        <h3 className="text-lg font-bold text-white mb-4">Offer Type</h3>
+        <h3 className="text-lg font-bold text-white mb-4">{t("editOffer.offerType")}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {offerTypes.map((type) => {
             const Icon = type.icon;
@@ -568,7 +574,7 @@ export default function EditOfferPage() {
         <div className="flex items-center gap-3 mb-6">
           {renderSelectedIcon()}
           <h3 className="text-xl font-bold text-white">
-            Edit {selectedOfferType.name}
+            {t("editOffer.editOfferType", { type: selectedOfferType.name })}
           </h3>
         </div>
 
@@ -577,7 +583,7 @@ export default function EditOfferPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
               <label className="text-gray-400 text-sm mb-2 block">
-                Offer Title *
+                {t("editOffer.offerTitle")} *
               </label>
               <input
                 type="text"
@@ -587,14 +593,14 @@ export default function EditOfferPage() {
                 className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                   errors.title ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
                 }`}
-                placeholder="Enter offer title"
+                placeholder={t("editOffer.offerTitlePlaceholder")}
               />
               {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title}</p>}
             </div>
 
             <div className="md:col-span-2">
               <label className="text-gray-400 text-sm mb-2 block">
-                Product Category *
+                {t("editOffer.productCategory")}
               </label>
               <div className="relative">
                 <div className="relative">
@@ -614,7 +620,7 @@ export default function EditOfferPage() {
                     }}
                     onBlur={() => setTimeout(() => setShowCategoryDropdown(false), 200)}
                     onFocus={() => setShowCategoryDropdown(true)}
-                    placeholder="Search or type product category..."
+                    placeholder={t("editOffer.productCategoryPlaceholder")}
                     className={`w-full pl-10 pr-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                       errors.category ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
                     }`}
@@ -650,20 +656,20 @@ export default function EditOfferPage() {
                         </button>
                       ))
                       .length === 0 && (
-                        <div className="px-4 py-2 text-gray-400 text-sm">No matching categories</div>
+                        <div className="px-4 py-2 text-gray-400 text-sm">{t("editOffer.noMatchingCategories")}</div>
                       )}
                   </div>
                 )}
               </div>
               {errors.category && <p className="text-red-500 text-xs mt-1">{errors.category}</p>}
               <p className="text-gray-500 text-xs mt-1">
-                Type or search to find a product category (e.g., Clothing, Jewelry)
+                {t("editOffer.productCategoryHint")}
               </p>
             </div>
 
             <div className="md:col-span-2">
               <label className="text-gray-400 text-sm mb-2 block">
-                Description *
+                {t("editOffer.description")}
               </label>
               <textarea
                 name="description"
@@ -673,7 +679,7 @@ export default function EditOfferPage() {
                 className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all resize-none ${
                   errors.description ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
                 }`}
-                placeholder="Describe your offer in detail..."
+                placeholder={t("editOffer.descriptionPlaceholder")}
               />
               {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description}</p>}
             </div>
@@ -681,11 +687,11 @@ export default function EditOfferPage() {
 
           {/* Pricing */}
           <div>
-            <h4 className="text-lg font-bold text-white mb-4">Pricing Information</h4>
+            <h4 className="text-lg font-bold text-white mb-4">{t("editOffer.pricingInformation")}</h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <label className="text-gray-400 text-sm mb-2 block">
-                  Original Price (kr.) *
+                  {t("editOffer.originalPrice")}
                 </label>
                 <input
                   type="number"
@@ -695,14 +701,14 @@ export default function EditOfferPage() {
                   className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                     errors.originalPrice ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
                   }`}
-                  placeholder="1000"
+                  placeholder={t("editOffer.originalPricePlaceholder")}
                 />
                 {errors.originalPrice && <p className="text-red-500 text-xs mt-1">{errors.originalPrice}</p>}
               </div>
 
               <div>
                 <label className="text-gray-400 text-sm mb-2 block">
-                  Discounted Price (kr.) *
+                  {t("editOffer.discountedPrice")}
                 </label>
                 <input
                   type="number"
@@ -712,14 +718,14 @@ export default function EditOfferPage() {
                   className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                     errors.discountPrice ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
                   }`}
-                  placeholder="800"
+                  placeholder={t("editOffer.discountedPricePlaceholder")}
                 />
                 {errors.discountPrice && <p className="text-red-500 text-xs mt-1">{errors.discountPrice}</p>}
               </div>
 
               <div>
                 <label className="text-gray-400 text-sm mb-2 block">
-                  Discount %
+                  {t("editOffer.discountPercent")}
                 </label>
                 <input
                   type="number"
@@ -727,7 +733,7 @@ export default function EditOfferPage() {
                   value={formData.discountPercentage}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all"
-                  placeholder="20"
+                  placeholder={t("editOffer.discountPercentPlaceholder")}
                   readOnly
                 />
               </div>
@@ -737,11 +743,11 @@ export default function EditOfferPage() {
           {/* Date & Time (varies by offer type) */}
           {selectedType !== "happy_hour" && (
             <div>
-              <h4 className="text-lg font-bold text-white mb-4">Offer Duration</h4>
+              <h4 className="text-lg font-bold text-white mb-4">{t("editOffer.offerDuration")}</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="text-gray-400 text-sm mb-2 block">
-                    Start Date *
+                    {t("editOffer.startDate")}
                   </label>
                   <input
                     type="date"
@@ -757,7 +763,7 @@ export default function EditOfferPage() {
 
                 <div>
                   <label className="text-gray-400 text-sm mb-2 block">
-                    End Date *
+                    {t("editOffer.endDate")}
                   </label>
                   <input
                     type="date"
@@ -778,7 +784,7 @@ export default function EditOfferPage() {
           {selectedType === "weekdays" && (
             <div className="space-y-6">
               <div>
-                <h4 className="text-lg font-bold text-white mb-4">Select Weekdays</h4>
+                <h4 className="text-lg font-bold text-white mb-4">{t("editOffer.selectWeekdays")}</h4>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {weekdays.map(day => (
                     <button
@@ -799,11 +805,11 @@ export default function EditOfferPage() {
               </div>
 
               <div>
-                <h4 className="text-lg font-bold text-white mb-4">Time Range</h4>
+                <h4 className="text-lg font-bold text-white mb-4">{t("editOffer.timeRange")}</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="text-gray-400 text-sm mb-2 block">
-                      Start Time *
+                      {t("editOffer.startTime")}
                     </label>
                     <input
                       type="time"
@@ -819,7 +825,7 @@ export default function EditOfferPage() {
 
                   <div>
                     <label className="text-gray-400 text-sm mb-2 block">
-                      End Time *
+                      {t("editOffer.endTime")}
                     </label>
                     <input
                       type="time"
@@ -836,10 +842,10 @@ export default function EditOfferPage() {
               </div>
 
               <div>
-                <h4 className="text-lg font-bold text-white mb-4">Location</h4>
+                <h4 className="text-lg font-bold text-white mb-4">{t("editOffer.location")}</h4>
                 <div>
                   <label className="text-gray-400 text-sm mb-2 block">
-                    Restaurant/Address *
+                    {t("editOffer.restaurantAddress")}
                   </label>
                   <input
                     type="text"
@@ -849,7 +855,7 @@ export default function EditOfferPage() {
                     className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                       errors.weekdayAddress ? "border-red-500 focus:border-red-500" : "border-pink/30 focus:border-pink"
                     }`}
-                    placeholder="Enter restaurant address or location"
+                    placeholder={t("editOffer.restaurantAddressPlaceholder")}
                   />
                   {errors.weekdayAddress && <p className="text-red-500 text-xs mt-1">{errors.weekdayAddress}</p>}
                 </div>
@@ -860,11 +866,11 @@ export default function EditOfferPage() {
           {/* Happy Hour Specific Fields */}
           {selectedType === "happy_hour" && (
             <div>
-              <h4 className="text-lg font-bold text-white mb-4">Happy Hour Details</h4>
+              <h4 className="text-lg font-bold text-white mb-4">{t("editOffer.happyHourDetails")}</h4>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
                   <label className="text-gray-400 text-sm mb-2 block">
-                    Start Time *
+                    {t("editOffer.startTime")}
                   </label>
                   <input
                     type="time"
@@ -880,7 +886,7 @@ export default function EditOfferPage() {
 
                 <div>
                   <label className="text-gray-400 text-sm mb-2 block">
-                    End Time *
+                    {t("editOffer.endTime")}
                   </label>
                   <input
                     type="time"
@@ -896,7 +902,7 @@ export default function EditOfferPage() {
 
                 <div>
                   <label className="text-gray-400 text-sm mb-2 block">
-                    Location *
+                    {t("editOffer.locationLabel")}
                   </label>
                   <input
                     type="text"
@@ -906,7 +912,7 @@ export default function EditOfferPage() {
                     className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                       errors.location ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
                     }`}
-                    placeholder="Bar/Restaurant name"
+                    placeholder={t("editOffer.locationPlaceholder")}
                   />
                   {errors.location && <p className="text-red-500 text-xs mt-1">{errors.location}</p>}
                 </div>
@@ -918,7 +924,7 @@ export default function EditOfferPage() {
           {selectedType !== "gift_card" && (
             <div>
               <label className="text-gray-400 text-sm mb-2 block">
-                Offer Website Link
+                {t("editOffer.offerLink")}
               </label>
               <input
                 type="url"
@@ -926,16 +932,16 @@ export default function EditOfferPage() {
                 value={formData.offerLink}
                 onChange={handleInputChange}
                 className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all"
-                placeholder="https://your-website.com/offer"
+                placeholder={t("editOffer.offerLinkPlaceholder")}
               />
-              <p className="text-gray-500 text-xs mt-1">Link to your original offer or website</p>
+              <p className="text-gray-500 text-xs mt-1">{t("editOffer.offerLinkHint")}</p>
             </div>
           )}
 
           {/* Terms & Conditions */}
           <div>
             <label className="text-gray-400 text-sm mb-2 block">
-              Terms & Conditions (Optional)
+              {t("editOffer.termsConditions")}
             </label>
             <textarea
               name="terms"
@@ -943,14 +949,14 @@ export default function EditOfferPage() {
               onChange={handleInputChange}
               rows={3}
               className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all resize-none"
-              placeholder="Any specific terms or conditions for this offer..."
+              placeholder={t("editOffer.termsPlaceholder")}
             />
           </div>
 
           {/* Image Upload */}
           <div>
             <label className="text-gray-400 text-sm mb-2 block">
-              Offer Image (Optional)
+              {t("editOffer.offerImage")}
             </label>
             <label className="flex flex-col items-center justify-center gap-2 px-4 py-6 bg-background border border-primary/30 rounded-lg cursor-pointer hover:border-primary transition-all">
               <input
@@ -963,8 +969,8 @@ export default function EditOfferPage() {
                 <img src={previewImageUrl || formData.image} alt="Preview" className="w-full h-48 object-cover rounded-lg" />
               ) : (
                 <>
-                  <span className="text-gray-400 text-sm">Click to upload or drag and drop</span>
-                  <span className="text-gray-500 text-xs">PNG, JPG or SVG (max. 2MB)</span>
+                  <span className="text-gray-400 text-sm">{t("editOffer.uploadImage")}</span>
+                  <span className="text-gray-500 text-xs">{t("editOffer.imageFormat")}</span>
                 </>
               )}
             </label>
@@ -982,7 +988,7 @@ export default function EditOfferPage() {
               ) : (
                 <>
                   <Save size={20} />
-                  Save Changes
+                  {t("editOffer.saveChanges")}
                 </>
               )}
             </button>
@@ -994,10 +1000,10 @@ export default function EditOfferPage() {
         <div className="bg-card-background border border-primary rounded-2xl p-6 lg:p-8 max-h-[800px] overflow-y-auto scrollbar-custom">
           <div className="flex items-center gap-2 mb-4">
             <Eye className="text-primary" size={20} />
-            <h2 className="text-xl font-bold text-white">Preview</h2>
+            <h2 className="text-xl font-bold text-white">{t("editOffer.previewTitle")}</h2>
           </div>
           <p className="text-gray-400 text-sm mb-6">
-            See how your offer card will look to customers
+            {t("editOffer.previewDescription")}
           </p>
           <div className="flex justify-center">
             <div className="w-full max-w-sm">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Gift,
@@ -9,6 +9,7 @@ import {
   DollarSign,
   Users,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface GiftCard {
   id: string;
@@ -25,6 +26,7 @@ interface GiftCard {
 }
 
 export default function GiftCardsPage() {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("approved");
 
@@ -96,6 +98,43 @@ export default function GiftCardsPage() {
     totalRevenue: giftCards.reduce((sum, card) => sum + card.totalRevenue, 0),
   };
 
+  const statsCards = useMemo(
+    () => [
+      {
+        labelKey: "companyGiftCards.stats.total",
+        value: stats.total.toLocaleString(),
+        icon: Gift,
+        borderClass: "border-primary",
+        iconColor: "text-primary",
+      },
+      {
+        labelKey: "companyGiftCards.stats.totalPurchases",
+        value: stats.totalPurchases.toLocaleString(),
+        icon: Users,
+        borderClass: "border-green",
+        iconColor: "text-green",
+      },
+      {
+        labelKey: "companyGiftCards.stats.totalRevenue",
+        value: `${stats.totalRevenue.toLocaleString()} kr.`,
+        icon: DollarSign,
+        borderClass: "border-blue-500",
+        iconColor: "text-blue-500",
+      },
+    ],
+    [stats.total, stats.totalPurchases, stats.totalRevenue]
+  );
+
+  const statusOptions = useMemo(
+    () => [
+      { value: "approved", label: t("companyGiftCards.filters.status.approved") },
+      { value: "all", label: t("companyGiftCards.filters.status.all") },
+      { value: "pending", label: t("companyGiftCards.filters.status.pending") },
+      { value: "rejected", label: t("companyGiftCards.filters.status.rejected") },
+    ],
+    [t]
+  );
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -108,47 +147,32 @@ export default function GiftCardsPage() {
             <ArrowLeft className="text-primary" size={20} />
           </Link>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white">
-              All Gift Cards
-            </h1>
-            <p className="text-gray-400 text-sm">
-              View and manage your approved gift cards
-            </p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">
+            {t("companyGiftCards.title")}
+          </h1>
+          <p className="text-gray-400 text-sm">
+            {t("companyGiftCards.subtitle")}
+          </p>
           </div>
         </div>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-card-background border border-primary rounded-2xl p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Total Gift Cards</p>
-              <p className="text-white text-2xl font-bold">{stats.total}</p>
+      {statsCards.map((card, index) => {
+        const Icon = card.icon;
+        return (
+          <div key={index} className={`bg-card-background border ${card.borderClass} rounded-2xl p-4`}>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-400 text-sm">{t(card.labelKey)}</p>
+                <p className="text-white text-2xl font-bold">{card.value}</p>
+              </div>
+              <Icon className={card.iconColor} size={24} />
             </div>
-            <Gift className="text-primary" size={24} />
           </div>
-        </div>
-
-        <div className="bg-card-background border border-green rounded-2xl p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Total Purchases</p>
-              <p className="text-white text-2xl font-bold">{stats.totalPurchases}</p>
-            </div>
-            <Users className="text-green" size={24} />
-          </div>
-        </div>
-
-        <div className="bg-card-background border border-blue-500 rounded-2xl p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Total Revenue</p>
-              <p className="text-white text-2xl font-bold">{stats.totalRevenue.toLocaleString()} kr.</p>
-            </div>
-            <DollarSign className="text-blue-500" size={24} />
-          </div>
-        </div>
+        );
+      })}
       </div>
 
       {/* Filters */}
@@ -159,7 +183,7 @@ export default function GiftCardsPage() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
               <input
                 type="text"
-                placeholder="Search gift cards..."
+              placeholder={t("companyGiftCards.filters.searchPlaceholder")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary"
@@ -174,10 +198,11 @@ export default function GiftCardsPage() {
               onChange={(e) => setStatusFilter(e.target.value)}
               className="px-3 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
             >
-              <option value="approved">Approved Only</option>
-              <option value="all">All Status</option>
-              <option value="pending">Pending</option>
-              <option value="rejected">Rejected</option>
+            {statusOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
             </select>
           </div>
         </div>
@@ -188,11 +213,11 @@ export default function GiftCardsPage() {
         {filteredGiftCards.length === 0 ? (
           <div className="p-8 text-center">
             <Gift className="mx-auto text-gray-400 mb-4" size={48} />
-            <h3 className="text-xl font-bold text-white mb-2">No gift cards found</h3>
+            <h3 className="text-xl font-bold text-white mb-2">{t("companyGiftCards.table.emptyTitle")}</h3>
             <p className="text-gray-400">
               {searchTerm || statusFilter !== "approved"
-                ? "Try adjusting your search or filter criteria"
-                : "You don't have any approved gift cards yet"}
+                ? t("companyGiftCards.table.emptyFiltered")
+                : t("companyGiftCards.table.emptyDefault")}
             </p>
           </div>
         ) : (
@@ -200,13 +225,13 @@ export default function GiftCardsPage() {
             <table className="w-full">
               <thead>
                 <tr className="text-left text-gray-400 text-sm border-b border-primary/50">
-                  <th className="pb-3">Gift Card</th>
-                  <th className="pb-3">Value</th>
-                  <th className="pb-3">Discount</th>
-                  <th className="pb-3">Purchases</th>
-                  <th className="pb-3">Revenue</th>
-                  <th className="pb-3">Valid Period</th>
-                  <th className="pb-3">Actions</th>
+                  <th className="pb-3">{t("companyGiftCards.table.headers.giftCard")}</th>
+                  <th className="pb-3">{t("companyGiftCards.table.headers.value")}</th>
+                  <th className="pb-3">{t("companyGiftCards.table.headers.discount")}</th>
+                  <th className="pb-3">{t("companyGiftCards.table.headers.purchases")}</th>
+                  <th className="pb-3">{t("companyGiftCards.table.headers.revenue")}</th>
+                  <th className="pb-3">{t("companyGiftCards.table.headers.validPeriod")}</th>
+                  <th className="pb-3">{t("companyGiftCards.table.headers.actions")}</th>
                 </tr>
               </thead>
               <tbody className="text-white">
@@ -228,9 +253,11 @@ export default function GiftCardsPage() {
                     </td>
                     <td className="py-4">
                       {card.discountPercentage ? (
-                        <span className="text-sm text-green font-semibold">{card.discountPercentage}% OFF</span>
+                        <span className="text-sm text-green font-semibold">
+                          {t("companyGiftCards.table.discountValue", { value: card.discountPercentage })}
+                        </span>
                       ) : (
-                        <span className="text-sm text-gray-500">—</span>
+                        <span className="text-sm text-gray-500">{t("companyGiftCards.table.noDiscount")}</span>
                       )}
                     </td>
                     <td className="py-4">
@@ -253,7 +280,7 @@ export default function GiftCardsPage() {
                       <Link
                         to={`/company/gift-cards/${card.id}`}
                         className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
-                        title="View Details"
+                        title={t("companyGiftCards.table.viewDetails")}
                       >
                         <Eye size={16} />
                       </Link>

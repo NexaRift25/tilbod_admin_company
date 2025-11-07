@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   DollarSign,
@@ -17,29 +17,30 @@ import {
   Clock,
   BarChart3,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface FinancialTransaction {
   id: string;
   date: string;
   type: "revenue" | "commission" | "refund" | "payout";
-  description: string;
+  descriptionKey: string;
   amount: number;
   status: "completed" | "pending" | "failed";
   company?: string;
-  offerType?: string;
   reference: string;
 }
 
 interface CommissionBreakdown {
-  offerType: string;
+  offerTypeKey: string;
   baseFee: number;
   transactions: number;
   totalCommission: number;
   percentage: number;
+  baseFeeLabelKey: string;
 }
 
 interface MonthlyRevenue {
-  month: string;
+  monthKey: string;
   revenue: number;
   commission: number;
   netIncome: number;
@@ -49,13 +50,14 @@ interface MonthlyRevenue {
 }
 
 export default function AdminFinancialPage() {
+  const { t } = useTranslation();
   const [timeRange, setTimeRange] = useState("month");
   const [selectedTab, setSelectedTab] = useState<"overview" | "transactions" | "commissions" | "payouts">("overview");
 
   // Mock financial data
   const summaryStats = [
     {
-      name: "Total Revenue",
+      nameKey: "adminFinancial.summary.totalRevenue",
       value: "4,587,234 kr.",
       change: "+18.5%",
       changeType: "positive" as const,
@@ -65,7 +67,7 @@ export default function AdminFinancialPage() {
       iconColor: "text-green",
     },
     {
-      name: "Platform Commission",
+      nameKey: "adminFinancial.summary.platformCommission",
       value: "458,723 kr.",
       change: "+18.2%",
       changeType: "positive" as const,
@@ -75,7 +77,7 @@ export default function AdminFinancialPage() {
       iconColor: "text-primary",
     },
     {
-      name: "Net Income",
+      nameKey: "adminFinancial.summary.netIncome",
       value: "4,128,511 kr.",
       change: "+18.7%",
       changeType: "positive" as const,
@@ -85,7 +87,7 @@ export default function AdminFinancialPage() {
       iconColor: "text-blue-500",
     },
     {
-      name: "Total Transactions",
+      nameKey: "adminFinancial.summary.totalTransactions",
       value: "1,234",
       change: "+23",
       changeType: "positive" as const,
@@ -98,7 +100,7 @@ export default function AdminFinancialPage() {
 
   const monthlyRevenue: MonthlyRevenue[] = [
     {
-      month: "Jul 2024",
+      monthKey: "adminFinancial.months.jul2024",
       revenue: 350000,
       commission: 35000,
       netIncome: 315000,
@@ -107,7 +109,7 @@ export default function AdminFinancialPage() {
       growthType: "positive",
     },
     {
-      month: "Aug 2024",
+      monthKey: "adminFinancial.months.aug2024",
       revenue: 380000,
       commission: 38000,
       netIncome: 342000,
@@ -116,7 +118,7 @@ export default function AdminFinancialPage() {
       growthType: "positive",
     },
     {
-      month: "Sep 2024",
+      monthKey: "adminFinancial.months.sep2024",
       revenue: 420000,
       commission: 42000,
       netIncome: 378000,
@@ -125,7 +127,7 @@ export default function AdminFinancialPage() {
       growthType: "positive",
     },
     {
-      month: "Oct 2024",
+      monthKey: "adminFinancial.months.oct2024",
       revenue: 450000,
       commission: 45000,
       netIncome: 405000,
@@ -134,7 +136,7 @@ export default function AdminFinancialPage() {
       growthType: "positive",
     },
     {
-      month: "Nov 2024",
+      monthKey: "adminFinancial.months.nov2024",
       revenue: 480000,
       commission: 48000,
       netIncome: 432000,
@@ -143,7 +145,7 @@ export default function AdminFinancialPage() {
       growthType: "positive",
     },
     {
-      month: "Dec 2024",
+      monthKey: "adminFinancial.months.dec2024",
       revenue: 520000,
       commission: 52000,
       netIncome: 468000,
@@ -152,7 +154,7 @@ export default function AdminFinancialPage() {
       growthType: "positive",
     },
     {
-      month: "Jan 2025",
+      monthKey: "adminFinancial.months.jan2025",
       revenue: 587234,
       commission: 58723,
       netIncome: 528511,
@@ -164,32 +166,36 @@ export default function AdminFinancialPage() {
 
   const commissionBreakdown: CommissionBreakdown[] = [
     {
-      offerType: "Active Offer",
+      offerTypeKey: "adminFinancial.offerTypes.activeOffer",
       baseFee: 1,
       transactions: 567,
       totalCommission: 17577,
       percentage: 38.3,
+      baseFeeLabelKey: "adminFinancial.commissions.baseFeePerDay",
     },
     {
-      offerType: "Weekday Offer",
+      offerTypeKey: "adminFinancial.offerTypes.weekdayOffer",
       baseFee: 4,
       transactions: 423,
       totalCommission: 1692,
       percentage: 36.9,
+      baseFeeLabelKey: "adminFinancial.commissions.baseFeePerWeek",
     },
     {
-      offerType: "Happy Hour",
+      offerTypeKey: "adminFinancial.offerTypes.happyHour",
       baseFee: 10,
       transactions: 198,
       totalCommission: 5940,
       percentage: 12.9,
+      baseFeeLabelKey: "adminFinancial.commissions.baseFeePerMonth",
     },
     {
-      offerType: "Gift Card",
+      offerTypeKey: "adminFinancial.offerTypes.giftCard",
       baseFee: 5,
       transactions: 146,
       totalCommission: 2920,
       percentage: 6.4,
+      baseFeeLabelKey: "adminFinancial.commissions.baseFeePerSale",
     },
   ];
 
@@ -198,69 +204,105 @@ export default function AdminFinancialPage() {
       id: "1",
       date: "2025-01-20",
       type: "commission",
-      description: "Active Offer commission",
+      descriptionKey: "adminFinancial.transactionsTab.descriptions.activeOfferCommission",
       amount: 45,
       status: "completed",
       company: "Blue Lagoon Spa",
-      offerType: "Active Offer",
       reference: "COM-20250120-001",
     },
     {
       id: "2",
       date: "2025-01-20",
       type: "revenue",
-      description: "Gift Card sale",
+      descriptionKey: "adminFinancial.transactionsTab.descriptions.giftCardSale",
       amount: 8500,
       status: "completed",
       company: "Hotel Aurora",
-      offerType: "Gift Card",
       reference: "TXN-20250120-045",
     },
     {
       id: "3",
       date: "2025-01-19",
       type: "commission",
-      description: "Weekday Offer commission",
+      descriptionKey: "adminFinancial.transactionsTab.descriptions.weekdayOfferCommission",
       amount: 16,
       status: "completed",
       company: "Restaurant Downtown",
-      offerType: "Weekday Offer",
       reference: "COM-20250119-012",
     },
     {
       id: "4",
       date: "2025-01-19",
       type: "commission",
-      description: "Happy Hour commission",
+      descriptionKey: "adminFinancial.transactionsTab.descriptions.happyHourCommission",
       amount: 10,
       status: "completed",
       company: "Bar Central",
-      offerType: "Happy Hour",
       reference: "COM-20250119-008",
     },
     {
       id: "5",
       date: "2025-01-18",
       type: "refund",
-      description: "Gift Card refund",
+      descriptionKey: "adminFinancial.transactionsTab.descriptions.giftCardRefund",
       amount: 5000,
       status: "completed",
       company: "Nordic Wellness",
-      offerType: "Gift Card",
       reference: "REF-20250118-003",
     },
     {
       id: "6",
       date: "2025-01-18",
       type: "commission",
-      description: "Active Offer commission",
+      descriptionKey: "adminFinancial.transactionsTab.descriptions.activeOfferCommission",
       amount: 23,
       status: "pending",
       company: "Shopping Mall Iceland",
-      offerType: "Active Offer",
       reference: "COM-20250118-034",
     },
   ];
+
+  const timeRangeOptions = useMemo(
+    () => [
+      { value: "week", label: t("adminFinancial.timeRanges.week") },
+      { value: "month", label: t("adminFinancial.timeRanges.month") },
+      { value: "quarter", label: t("adminFinancial.timeRanges.quarter") },
+      { value: "year", label: t("adminFinancial.timeRanges.year") },
+      { value: "all", label: t("adminFinancial.timeRanges.all") },
+    ],
+    [t]
+  );
+
+  const tabs = useMemo(
+    () => [
+      { id: "overview", label: t("adminFinancial.tabs.overview"), icon: BarChart3 },
+      { id: "transactions", label: t("adminFinancial.tabs.transactions"), icon: FileText },
+      { id: "commissions", label: t("adminFinancial.tabs.commissions"), icon: Wallet },
+      { id: "payouts", label: t("adminFinancial.tabs.payouts"), icon: CreditCard },
+    ],
+    [t]
+  );
+
+  const quickActions = useMemo(
+    () => [
+      {
+        icon: Eye,
+        title: t("adminFinancial.quickActions.viewReportTitle"),
+        description: t("adminFinancial.quickActions.viewReportDescription"),
+      },
+      {
+        icon: Download,
+        title: t("adminFinancial.quickActions.exportDataTitle"),
+        description: t("adminFinancial.quickActions.exportDataDescription"),
+      },
+      {
+        icon: Building2,
+        title: t("adminFinancial.quickActions.companyReportsTitle"),
+        description: t("adminFinancial.quickActions.companyReportsDescription"),
+      },
+    ],
+    [t]
+  );
 
   const getTransactionIcon = (type: string) => {
     switch (type) {
@@ -318,6 +360,12 @@ export default function AdminFinancialPage() {
     }
   };
 
+  const getTransactionTypeLabel = (type: FinancialTransaction["type"]) =>
+    t(`adminFinancial.transactionsTab.types.${type}`);
+
+  const getStatusLabel = (status: FinancialTransaction["status"]) =>
+    t(`adminFinancial.transactionsTab.status.${status}`);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -330,8 +378,8 @@ export default function AdminFinancialPage() {
             <ArrowLeft className="text-primary" size={20} />
           </Link>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white">Financial Overview</h1>
-            <p className="text-gray-400 text-sm">Monitor platform revenue, commissions, and transactions</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">{t("adminFinancial.title")}</h1>
+            <p className="text-gray-400 text-sm">{t("adminFinancial.subtitle")}</p>
           </div>
         </div>
 
@@ -341,15 +389,15 @@ export default function AdminFinancialPage() {
             onChange={(e) => setTimeRange(e.target.value)}
             className="px-4 py-2 bg-background border border-primary/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary"
           >
-            <option value="week">Last Week</option>
-            <option value="month">Last Month</option>
-            <option value="quarter">Last Quarter</option>
-            <option value="year">Last Year</option>
-            <option value="all">All Time</option>
+            {timeRangeOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
           <button className="flex items-center gap-2 px-4 py-2 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all">
             <Download size={18} />
-            Export Report
+            {t("adminFinancial.exportReport")}
           </button>
         </div>
       </div>
@@ -360,7 +408,7 @@ export default function AdminFinancialPage() {
           const Icon = stat.icon;
           return (
             <div
-              key={stat.name}
+              key={stat.nameKey}
               className={`bg-card-background border ${stat.borderColor} rounded-2xl p-6`}
             >
               <div className="flex items-center justify-between mb-3">
@@ -373,7 +421,7 @@ export default function AdminFinancialPage() {
                   {stat.change}
                 </span>
               </div>
-              <h3 className="text-gray-400 text-sm mb-1">{stat.name}</h3>
+              <h3 className="text-gray-400 text-sm mb-1">{t(stat.nameKey)}</h3>
               <p className="text-white text-2xl font-bold">{stat.value}</p>
             </div>
           );
@@ -383,12 +431,7 @@ export default function AdminFinancialPage() {
       {/* Tabs */}
       <div className="bg-card-background border border-primary rounded-2xl p-4">
         <div className="flex items-center gap-2 overflow-x-auto">
-          {[
-            { id: "overview", label: "Overview", icon: BarChart3 },
-            { id: "transactions", label: "Transactions", icon: FileText },
-            { id: "commissions", label: "Commissions", icon: Wallet },
-            { id: "payouts", label: "Payouts", icon: CreditCard },
-          ].map((tab) => (
+          {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setSelectedTab(tab.id as any)}
@@ -411,25 +454,25 @@ export default function AdminFinancialPage() {
           {/* Monthly Revenue Table */}
           <div className="bg-card-background border border-primary rounded-2xl p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-white">Monthly Revenue Breakdown</h2>
+              <h2 className="text-xl font-bold text-white">{t("adminFinancial.overview.monthlyRevenueTitle")}</h2>
               <Filter size={20} className="text-gray-400" />
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-primary/30">
-                    <th className="text-left text-gray-400 text-sm py-3 px-4">Month</th>
-                    <th className="text-right text-gray-400 text-sm py-3 px-4">Revenue</th>
-                    <th className="text-right text-gray-400 text-sm py-3 px-4">Commission</th>
-                    <th className="text-right text-gray-400 text-sm py-3 px-4">Net Income</th>
-                    <th className="text-center text-gray-400 text-sm py-3 px-4">Transactions</th>
-                    <th className="text-right text-gray-400 text-sm py-3 px-4">Growth</th>
+                    <th className="text-left text-gray-400 text-sm py-3 px-4">{t("adminFinancial.overview.month")}</th>
+                    <th className="text-right text-gray-400 text-sm py-3 px-4">{t("adminFinancial.overview.revenue")}</th>
+                    <th className="text-right text-gray-400 text-sm py-3 px-4">{t("adminFinancial.overview.commission")}</th>
+                    <th className="text-right text-gray-400 text-sm py-3 px-4">{t("adminFinancial.overview.netIncome")}</th>
+                    <th className="text-center text-gray-400 text-sm py-3 px-4">{t("adminFinancial.overview.transactions")}</th>
+                    <th className="text-right text-gray-400 text-sm py-3 px-4">{t("adminFinancial.overview.growth")}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {monthlyRevenue.map((month, index) => (
                     <tr key={index} className="border-b border-primary/10 hover:bg-primary/5 transition-all">
-                      <td className="text-white font-medium py-3 px-4">{month.month}</td>
+                      <td className="text-white font-medium py-3 px-4">{t(month.monthKey)}</td>
                       <td className="text-white text-right py-3 px-4">{month.revenue.toLocaleString()} kr.</td>
                       <td className="text-primary text-right py-3 px-4">{month.commission.toLocaleString()} kr.</td>
                       <td className="text-green text-right py-3 px-4 font-semibold">{month.netIncome.toLocaleString()} kr.</td>
@@ -449,12 +492,12 @@ export default function AdminFinancialPage() {
           {/* Commission Breakdown */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="bg-card-background border border-primary rounded-2xl p-6">
-              <h2 className="text-xl font-bold text-white mb-6">Commission by Offer Type</h2>
+              <h2 className="text-xl font-bold text-white mb-6">{t("adminFinancial.commissions.commissionByOfferTitle")}</h2>
               <div className="space-y-4">
                 {commissionBreakdown.map((item, index) => (
                   <div key={index}>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-white font-medium">{item.offerType}</span>
+                      <span className="text-white font-medium">{t(item.offerTypeKey)}</span>
                       <span className="text-primary font-bold">{item.totalCommission.toLocaleString()} kr.</span>
                     </div>
                     <div className="flex items-center gap-3 mb-2">
@@ -467,8 +510,8 @@ export default function AdminFinancialPage() {
                       <span className="text-gray-400 text-sm">{item.percentage.toFixed(1)}%</span>
                     </div>
                     <div className="flex items-center justify-between text-xs text-gray-400">
-                      <span>{item.transactions} transactions</span>
-                      <span>{item.baseFee} kr. per {item.offerType.includes("Gift Card") ? "sale" : item.offerType.includes("Happy Hour") ? "month" : item.offerType.includes("Weekday") ? "week" : "day"}</span>
+                      <span>{t("adminFinancial.commissions.transactionCount", { count: item.transactions })}</span>
+                      <span>{t(item.baseFeeLabelKey, { fee: item.baseFee })}</span>
                     </div>
                   </div>
                 ))}
@@ -476,29 +519,23 @@ export default function AdminFinancialPage() {
             </div>
 
             <div className="bg-card-background border border-primary rounded-2xl p-6">
-              <h2 className="text-xl font-bold text-white mb-6">Quick Actions</h2>
+              <h2 className="text-xl font-bold text-white mb-6">{t("adminFinancial.quickActions.title")}</h2>
               <div className="space-y-3">
-                <button className="w-full flex items-center gap-3 p-4 bg-primary/10 border border-primary rounded-lg hover:bg-primary/20 transition-all text-left">
-                  <Eye className="text-primary" size={20} />
-                  <div>
-                    <p className="text-white font-semibold">View Financial Report</p>
-                    <p className="text-gray-400 text-sm">Generate detailed PDF report</p>
-                  </div>
-                </button>
-                <button className="w-full flex items-center gap-3 p-4 bg-primary/10 border border-primary rounded-lg hover:bg-primary/20 transition-all text-left">
-                  <Download className="text-primary" size={20} />
-                  <div>
-                    <p className="text-white font-semibold">Export Data</p>
-                    <p className="text-gray-400 text-sm">Download CSV/Excel file</p>
-                  </div>
-                </button>
-                <button className="w-full flex items-center gap-3 p-4 bg-primary/10 border border-primary rounded-lg hover:bg-primary/20 transition-all text-left">
-                  <Building2 className="text-primary" size={20} />
-                  <div>
-                    <p className="text-white font-semibold">Company Reports</p>
-                    <p className="text-gray-400 text-sm">View per-company breakdown</p>
-                  </div>
-                </button>
+                {quickActions.map((action, index) => {
+                  const ActionIcon = action.icon;
+                  return (
+                    <button
+                      key={index}
+                      className="w-full flex items-center gap-3 p-4 bg-primary/10 border border-primary rounded-lg hover:bg-primary/20 transition-all text-left"
+                    >
+                      <ActionIcon className="text-primary" size={20} />
+                      <div>
+                        <p className="text-white font-semibold">{action.title}</p>
+                        <p className="text-gray-400 text-sm">{action.description}</p>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -508,7 +545,7 @@ export default function AdminFinancialPage() {
       {selectedTab === "transactions" && (
         <div className="bg-card-background border border-primary rounded-2xl p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-white">Recent Transactions</h2>
+            <h2 className="text-xl font-bold text-white">{t("adminFinancial.transactionsTab.title")}</h2>
             <div className="flex items-center gap-2">
               <Filter size={20} className="text-gray-400" />
               <Download size={20} className="text-gray-400 cursor-pointer hover:text-primary transition-colors" />
@@ -518,12 +555,12 @@ export default function AdminFinancialPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-primary/30">
-                  <th className="text-left text-gray-400 text-sm py-3 px-4">Date</th>
-                  <th className="text-left text-gray-400 text-sm py-3 px-4">Type</th>
-                  <th className="text-left text-gray-400 text-sm py-3 px-4">Description</th>
-                  <th className="text-left text-gray-400 text-sm py-3 px-4">Company</th>
-                  <th className="text-right text-gray-400 text-sm py-3 px-4">Amount</th>
-                  <th className="text-center text-gray-400 text-sm py-3 px-4">Status</th>
+                  <th className="text-left text-gray-400 text-sm py-3 px-4">{t("adminFinancial.transactionsTab.table.date")}</th>
+                  <th className="text-left text-gray-400 text-sm py-3 px-4">{t("adminFinancial.transactionsTab.table.type")}</th>
+                  <th className="text-left text-gray-400 text-sm py-3 px-4">{t("adminFinancial.transactionsTab.table.description")}</th>
+                  <th className="text-left text-gray-400 text-sm py-3 px-4">{t("adminFinancial.transactionsTab.table.company")}</th>
+                  <th className="text-right text-gray-400 text-sm py-3 px-4">{t("adminFinancial.transactionsTab.table.amount")}</th>
+                  <th className="text-center text-gray-400 text-sm py-3 px-4">{t("adminFinancial.transactionsTab.table.status")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -536,10 +573,10 @@ export default function AdminFinancialPage() {
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2">
                           <Icon className={getTransactionColor(transaction.type)} size={16} />
-                          <span className="text-white capitalize">{transaction.type}</span>
+                          <span className="text-white capitalize">{getTransactionTypeLabel(transaction.type)}</span>
                         </div>
                       </td>
-                      <td className="text-gray-300 py-3 px-4">{transaction.description}</td>
+                      <td className="text-gray-300 py-3 px-4">{t(transaction.descriptionKey)}</td>
                       <td className="text-gray-300 py-3 px-4">{transaction.company}</td>
                       <td className={`text-right py-3 px-4 font-bold ${getTransactionColor(transaction.type)}`}>
                         {transaction.amount.toLocaleString()} kr.
@@ -548,7 +585,7 @@ export default function AdminFinancialPage() {
                         <div className="flex items-center justify-center gap-1">
                           <StatusIcon className={getStatusColor(transaction.status)} size={16} />
                           <span className={`text-sm capitalize ${getStatusColor(transaction.status)}`}>
-                            {transaction.status}
+                            {getStatusLabel(transaction.status)}
                           </span>
                         </div>
                       </td>
@@ -564,12 +601,12 @@ export default function AdminFinancialPage() {
       {selectedTab === "commissions" && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-card-background border border-primary rounded-2xl p-6">
-            <h2 className="text-xl font-bold text-white mb-6">Commission Structure</h2>
+            <h2 className="text-xl font-bold text-white mb-6">{t("adminFinancial.commissions.structureTitle")}</h2>
             <div className="space-y-4">
               {commissionBreakdown.map((item, index) => (
                 <div key={index} className="border border-primary/30 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-white font-semibold">{item.offerType}</span>
+                    <span className="text-white font-semibold">{t(item.offerTypeKey)}</span>
                     <span className="text-primary font-bold">{item.totalCommission.toLocaleString()} kr.</span>
                   </div>
                   <div className="flex items-center gap-3 mb-2">
@@ -583,11 +620,11 @@ export default function AdminFinancialPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <p className="text-gray-400">Base Fee</p>
+                      <p className="text-gray-400">{t("adminFinancial.commissions.baseFeeLabel")}</p>
                       <p className="text-white font-medium">{item.baseFee} kr.</p>
                     </div>
                     <div>
-                      <p className="text-gray-400">Transactions</p>
+                      <p className="text-gray-400">{t("adminFinancial.commissions.transactionsTitle")}</p>
                       <p className="text-white font-medium">{item.transactions}</p>
                     </div>
                   </div>
@@ -597,22 +634,22 @@ export default function AdminFinancialPage() {
           </div>
 
           <div className="bg-card-background border border-primary rounded-2xl p-6">
-            <h2 className="text-xl font-bold text-white mb-6">Commission Summary</h2>
+            <h2 className="text-xl font-bold text-white mb-6">{t("adminFinancial.commissions.summaryTitle")}</h2>
             <div className="space-y-6">
               <div>
-                <p className="text-gray-400 text-sm mb-2">Total Commission Earned</p>
+                <p className="text-gray-400 text-sm mb-2">{t("adminFinancial.commissions.totalCommissionEarned")}</p>
                 <p className="text-primary text-3xl font-bold">{commissionBreakdown.reduce((sum, item) => sum + item.totalCommission, 0).toLocaleString()} kr.</p>
               </div>
               <div className="h-px bg-primary/30"></div>
               <div>
-                <p className="text-gray-400 text-sm mb-2">Average per Transaction</p>
+                <p className="text-gray-400 text-sm mb-2">{t("adminFinancial.commissions.averagePerTransaction")}</p>
                 <p className="text-white text-xl font-bold">
                   {(commissionBreakdown.reduce((sum, item) => sum + item.totalCommission, 0) / commissionBreakdown.reduce((sum, item) => sum + item.transactions, 0)).toFixed(2)} kr.
                 </p>
               </div>
               <div className="h-px bg-primary/30"></div>
               <div>
-                <p className="text-gray-400 text-sm mb-2">Total Transactions</p>
+                <p className="text-gray-400 text-sm mb-2">{t("adminFinancial.commissions.totalTransactions")}</p>
                 <p className="text-white text-xl font-bold">{commissionBreakdown.reduce((sum, item) => sum + item.transactions, 0)}</p>
               </div>
             </div>
@@ -624,8 +661,8 @@ export default function AdminFinancialPage() {
         <div className="bg-card-background border border-primary rounded-2xl p-6">
           <div className="text-center py-12">
             <CreditCard className="mx-auto text-gray-400 mb-4" size={48} />
-            <h3 className="text-xl font-bold text-white mb-2">Payout Management</h3>
-            <p className="text-gray-400">Payout functionality will be available soon</p>
+            <h3 className="text-xl font-bold text-white mb-2">{t("adminFinancial.payouts.title")}</h3>
+            <p className="text-gray-400">{t("adminFinancial.payouts.comingSoon")}</p>
           </div>
         </div>
       )}
