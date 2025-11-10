@@ -82,16 +82,16 @@ export default function AdminLayout() {
         href: "/admin/product-categories",
         icon: Package,
       },
-      {
-        name: t("adminSidebar.nav.discountLabels"),
-        href: "/admin/discount-labels",
-        icon: Tag,
-      },
-      {
-        name: t("adminSidebar.nav.targetedDiscounts"),
-        href: "/admin/targeted-discounts",
-        icon: Target,
-      },
+      // {
+      //   name: t("adminSidebar.nav.discountLabels"),
+      //   href: "/admin/discount-labels",
+      //   icon: Tag,
+      // },
+      // {
+      //   name: t("adminSidebar.nav.targetedDiscounts"),
+      //   href: "/admin/targeted-discounts",
+      //   icon: Target,
+      // },
       {
         name: t("adminSidebar.nav.financial"),
         href: "/admin/financial",

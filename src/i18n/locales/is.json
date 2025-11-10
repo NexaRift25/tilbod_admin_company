@@ -78,9 +78,24 @@
       "discountValue": "{{value}}% afsláttur",
       "noDiscount": "—",
       "viewDetails": "Skoða nánar",
+      "verify": "Staðfesta gjafabréf",
       "emptyTitle": "Engin gjafabréf fundust",
       "emptyFiltered": "Reyndu að breyta leit eða síu",
       "emptyDefault": "Þú átt ekki samþykkt gjafabréf ennþá"
+    },
+    "verifyModal": {
+      "title": "Staðfesta gjafabréf",
+      "fallbackCard": "þetta gjafabréf",
+      "description": "Sláðu inn kóðann sem viðskiptavinurinn gaf til að staðfesta innlausn fyrir {{card}}.",
+      "codeLabel": "Gjafabréfskóði",
+      "codePlaceholder": "Sláðu inn gjafabréfskóða",
+      "submit": "Staðfesta kóða",
+      "cancel": "Hætta við",
+      "resultSuccess": "Kóðinn {{code}} er gildur fyrir {{card}}. Þú getur innleyst hann núna.",
+      "resultError": "Ekki tókst að staðfesta kóðann. Reyndu aftur eða hafðu samband við þjónustu.",
+      "errors": {
+        "required": "Sláðu inn gjafabréfskóða til að staðfesta."
+      }
     }
   },
   "companyGiftCardDetails": {

@@ -78,9 +78,24 @@
       "discountValue": "{{value}}% OFF",
       "noDiscount": "—",
       "viewDetails": "View details",
+      "verify": "Verify gift card",
       "emptyTitle": "No gift cards found",
       "emptyFiltered": "Try adjusting your search or filter criteria",
       "emptyDefault": "You don't have any approved gift cards yet"
+    },
+    "verifyModal": {
+      "title": "Verify Gift Card",
+      "fallbackCard": "this gift card",
+      "description": "Enter the code provided by the customer to confirm redemption for {{card}}.",
+      "codeLabel": "Gift card code",
+      "codePlaceholder": "Enter the gift card code",
+      "submit": "Verify code",
+      "cancel": "Cancel",
+      "resultSuccess": "Code {{code}} is valid for {{card}}. You can redeem it now.",
+      "resultError": "We couldn't verify that code. Please try again or contact support.",
+      "errors": {
+        "required": "Enter a gift card code to verify."
+      }
     }
   },
   "companyGiftCardDetails": {

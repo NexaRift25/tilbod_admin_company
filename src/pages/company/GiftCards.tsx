@@ -8,8 +8,10 @@ import {
   Filter,
   DollarSign,
   Users,
+  ShieldCheck,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import Modal from "@/components/ui/modal";
 
 interface GiftCard {
   id: string;
@@ -29,6 +31,10 @@ export default function GiftCardsPage() {
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("approved");
+  const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
+  const [selectedCard, setSelectedCard] = useState<GiftCard | null>(null);
+  const [verificationCode, setVerificationCode] = useState("");
+  const [verificationFeedback, setVerificationFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   const [giftCards] = useState<GiftCard[]>([
     {
@@ -124,6 +130,42 @@ export default function GiftCardsPage() {
     ],
     [stats.total, stats.totalPurchases, stats.totalRevenue]
   );
+
+  const handleOpenVerifyModal = (card: GiftCard) => {
+    setSelectedCard(card);
+    setVerificationCode("");
+    setVerificationFeedback(null);
+    setIsVerifyModalOpen(true);
+  };
+
+  const handleCloseVerifyModal = () => {
+    setIsVerifyModalOpen(false);
+    setSelectedCard(null);
+    setVerificationCode("");
+    setVerificationFeedback(null);
+  };
+
+  const handleVerifySubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!verificationCode.trim()) {
+      setVerificationFeedback({
+        type: "error",
+        message: t("companyGiftCards.verifyModal.errors.required"),
+      });
+      return;
+    }
+
+    const normalizedCode = verificationCode.trim();
+
+    setVerificationFeedback({
+      type: "success",
+      message: t("companyGiftCards.verifyModal.resultSuccess", {
+        code: normalizedCode,
+        card: selectedCard?.title ?? "",
+      }),
+    });
+  };
 
   const statusOptions = useMemo(
     () => [
@@ -277,13 +319,24 @@ export default function GiftCardsPage() {
                       </div>
                     </td>
                     <td className="py-4">
-                      <Link
-                        to={`/company/gift-cards/${card.id}`}
-                        className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
-                        title={t("companyGiftCards.table.viewDetails")}
-                      >
-                        <Eye size={16} />
-                      </Link>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => handleOpenVerifyModal(card)}
+                          className="p-2 text-gray-400 hover:text-green hover:bg-green/10 rounded-lg transition-all"
+                          title={t("companyGiftCards.table.verify")}
+                          aria-label={t("companyGiftCards.table.verify")}
+                        >
+                          <ShieldCheck size={16} />
+                        </button>
+                        <Link
+                          to={`/company/gift-cards/${card.id}`}
+                          className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+                          title={t("companyGiftCards.table.viewDetails")}
+                        >
+                          <Eye size={16} />
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -292,6 +345,64 @@ export default function GiftCardsPage() {
           </div>
         )}
       </div>
+
+      <Modal
+        isOpen={isVerifyModalOpen}
+        onClose={handleCloseVerifyModal}
+        title={t("companyGiftCards.verifyModal.title", { card: selectedCard?.title ?? "" })}
+        footer={
+          <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={handleCloseVerifyModal}
+              className="px-4 py-2 rounded-lg border border-primary/40 text-gray-300 hover:text-white hover:border-primary transition-all"
+            >
+              {t("companyGiftCards.verifyModal.cancel")}
+            </button>
+            <button
+              type="submit"
+              form="verify-gift-card-form"
+              className="px-4 py-2 rounded-lg bg-primary text-black font-semibold hover:bg-primary/80 transition-all"
+            >
+              {t("companyGiftCards.verifyModal.submit")}
+            </button>
+          </div>
+        }
+      >
+        <form id="verify-gift-card-form" onSubmit={handleVerifySubmit} className="space-y-4">
+          <p className="text-gray-400">
+            {t("companyGiftCards.verifyModal.description", {
+              card: selectedCard?.title ?? t("companyGiftCards.verifyModal.fallbackCard"),
+            })}
+          </p>
+
+          <div className="space-y-2">
+            <label htmlFor="gift-card-verification-code" className="text-sm font-medium text-white">
+              {t("companyGiftCards.verifyModal.codeLabel")}
+            </label>
+            <input
+              id="gift-card-verification-code"
+              type="text"
+              value={verificationCode}
+              onChange={(event) => setVerificationCode(event.target.value)}
+              placeholder={t("companyGiftCards.verifyModal.codePlaceholder")}
+              className="w-full rounded-lg border border-primary/40 bg-background px-3 py-2 text-white placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2"
+            />
+          </div>
+
+          {verificationFeedback && (
+            <div
+              className={`rounded-lg border px-4 py-3 text-sm ${
+                verificationFeedback.type === "success"
+                  ? "border-green/40 bg-green/10 text-green"
+                  : "border-red-500/40 bg-red-500/10 text-red-500"
+              }`}
+            >
+              {verificationFeedback.message}
+            </div>
+          )}
+        </form>
+      </Modal>
     </div>
   );
 }
