@@ -14,7 +14,7 @@ import {
   FolderOpen,
   Package,
   TrendingUp,
-  Target,
+  CreditCard,
 } from "lucide-react";
 import Container from "@/components/ui/Container";
 import { Logo, MobileLogo } from "@/components/ui/Header";
@@ -61,6 +61,11 @@ export default function AdminLayout() {
         name: t("adminSidebar.nav.commission"),
         href: "/admin/commission-pricing",
         icon: DollarSign,
+      },
+      {
+        name: t("adminSidebar.nav.paymentHistory"),
+        href: "/admin/payment-history",
+        icon: CreditCard,
       },
       {
         name: t("adminSidebar.nav.analytics"),

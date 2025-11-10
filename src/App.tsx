@@ -31,6 +31,7 @@ import AdminOffersPage from './pages/admin/Offers';
 import AdminOfferDetailsPage from './pages/admin/OfferDetails';
 import AdminUsersPage from './pages/admin/Users';
 import AdminCommissionPricingPage from './pages/admin/CommissionPricing';
+import AdminPaymentHistoryPage from './pages/admin/PaymentHistory';
 import AdminAnalyticsPage from './pages/admin/Analytics';
 import AdminEventsSeasonsPage from './pages/admin/EventsSeasons';
 import AdminCategoriesPage from './pages/admin/Categories';
@@ -107,6 +108,7 @@ function App() {
             <Route path="offers/:id" element={<AdminOfferDetailsPage />} />
             <Route path="users" element={<AdminUsersPage />} />
             <Route path="commission-pricing" element={<AdminCommissionPricingPage />} />
+            <Route path="payment-history" element={<AdminPaymentHistoryPage />} />
             <Route path="analytics" element={<AdminAnalyticsPage />} />
             <Route path="events-seasons" element={<AdminEventsSeasonsPage />} />
             <Route path="categories" element={<AdminCategoriesPage />} />

@@ -259,6 +259,7 @@
       "offers": "Tilboð",
       "users": "Notendur",
       "commission": "Þóknun og verð",
+      "paymentHistory": "Greiðslusaga",
       "analytics": "Greiningar",
       "events": "Viðburðir og árstíðir",
       "categories": "Flokkar",
@@ -1676,6 +1677,91 @@
           "example": "Dæmi: 10.000 kr. gjafabréf = 500 kr. þóknun"
         }
       }
+    }
+  },
+  "adminPaymentHistory": {
+    "title": "Greiðslusaga",
+    "subtitle": "Skoðaðu allar útgreiðslur, þóknanir, endurgreiðslur og leiðréttingar kerfisins.",
+    "actions": {
+      "refresh": "Endurhlaða",
+      "export": "Flytja út allt",
+      "downloadVisible": "Hlaða niður sýnilegum línum"
+    },
+    "stats": {
+      "totalVolume": "Heildarupphæð",
+      "last30Days": "Síðustu 30 dagar",
+      "completed": "Lokið færslur",
+      "processing": "Í vinnslu / í bið",
+      "failed": "Misheppnaðar færslur",
+      "failureRate": "Hlutfall misheppnaðra {{value}}"
+    },
+    "filters": {
+      "searchLabel": "Leit",
+      "searchPlaceholder": "Leitað eftir fyrirtæki eða viðmiðun...",
+      "statusLabel": "Staða",
+      "typeLabel": "Tegund færslu",
+      "status": {
+        "all": "Allar stöður"
+      },
+      "type": {
+        "all": "Allar færslutegundir"
+      },
+      "reset": "Endurstilla síur"
+    },
+    "types": {
+      "payout": "Útgreiðsla",
+      "commission": "Þóknun",
+      "refund": "Endurgreiðsla",
+      "adjustment": "Leiðrétting"
+    },
+    "status": {
+      "completed": "Lokið",
+      "pending": "Í bið",
+      "processing": "Í vinnslu",
+      "failed": "Misheppnað"
+    },
+    "methods": {
+      "bankTransfer": "Bankafærsla",
+      "card": "Kort",
+      "manual": "Handvirkt"
+    },
+    "table": {
+      "title": "Færslur",
+      "subtitle": "Sýni {{count}} færslur",
+      "headers": {
+        "reference": "Viðmiðun",
+        "company": "Fyrirtæki",
+        "type": "Tegund",
+        "amount": "Brúttóupphæð",
+        "fees": "Gjöld",
+        "netAmount": "Nettóupphæð",
+        "status": "Staða",
+        "method": "Aðferð",
+        "date": "Dagsetning",
+        "actions": "Aðgerðir"
+      },
+      "actions": {
+        "view": "Skoða nánar"
+      },
+      "empty": {
+        "title": "Engar færslur fundust",
+        "description": "Stilltu síurnar eða prófaðu aðra leit."
+      }
+    },
+    "modal": {
+      "title": "Færsla {{reference}}",
+      "export": "Flytja út kvittun",
+      "company": "Fyrirtæki",
+      "status": "Staða",
+      "type": "Tegund",
+      "amount": "Brúttóupphæð",
+      "fees": "Gjöld",
+      "netAmount": "Nettóupphæð",
+      "method": "Greiðsluaðferð",
+      "processedAt": "Unnið",
+      "processedBy": "Unnið af",
+      "description": "Lýsing",
+      "notice": "Þessi færsla er hluti af óbreytanlegu færslusafni. Leiðréttingar þarf að skrá sem nýja leiðréttingarfærslu."
     }
   },
   "adminCommissionApproval": {

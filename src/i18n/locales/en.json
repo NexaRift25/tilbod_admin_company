@@ -259,6 +259,7 @@
       "offers": "Offers",
       "users": "Users",
       "commission": "Commission & Price",
+      "paymentHistory": "Payment History",
       "analytics": "Analytics",
       "events": "Events & Seasons",
       "categories": "Categories",
@@ -1847,6 +1848,91 @@
           "example": "Example: 10,000 kr. gift card = 500 kr. commission"
         }
       }
+    }
+  },
+  "adminPaymentHistory": {
+    "title": "Payment History",
+    "subtitle": "Review payouts, commissions, refunds, and adjustments across the platform.",
+    "actions": {
+      "refresh": "Refresh",
+      "export": "Export all",
+      "downloadVisible": "Download visible rows"
+    },
+    "stats": {
+      "totalVolume": "Total Volume",
+      "last30Days": "Last 30 days",
+      "completed": "Completed Transactions",
+      "processing": "Pending / Processing",
+      "failed": "Failed Transactions",
+      "failureRate": "Failure rate {{value}}"
+    },
+    "filters": {
+      "searchLabel": "Search",
+      "searchPlaceholder": "Search by company or reference...",
+      "statusLabel": "Status",
+      "typeLabel": "Transaction type",
+      "status": {
+        "all": "All statuses"
+      },
+      "type": {
+        "all": "All transaction types"
+      },
+      "reset": "Reset filters"
+    },
+    "types": {
+      "payout": "Payout",
+      "commission": "Commission",
+      "refund": "Refund",
+      "adjustment": "Adjustment"
+    },
+    "status": {
+      "completed": "Completed",
+      "pending": "Pending",
+      "processing": "Processing",
+      "failed": "Failed"
+    },
+    "methods": {
+      "bankTransfer": "Bank transfer",
+      "card": "Card refund",
+      "manual": "Manual"
+    },
+    "table": {
+      "title": "Transactions",
+      "subtitle": "Showing {{count}} transactions",
+      "headers": {
+        "reference": "Reference",
+        "company": "Company",
+        "type": "Type",
+        "amount": "Amount",
+        "fees": "Fees",
+        "netAmount": "Net amount",
+        "status": "Status",
+        "method": "Method",
+        "date": "Date",
+        "actions": "Actions"
+      },
+      "actions": {
+        "view": "View details"
+      },
+      "empty": {
+        "title": "No transactions match your filters",
+        "description": "Adjust your filters or try a different search term."
+      }
+    },
+    "modal": {
+      "title": "Transaction {{reference}}",
+      "export": "Export receipt",
+      "company": "Company",
+      "status": "Status",
+      "type": "Type",
+      "amount": "Gross amount",
+      "fees": "Platform fees",
+      "netAmount": "Net amount",
+      "method": "Payment method",
+      "processedAt": "Processed at",
+      "processedBy": "Processed by",
+      "description": "Description",
+      "notice": "This record is part of the immutable ledger. Any corrections must be performed as a new adjustment transaction."
     }
   },
   "adminCommissionApproval": {
