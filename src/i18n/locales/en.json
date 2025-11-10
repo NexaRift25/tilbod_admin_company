@@ -1708,7 +1708,8 @@
     "units": {
       "day": "day",
       "week": "week",
-      "month": "month"
+      "month": "month",
+      "percentage": "percentage"
     },
     "updatedBy": {
       "adminUser": "Admin User"
@@ -1719,6 +1720,21 @@
       "description": "Description",
       "lastUpdatedLabel": "Last Updated",
       "lastUpdated": "Last updated {{date}} · {{user}}",
+      "addModal": {
+        "title": "Create Commission Rule",
+        "description": "Define the commission rate and offer type you would like to apply.",
+        "offerType": "Offer type",
+        "offerTypeUnavailable": "This offer type already has an active commission rule.",
+        "rate": "Commission rate",
+        "ratePlaceholder": "Enter rate per {{unit}}",
+        "rateHint": "Commission will be charged per {{unit}}.",
+        "submit": "Create rule",
+        "errors": {
+          "rateRequired": "Enter a commission rate.",
+          "ratePositive": "Rate must be greater than zero.",
+          "offerTypeDuplicate": "A commission rule for this offer type already exists."
+        }
+      },
       "rate": {
         "label": "Commission Rate",
         "percentage": "{{rate}}% per sale",
@@ -1754,6 +1770,27 @@
       "valueLabel": "Value",
       "descriptionLabel": "Description",
       "applicableLabel": "Applicable To",
+      "addModal": {
+        "title": "Create Pricing Rule",
+        "description": "Set how this pricing rule should apply across the platform.",
+        "name": "Rule name",
+        "namePlaceholder": "Enter a descriptive rule name",
+        "descriptionLabel": "Rule description",
+        "descriptionPlaceholder": "Describe how and when this pricing rule should be used",
+        "type": "Rule type",
+        "value": "Value",
+        "valuePlaceholder": "Enter value in {{unit}}",
+        "valueHint": "Applied as {{unit}} for each eligible offer.",
+        "amountUnit": "kr.",
+        "applicable": "Applies to",
+        "submit": "Create rule",
+        "errors": {
+          "nameRequired": "Enter a rule name.",
+          "valueRequired": "Enter a value for this rule.",
+          "valuePositive": "Value must be greater than zero.",
+          "applicableRequired": "Select at least one category this rule applies to."
+        }
+      },
       "valueDisplay": {
         "percentage": "{{value}}%",
         "amount": "{{amount}} kr."

@@ -1537,7 +1537,8 @@
     "units": {
       "day": "dagur",
       "week": "vika",
-      "month": "mánuður"
+      "month": "mánuður",
+      "percentage": "hlutfall"
     },
     "updatedBy": {
       "adminUser": "Kerfisstjóri"
@@ -1548,6 +1549,21 @@
       "description": "Lýsing",
       "lastUpdatedLabel": "Síðast uppfært",
       "lastUpdated": "Uppfært {{date}} · {{user}}",
+      "addModal": {
+        "title": "Búa til þóknunarreglu",
+        "description": "Skilgreindu þóknunarhlutfall og tegund tilboðs sem á að gilda.",
+        "offerType": "Tegund tilboðs",
+        "offerTypeUnavailable": "Þessi tegund tilboðs hefur þegar virka þóknunarreglu.",
+        "rate": "Þóknunarhlutfall",
+        "ratePlaceholder": "Sláðu inn hlutfall á {{unit}}",
+        "rateHint": "Þóknun verður rukkuð á hvert {{unit}}.",
+        "submit": "Búa til reglu",
+        "errors": {
+          "rateRequired": "Sláðu inn þóknunarhlutfall.",
+          "ratePositive": "Hlutfall verður að vera hærra en núll.",
+          "offerTypeDuplicate": "Þóknunarregla fyrir þessa tegund tilboðs er þegar til."
+        }
+      },
       "rate": {
         "label": "Þóknunarhlutfall",
         "percentage": "{{rate}}% af hverri sölu",
@@ -1583,6 +1599,27 @@
       "valueLabel": "Gildi",
       "descriptionLabel": "Lýsing",
       "applicableLabel": "Gildir fyrir",
+      "addModal": {
+        "title": "Búa til verðreglu",
+        "description": "Skilgreindu hvernig þessi regla á að gilda í kerfinu.",
+        "name": "Heiti reglu",
+        "namePlaceholder": "Settu lýsandi heiti á regluna",
+        "descriptionLabel": "Lýsing reglu",
+        "descriptionPlaceholder": "Lýstu hvernig og hvenær regluna á að nota",
+        "type": "Tegund reglu",
+        "value": "Gildi",
+        "valuePlaceholder": "Sláðu inn gildi í {{unit}}",
+        "valueHint": "Beitt sem {{unit}} á viðeigandi tilboð.",
+        "amountUnit": "kr.",
+        "applicable": "Gildir fyrir",
+        "submit": "Búa til reglu",
+        "errors": {
+          "nameRequired": "Sláðu inn heiti reglu.",
+          "valueRequired": "Sláðu inn gildi fyrir regluna.",
+          "valuePositive": "Gildi verður að vera hærra en núll.",
+          "applicableRequired": "Veldu að minnsta kosti einn flokk sem reglan á við."
+        }
+      },
       "valueDisplay": {
         "percentage": "{{value}}%",
         "amount": "{{amount}} kr."
