@@ -126,6 +126,56 @@
       "usedCards": "Used Cards",
       "totalRevenue": "Total Revenue"
     },
+    "verify": {
+      "title": "Verify Gift Card",
+      "subtitle": "Confirm a purchase by scanning in person, emailing the customer, or entering a code.",
+      "emptyState": "Once customers start redeeming this gift card, you'll see their purchases here.",
+      "methodLabel": "Verification method",
+      "method": {
+        "scan": "Scan in person",
+        "email": "Send email",
+        "code": "Enter code"
+      },
+      "autoHint": "We automatically match the purchase details with your gift card records.",
+      "scanTitle": "Verify on location",
+      "scanDescription": "Scan the customer's code to locate the next active purchase ready to redeem.",
+      "scanButton": "Find active purchase",
+      "scanButtonLoading": "Verifying...",
+      "codeTitle": "Manual code entry",
+      "codeDescription": "Type in the verification code that the customer provides to complete redemption.",
+      "codeLabel": "Verification code",
+      "codePlaceholder": "Enter verification code",
+      "codeButton": "Verify code",
+      "codeButtonLoading": "Verifying...",
+      "emailTitle": "Email verification link",
+      "emailDescription": "Send the customer a secure link—once they open it we'll match their purchase automatically.",
+      "emailLabel": "Customer email",
+      "emailPlaceholder": "name@example.com",
+      "emailButton": "Send verification email",
+      "emailButtonLoading": "Sending...",
+      "scanSuccess": "Found an active purchase for {{customer}}. Choose how to proceed below.",
+      "emailSuccess": "Found {{customer}}'s purchase via {{email}}. Choose how to proceed below.",
+      "codeSuccess": "Code {{code}} matches {{customer}}. Choose how to proceed below.",
+      "matchFoundLabel": "Matching purchase",
+      "matchAmount": "Purchase amount",
+      "matchStatus": "Status",
+      "matchCode": "Gift card code",
+      "matchPurchaseDate": "Purchase date",
+      "cancelButton": "Cancel",
+      "obtainButton": "Obtain",
+      "obtainButtonLoading": "Completing...",
+      "obtainSuccess": "Gift card for {{customer}} has been marked as redeemed.",
+      "errors": {
+        "noPurchaseSelected": "Select a purchase to verify.",
+        "alreadyProcessed": "This purchase is already {{status}}.",
+        "emailRequired": "Email address is required.",
+        "emailInvalid": "Enter a valid email address.",
+        "codeRequired": "Enter a verification code.",
+        "emailNotFound": "No purchase found for {{email}}.",
+        "codeNotFound": "No purchase matches the code {{code}}.",
+        "noActivePurchases": "There are no active purchases to verify."
+      }
+    },
     "purchases": {
       "title": "Gift Card Purchases ({{count}})",
       "emptyTitle": "No purchases yet",
@@ -134,32 +184,13 @@
         "customer": "Customer",
         "purchaseDate": "Purchase Date",
         "amount": "Amount",
-        "status": "Status",
-        "otp": "OTP",
-        "actions": "Actions"
+        "status": "Status"
       },
       "status": {
         "active": "Active",
         "used": "Used",
         "expired": "Expired"
-      },
-      "notGenerated": "Not generated",
-      "generate": "Generate OTP",
-      "regenerate": "Regenerate",
-      "generateTooltip": "Generate OTP",
-      "inactiveTooltip": "Only active cards can generate OTP",
-      "copyOtp": "Copy OTP"
-    },
-    "modal": {
-      "title": "OTP Generated Successfully",
-      "customerLabel": "Customer",
-      "emailLabel": "Email",
-      "valueLabel": "Gift Card Value",
-      "generatedLabel": "Generated OTP",
-      "shareHint": "Share this OTP with the customer. They can use it to redeem their gift card.",
-      "validityHint": "OTP is valid for redemption. Regenerating will invalidate the previous one.",
-      "close": "Close",
-      "copy": "Copy OTP"
+      }
     }
   },
   "companySidebar": {

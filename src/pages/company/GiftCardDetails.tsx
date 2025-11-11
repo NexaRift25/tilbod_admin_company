@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, FormEvent } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   ArrowLeft,
@@ -8,12 +8,10 @@ import {
   Calendar,
   CheckCircle,
   Key,
-  Copy,
-  RefreshCw,
+  QrCode,
   Mail,
   Phone,
 } from "lucide-react";
-import Modal from "@/components/ui/modal";
 import { useTranslation } from "react-i18next";
 
 interface GiftCardPurchase {
@@ -104,6 +102,8 @@ const mockPurchases: Record<string, GiftCardPurchase[]> = {
       purchaseDate: "2025-01-15",
       purchaseAmount: 15000,
       status: "active",
+      otp: "SPA-001",
+      otpGeneratedAt: "2025-01-15T09:00:00Z",
     },
     {
       id: "p2",
@@ -112,6 +112,8 @@ const mockPurchases: Record<string, GiftCardPurchase[]> = {
       purchaseDate: "2025-01-18",
       purchaseAmount: 15000,
       status: "active",
+      otp: "SPA-002",
+      otpGeneratedAt: "2025-01-18T11:30:00Z",
     },
     {
       id: "p3",
@@ -121,6 +123,8 @@ const mockPurchases: Record<string, GiftCardPurchase[]> = {
       purchaseDate: "2025-01-20",
       purchaseAmount: 15000,
       status: "used",
+      otp: "SPA-003",
+      otpGeneratedAt: "2025-01-20T13:45:00Z",
       usedAt: "2025-01-25",
     },
     {
@@ -130,6 +134,8 @@ const mockPurchases: Record<string, GiftCardPurchase[]> = {
       purchaseDate: "2025-01-12",
       purchaseAmount: 15000,
       status: "active",
+      otp: "SPA-004",
+      otpGeneratedAt: "2025-01-12T10:15:00Z",
     },
   ],
   "2": [
@@ -140,6 +146,8 @@ const mockPurchases: Record<string, GiftCardPurchase[]> = {
       purchaseDate: "2025-01-14",
       purchaseAmount: 10000,
       status: "active",
+      otp: "REST-001",
+      otpGeneratedAt: "2025-01-14T16:00:00Z",
     },
     {
       id: "p6",
@@ -148,6 +156,8 @@ const mockPurchases: Record<string, GiftCardPurchase[]> = {
       purchaseDate: "2025-01-16",
       purchaseAmount: 10000,
       status: "used",
+      otp: "REST-002",
+      otpGeneratedAt: "2025-01-16T12:20:00Z",
       usedAt: "2025-01-22",
     },
   ],
@@ -159,10 +169,13 @@ export default function GiftCardDetailsPage() {
   const [giftCard, setGiftCard] = useState<GiftCard | null>(null);
   const [purchases, setPurchases] = useState<GiftCardPurchase[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedPurchase, setSelectedPurchase] = useState<GiftCardPurchase | null>(null);
-  const [showOtpModal, setShowOtpModal] = useState(false);
-  const [generatedOtp, setGeneratedOtp] = useState<string>("");
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [verificationMethod, setVerificationMethod] = useState<"scan" | "email" | "code">("scan");
+  const [verificationFeedback, setVerificationFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [emailAddress, setEmailAddress] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [matchedPurchaseId, setMatchedPurchaseId] = useState<string | null>(null);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
 
   const stats = useMemo(
     () => ({
@@ -172,6 +185,11 @@ export default function GiftCardDetailsPage() {
       totalRevenue: purchases.reduce((sum, p) => sum + p.purchaseAmount, 0),
     }),
     [purchases]
+  );
+
+  const matchedPurchase = useMemo(
+    () => purchases.find((purchase) => purchase.id === matchedPurchaseId) ?? null,
+    [purchases, matchedPurchaseId]
   );
 
   useEffect(() => {
@@ -190,35 +208,17 @@ export default function GiftCardDetailsPage() {
     fetchData();
   }, [id]);
 
-  const generateOTP = () => {
-    // Generate 6-digit OTP
-    return Math.floor(100000 + Math.random() * 900000).toString();
-  };
+  useEffect(() => {
+    setVerificationFeedback(null);
+    setMatchedPurchaseId(null);
+    setVerificationCode("");
+  }, [verificationMethod]);
 
-  const handleGenerateOTP = async (purchase: GiftCardPurchase) => {
-    setIsGenerating(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const otp = generateOTP();
-    setGeneratedOtp(otp);
-    
-    // Update purchase with OTP
-    setPurchases(prev => prev.map(p => 
-      p.id === purchase.id 
-        ? { ...p, otp, otpGeneratedAt: new Date().toISOString() }
-        : p
-    ));
-    
-    setSelectedPurchase({ ...purchase, otp, otpGeneratedAt: new Date().toISOString() });
-    setIsGenerating(false);
-    setShowOtpModal(true);
-  };
-
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    // You could add a toast notification here
-  };
+  useEffect(() => {
+    if (matchedPurchaseId && !purchases.some((purchase) => purchase.id === matchedPurchaseId)) {
+      setMatchedPurchaseId(null);
+    }
+  }, [matchedPurchaseId, purchases]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -235,6 +235,207 @@ export default function GiftCardDetailsPage() {
 
   const getPurchaseStatusLabel = (status: GiftCardPurchase["status"]) =>
     t(`companyGiftCardDetails.purchases.status.${status}`);
+
+  const handleScanVerify = async () => {
+    const nextActive = purchases.find((purchase) => purchase.status === "active");
+
+    if (!nextActive) {
+      setVerificationFeedback({
+        type: "error",
+        message: t("companyGiftCardDetails.verify.errors.noActivePurchases"),
+      });
+      return;
+    }
+
+    setIsVerifying(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setMatchedPurchaseId(nextActive.id);
+      setVerificationFeedback({
+        type: "success",
+        message: t("companyGiftCardDetails.verify.scanSuccess", {
+          customer: nextActive.customerName,
+        }),
+      });
+      if (nextActive.otp) {
+        setVerificationCode(nextActive.otp);
+      }
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  const handleSendEmailVerification = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const trimmedEmail = emailAddress.trim();
+
+    if (!trimmedEmail) {
+      setVerificationFeedback({
+        type: "error",
+        message: t("companyGiftCardDetails.verify.errors.emailRequired"),
+      });
+      return;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailPattern.test(trimmedEmail)) {
+      setVerificationFeedback({
+        type: "error",
+        message: t("companyGiftCardDetails.verify.errors.emailInvalid"),
+      });
+      return;
+    }
+
+    const normalizedEmail = trimmedEmail.toLowerCase();
+    const matches = purchases.filter(
+      (purchase) => purchase.customerEmail.toLowerCase() === normalizedEmail
+    );
+
+    if (matches.length === 0) {
+      setVerificationFeedback({
+        type: "error",
+        message: t("companyGiftCardDetails.verify.errors.emailNotFound", {
+          email: trimmedEmail,
+        }),
+      });
+      return;
+    }
+
+    const candidate = matches.find((purchase) => purchase.status === "active") ?? matches[0];
+
+    if (candidate.status !== "active") {
+      setVerificationFeedback({
+        type: "error",
+        message: t("companyGiftCardDetails.verify.errors.alreadyProcessed", {
+          status: getPurchaseStatusLabel(candidate.status),
+        }),
+      });
+      return;
+    }
+
+    setIsVerifying(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setMatchedPurchaseId(candidate.id);
+      setVerificationFeedback({
+        type: "success",
+        message: t("companyGiftCardDetails.verify.emailSuccess", {
+          customer: candidate.customerName,
+          email: trimmedEmail,
+        }),
+      });
+      if (candidate.otp) {
+        setVerificationCode(candidate.otp);
+      }
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  const handleManualCodeVerification = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const trimmedCode = verificationCode.trim();
+
+    if (!trimmedCode) {
+      setVerificationFeedback({
+        type: "error",
+        message: t("companyGiftCardDetails.verify.errors.codeRequired"),
+      });
+      return;
+    }
+
+    const normalizedCode = trimmedCode.toLowerCase();
+    const candidate = purchases.find((purchase) => {
+      const otp = purchase.otp?.toLowerCase();
+      return otp ? otp === normalizedCode : purchase.id.toLowerCase() === normalizedCode;
+    });
+
+    if (!candidate) {
+      setVerificationFeedback({
+        type: "error",
+        message: t("companyGiftCardDetails.verify.errors.codeNotFound", {
+          code: trimmedCode,
+        }),
+      });
+      return;
+    }
+
+    if (candidate.status !== "active") {
+      setVerificationFeedback({
+        type: "error",
+        message: t("companyGiftCardDetails.verify.errors.alreadyProcessed", {
+          status: getPurchaseStatusLabel(candidate.status),
+        }),
+      });
+      return;
+    }
+
+    setIsVerifying(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setMatchedPurchaseId(candidate.id);
+      setVerificationFeedback({
+        type: "success",
+        message: t("companyGiftCardDetails.verify.codeSuccess", {
+          code: trimmedCode,
+          customer: candidate.customerName,
+        }),
+      });
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  const handleCancelMatchedPurchase = () => {
+    setMatchedPurchaseId(null);
+    setVerificationFeedback(null);
+    setVerificationCode("");
+  };
+
+  const handleObtainMatchedPurchase = async () => {
+    if (!matchedPurchase) {
+      return;
+    }
+
+    if (matchedPurchase.status !== "active") {
+      setVerificationFeedback({
+        type: "error",
+        message: t("companyGiftCardDetails.verify.errors.alreadyProcessed", {
+          status: getPurchaseStatusLabel(matchedPurchase.status),
+        }),
+      });
+      setMatchedPurchaseId(null);
+      return;
+    }
+
+    setIsCompleting(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const verifiedAt = new Date().toISOString();
+
+      setPurchases((previous) =>
+        previous.map((purchase) =>
+          purchase.id === matchedPurchase.id
+            ? { ...purchase, status: "used", usedAt: verifiedAt }
+            : purchase
+        )
+      );
+
+      setVerificationFeedback({
+        type: "success",
+        message: t("companyGiftCardDetails.verify.obtainSuccess", {
+          customer: matchedPurchase.customerName,
+        }),
+      });
+      setMatchedPurchaseId(null);
+      setVerificationCode("");
+    } finally {
+      setIsCompleting(false);
+    }
+  };
 
   const infoStats = useMemo(
     () => [
@@ -435,6 +636,285 @@ export default function GiftCardDetailsPage() {
         })}
       </div>
 
+      {/* Verify Gift Card */}
+      <div className="bg-card-background border border-primary rounded-2xl p-6">
+        <div className="flex flex-col gap-4">
+          <div>
+            <h3 className="text-lg font-bold text-white mb-1">
+              {t("companyGiftCardDetails.verify.title")}
+            </h3>
+            <p className="text-gray-400 text-sm">
+              {t("companyGiftCardDetails.verify.subtitle")}
+            </p>
+          </div>
+
+          {purchases.length === 0 ? (
+            <div className="rounded-lg border border-primary/30 bg-background/40 p-4 text-sm text-gray-400">
+              {t("companyGiftCardDetails.verify.emptyState")}
+            </div>
+          ) : (
+            <>
+              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <p className="text-sm font-medium text-gray-300">
+                  {t("companyGiftCardDetails.verify.methodLabel")}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setVerificationMethod("scan")}
+                    className={`px-4 py-2 rounded-lg border transition-all ${
+                      verificationMethod === "scan"
+                        ? "bg-primary text-dark border-primary"
+                        : "border-primary/40 text-gray-300 hover:bg-primary/10"
+                    }`}
+                  >
+                    {t("companyGiftCardDetails.verify.method.scan")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setVerificationMethod("email")}
+                    className={`px-4 py-2 rounded-lg border transition-all ${
+                      verificationMethod === "email"
+                        ? "bg-primary text-dark border-primary"
+                        : "border-primary/40 text-gray-300 hover:bg-primary/10"
+                    }`}
+                  >
+                    {t("companyGiftCardDetails.verify.method.email")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setVerificationMethod("code")}
+                    className={`px-4 py-2 rounded-lg border transition-all ${
+                      verificationMethod === "code"
+                        ? "bg-primary text-dark border-primary"
+                        : "border-primary/40 text-gray-300 hover:bg-primary/10"
+                    }`}
+                  >
+                    {t("companyGiftCardDetails.verify.method.code")}
+                  </button>
+                </div>
+              </div>
+
+              <p className="text-xs text-gray-500">
+                {t("companyGiftCardDetails.verify.autoHint")}
+              </p>
+
+              {verificationMethod === "scan" ? (
+                <div className="rounded-lg border border-primary/30 bg-background/40 p-4">
+                  <div className="flex items-start gap-3">
+                    <QrCode className="text-primary mt-1" size={20} />
+                    <div>
+                      <p className="text-white font-semibold">
+                        {t("companyGiftCardDetails.verify.scanTitle")}
+                      </p>
+                      <p className="text-gray-400 text-sm">
+                        {t("companyGiftCardDetails.verify.scanDescription")}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleScanVerify}
+                    disabled={isVerifying}
+                    className="mt-4 inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-dark transition-all hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {t(
+                      isVerifying
+                        ? "companyGiftCardDetails.verify.scanButtonLoading"
+                        : "companyGiftCardDetails.verify.scanButton"
+                    )}
+                  </button>
+                </div>
+              ) : verificationMethod === "email" ? (
+                <form
+                  onSubmit={handleSendEmailVerification}
+                  className="space-y-3 rounded-lg border border-primary/30 bg-background/40 p-4"
+                >
+                  <div className="flex items-start gap-3">
+                    <Mail className="text-primary mt-1" size={20} />
+                    <div>
+                      <p className="text-white font-semibold">
+                        {t("companyGiftCardDetails.verify.emailTitle")}
+                      </p>
+                      <p className="text-gray-400 text-sm">
+                        {t("companyGiftCardDetails.verify.emailDescription")}
+                      </p>
+                    </div>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="gift-card-verification-email"
+                      className="text-sm font-medium text-gray-300"
+                    >
+                      {t("companyGiftCardDetails.verify.emailLabel")}
+                    </label>
+                    <input
+                      id="gift-card-verification-email"
+                      type="email"
+                      value={emailAddress}
+                      onChange={(event) => setEmailAddress(event.target.value)}
+                      className="mt-1 w-full rounded-lg border border-primary/40 bg-background px-3 py-2 text-white placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2"
+                      placeholder={t("companyGiftCardDetails.verify.emailPlaceholder")}
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={isVerifying}
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-dark transition-all hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {t(
+                      isVerifying
+                        ? "companyGiftCardDetails.verify.emailButtonLoading"
+                        : "companyGiftCardDetails.verify.emailButton"
+                    )}
+                  </button>
+                </form>
+              ) : (
+                <form
+                  onSubmit={handleManualCodeVerification}
+                  className="space-y-3 rounded-lg border border-primary/30 bg-background/40 p-4"
+                >
+                  <div className="flex items-start gap-3">
+                    <Key className="text-primary mt-1" size={20} />
+                    <div>
+                      <p className="text-white font-semibold">
+                        {t("companyGiftCardDetails.verify.codeTitle")}
+                      </p>
+                      <p className="text-gray-400 text-sm">
+                        {t("companyGiftCardDetails.verify.codeDescription")}
+                      </p>
+                    </div>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="gift-card-verification-code"
+                      className="text-sm font-medium text-gray-300"
+                    >
+                      {t("companyGiftCardDetails.verify.codeLabel")}
+                    </label>
+                    <input
+                      id="gift-card-verification-code"
+                      type="text"
+                      value={verificationCode}
+                      onChange={(event) => setVerificationCode(event.target.value)}
+                      className="mt-1 w-full rounded-lg border border-primary/40 bg-background px-3 py-2 text-white placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2"
+                      placeholder={t("companyGiftCardDetails.verify.codePlaceholder")}
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={isVerifying}
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-dark transition-all hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {t(
+                      isVerifying
+                        ? "companyGiftCardDetails.verify.codeButtonLoading"
+                        : "companyGiftCardDetails.verify.codeButton"
+                    )}
+                  </button>
+                </form>
+              )}
+
+              {matchedPurchase && (
+                <div className="space-y-4 rounded-lg border border-primary/40 bg-background/40 p-4">
+                  <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                    <div className="space-y-1">
+                      <p className="text-sm uppercase tracking-wide text-gray-500">
+                        {t("companyGiftCardDetails.verify.matchFoundLabel")}
+                      </p>
+                      <p className="text-lg font-semibold text-white">
+                        {matchedPurchase.customerName}
+                      </p>
+                      <div className="flex items-center gap-2 text-sm text-gray-400">
+                        <Mail size={14} />
+                        <span>{matchedPurchase.customerEmail}</span>
+                      </div>
+                      {matchedPurchase.customerPhone && (
+                        <div className="flex items-center gap-2 text-sm text-gray-400">
+                          <Phone size={14} />
+                          <span>{matchedPurchase.customerPhone}</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-1 gap-2 text-sm text-gray-300 sm:grid-cols-2">
+                      <div>
+                        <span className="block text-xs uppercase tracking-wide text-gray-500">
+                          {t("companyGiftCardDetails.verify.matchAmount")}
+                        </span>
+                        <span className="font-semibold text-white">
+                          {matchedPurchase.purchaseAmount.toLocaleString()} kr.
+                        </span>
+                      </div>
+                      <div>
+                        <span className="block text-xs uppercase tracking-wide text-gray-500">
+                          {t("companyGiftCardDetails.verify.matchStatus")}
+                        </span>
+                        <span
+                          className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-xs font-semibold ${getStatusColor(
+                            matchedPurchase.status
+                          )}`}
+                        >
+                          <span>{getPurchaseStatusLabel(matchedPurchase.status)}</span>
+                        </span>
+                      </div>
+                      <div>
+                        <span className="block text-xs uppercase tracking-wide text-gray-500">
+                          {t("companyGiftCardDetails.verify.matchCode")}
+                        </span>
+                        <span className="font-mono text-white">
+                          {matchedPurchase.otp ?? matchedPurchase.id}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="block text-xs uppercase tracking-wide text-gray-500">
+                          {t("companyGiftCardDetails.verify.matchPurchaseDate")}
+                        </span>
+                        <span className="text-white">
+                          {new Date(matchedPurchase.purchaseDate).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+                    <button
+                      type="button"
+                      onClick={handleCancelMatchedPurchase}
+                      className="rounded-lg border border-primary/40 px-4 py-2 text-sm text-gray-300 transition-all hover:border-primary hover:text-white"
+                    >
+                      {t("companyGiftCardDetails.verify.cancelButton")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleObtainMatchedPurchase}
+                      disabled={isCompleting}
+                      className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-dark transition-all hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {t(
+                        isCompleting
+                          ? "companyGiftCardDetails.verify.obtainButtonLoading"
+                          : "companyGiftCardDetails.verify.obtainButton"
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+
+          {verificationFeedback && (
+            <div
+              className={`rounded-lg border px-4 py-3 text-sm ${
+                verificationFeedback.type === "success"
+                  ? "border-green/40 bg-green/10 text-green"
+                  : "border-red-500/40 bg-red-500/10 text-red-500"
+              }`}
+            >
+              {verificationFeedback.message}
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Purchases List */}
       <div className="bg-card-background border border-primary rounded-2xl p-6">
         <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
@@ -457,8 +937,6 @@ export default function GiftCardDetailsPage() {
                   <th className="pb-3">{t("companyGiftCardDetails.purchases.table.purchaseDate")}</th>
                   <th className="pb-3">{t("companyGiftCardDetails.purchases.table.amount")}</th>
                   <th className="pb-3">{t("companyGiftCardDetails.purchases.table.status")}</th>
-                  <th className="pb-3">{t("companyGiftCardDetails.purchases.table.otp")}</th>
-                  <th className="pb-3">{t("companyGiftCardDetails.purchases.table.actions")}</th>
                 </tr>
               </thead>
               <tbody className="text-white">
@@ -493,39 +971,6 @@ export default function GiftCardDetailsPage() {
                         <span className="capitalize">{getPurchaseStatusLabel(purchase.status)}</span>
                       </span>
                     </td>
-                    <td className="py-4">
-                      {purchase.otp ? (
-                        <div className="flex items-center gap-2">
-                          <code className="text-sm font-mono bg-background px-2 py-1 rounded border border-primary/50">
-                            {purchase.otp}
-                          </code>
-                          <button
-                            onClick={() => copyToClipboard(purchase.otp!)}
-                            className="p-1 text-gray-400 hover:text-primary hover:bg-primary/10 rounded transition-all"
-                            title={t("companyGiftCardDetails.purchases.copyOtp")}
-                          >
-                            <Copy size={14} />
-                          </button>
-                        </div>
-                      ) : (
-                        <span className="text-sm text-gray-500">{t("companyGiftCardDetails.purchases.notGenerated")}</span>
-                      )}
-                    </td>
-                    <td className="py-4">
-                      <button
-                        onClick={() => handleGenerateOTP(purchase)}
-                        disabled={purchase.status !== "active" || isGenerating}
-                        className="flex items-center gap-2 px-3 py-2 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-                        title={purchase.status !== "active"
-                          ? t("companyGiftCardDetails.purchases.inactiveTooltip")
-                          : t("companyGiftCardDetails.purchases.generateTooltip")}
-                      >
-                        <Key size={14} />
-                        {purchase.otp
-                          ? t("companyGiftCardDetails.purchases.regenerate")
-                          : t("companyGiftCardDetails.purchases.generate")}
-                      </button>
-                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -533,89 +978,6 @@ export default function GiftCardDetailsPage() {
           </div>
         )}
       </div>
-
-      {/* OTP Modal */}
-      <Modal
-        isOpen={showOtpModal}
-        onClose={() => {
-          setShowOtpModal(false);
-          setSelectedPurchase(null);
-          setGeneratedOtp("");
-        }}
-        title={t("companyGiftCardDetails.modal.title")}
-        size="md"
-        footer={
-          <div className="flex items-center justify-end gap-3">
-            <button
-              onClick={() => {
-                setShowOtpModal(false);
-                setSelectedPurchase(null);
-                setGeneratedOtp("");
-              }}
-              className="px-6 py-2 text-gray-400 hover:text-white hover:bg-primary/10 rounded-lg transition-all"
-            >
-              {t("companyGiftCardDetails.modal.close")}
-            </button>
-            <button
-              onClick={() => {
-                if (generatedOtp) {
-                  copyToClipboard(generatedOtp);
-                }
-              }}
-              className="px-6 py-2 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 transition-all flex items-center gap-2"
-            >
-              <Copy size={16} />
-              {t("companyGiftCardDetails.modal.copy")}
-            </button>
-          </div>
-        }
-      >
-        <div className="space-y-4">
-          {selectedPurchase && (
-            <div className="bg-background/50 border border-primary/30 rounded-lg p-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400 text-sm">{t("companyGiftCardDetails.modal.customerLabel")}</span>
-                  <span className="text-white font-semibold">{selectedPurchase.customerName}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400 text-sm">{t("companyGiftCardDetails.modal.emailLabel")}</span>
-                  <span className="text-white text-sm">{selectedPurchase.customerEmail}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400 text-sm">{t("companyGiftCardDetails.modal.valueLabel")}</span>
-                  <span className="text-white font-semibold">{selectedPurchase.purchaseAmount.toLocaleString()} kr.</span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="bg-primary/10 border border-primary rounded-lg p-6 text-center">
-            <Key className="mx-auto text-primary mb-3" size={32} />
-            <p className="text-gray-400 text-sm mb-2">{t("companyGiftCardDetails.modal.generatedLabel")}</p>
-            <div className="flex items-center justify-center gap-3">
-              <code className="text-3xl font-mono font-bold text-white bg-background px-4 py-2 rounded border border-primary">
-                {generatedOtp}
-              </code>
-              <button
-                onClick={() => copyToClipboard(generatedOtp)}
-                className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
-                title={t("companyGiftCardDetails.purchases.copyOtp")}
-              >
-                <Copy size={20} />
-              </button>
-            </div>
-            <p className="text-gray-500 text-xs mt-3">{t("companyGiftCardDetails.modal.shareHint")}</p>
-          </div>
-
-          <div className="bg-blue-500/10 border border-blue-500 rounded-lg p-3">
-            <div className="flex items-start gap-2">
-              <RefreshCw className="text-blue-500 flex-shrink-0 mt-0.5" size={16} />
-              <p className="text-blue-500 text-xs">{t("companyGiftCardDetails.modal.validityHint")}</p>
-            </div>
-          </div>
-        </div>
-      </Modal>
     </div>
   );
 }

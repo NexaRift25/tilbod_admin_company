@@ -126,6 +126,56 @@
       "usedCards": "Notuð kort",
       "totalRevenue": "Heildartekjur"
     },
+    "verify": {
+      "title": "Staðfesta gjafabréf",
+      "subtitle": "Staðfestu kaup með því að skanna á staðnum, senda staðfestingarpóst eða slá inn kóða.",
+      "emptyState": "Þegar innlausnir hefjast birtast kaupin hér að neðan.",
+      "methodLabel": "Aðferð við staðfestingu",
+      "method": {
+        "scan": "Skanna á staðnum",
+        "email": "Senda tölvupóst",
+        "code": "Slá inn kóða"
+      },
+      "autoHint": "Við pöruðum sjálfkrafa kaupin við gjafabréfastöðuna.",
+      "scanTitle": "Staðfesta á staðnum",
+      "scanDescription": "Skannaðu kóðann til að finna næstu virku færslu sem er tilbúin til innlausnar.",
+      "scanButton": "Finna virka færslu",
+      "scanButtonLoading": "Staðfesti...",
+      "codeTitle": "Handvirk kóðaskráning",
+      "codeDescription": "Sláðu inn staðfestingarkóðann sem viðskiptavinurinn gefur til að ljúka innlausn.",
+      "codeLabel": "Staðfestingarkóði",
+      "codePlaceholder": "Sláðu inn staðfestingarkóða",
+      "codeButton": "Staðfesta kóða",
+      "codeButtonLoading": "Staðfesti...",
+      "emailTitle": "Senda staðfestingarpóst",
+      "emailDescription": "Sendu viðskiptavininum öruggan hlekk — þegar hann opnar hann pöruðum við kaupin sjálfkrafa.",
+      "emailLabel": "Netfang viðskiptavinar",
+      "emailPlaceholder": "nafn@example.com",
+      "emailButton": "Senda staðfestingarpóst",
+      "emailButtonLoading": "Sendi...",
+      "scanSuccess": "Við fundum virka færslu fyrir {{customer}}. Veldu aðgerð hér að neðan.",
+      "emailSuccess": "Fundum færsluna hjá {{customer}} með netfanginu {{email}}. Veldu aðgerð hér að neðan.",
+      "codeSuccess": "Kóðinn {{code}} passar við {{customer}}. Veldu aðgerð hér að neðan.",
+      "matchFoundLabel": "Fann færslu",
+      "matchAmount": "Kaupupphæð",
+      "matchStatus": "Staða",
+      "matchCode": "Gjafabréfskóði",
+      "matchPurchaseDate": "Kaupdagur",
+      "cancelButton": "Hætta við",
+      "obtainButton": "Afhenda",
+      "obtainButtonLoading": "Lýk afgreiðslu...",
+      "obtainSuccess": "Gjafabréf fyrir {{customer}} hefur verið merkt sem innleyst.",
+      "errors": {
+        "noPurchaseSelected": "Veldu kaup til að staðfesta.",
+        "alreadyProcessed": "Þessi kaup eru þegar {{status}}.",
+        "emailRequired": "Netfang er nauðsynlegt.",
+        "emailInvalid": "Sláðu inn gilt netfang.",
+        "codeRequired": "Sláðu inn staðfestingarkóða.",
+        "emailNotFound": "Engin kaup fundust fyrir {{email}}.",
+        "codeNotFound": "Engin kaup fundust með kóðanum {{code}}.",
+        "noActivePurchases": "Engar virkar færslur eru tiltækar til staðfestingar."
+      }
+    },
     "purchases": {
       "title": "Kaup á gjafabréfi ({{count}})",
       "emptyTitle": "Engin kaup ennþá",
@@ -134,32 +184,13 @@
         "customer": "Viðskiptavinur",
         "purchaseDate": "Kaupdagur",
         "amount": "Upphæð",
-        "status": "Staða",
-        "otp": "OTP",
-        "actions": "Aðgerðir"
+        "status": "Staða"
       },
       "status": {
         "active": "Virkt",
         "used": "Notað",
         "expired": "Útrunnið"
-      },
-      "notGenerated": "Ekki búið til",
-      "generate": "Búa til OTP",
-      "regenerate": "Endurnýja",
-      "generateTooltip": "Búa til OTP",
-      "inactiveTooltip": "Aðeins virk kort geta búið til OTP",
-      "copyOtp": "Afrita OTP"
-    },
-    "modal": {
-      "title": "OTP kóði búinn til",
-      "customerLabel": "Viðskiptavinur",
-      "emailLabel": "Netfang",
-      "valueLabel": "Verðmæti gjafabréfs",
-      "generatedLabel": "Nýtt OTP",
-      "shareHint": "Deildu þessum kóða með viðskiptavininum. Hann notar hann til að innleysa gjafabréfið.",
-      "validityHint": "OTP-kóði gildir fyrir innlausn. Endurnýjun ógildir fyrri kóða.",
-      "close": "Loka",
-      "copy": "Afrita OTP"
+      }
     }
   },
   "companySidebar": {
