@@ -23,20 +23,27 @@ interface OfferFormData {
   type: OfferType;
   title: string;
   description: string;
-  category: string;
-  originalPrice: string;
-  discountPrice: string;
+  category: string[];
+  priceNow: string;
+  priceBefore: string;
   discountPercentage: string;
   startDate: string;
-  endDate: string;
-  weekdays: string[];
   startTime: string;
+  endDate: string;
   endTime: string;
+  weekdays: string[];
   location: string;
   terms: string;
   image: string;
   weekdayAddress: string;
   offerLink: string;
+  eventCategory: string;
+  subBox: string;
+  locationSource: "custom" | "company";
+  timeRangeMode: "single" | "custom";
+  customTimes: Record<string, { start: string; end: string }>;
+  openingHours: Record<string, { start: string; end: string }>;
+  priceInfo: string;
 }
 
 // offerTypes will be created inside component to use translations
@@ -116,20 +123,27 @@ export default function CreateOfferPage() {
     type: "active",
     title: "",
     description: "",
-    category: "",
-    originalPrice: "",
-    discountPrice: "",
+    category: [],
+    priceNow: "",
+    priceBefore: "",
     discountPercentage: "",
     startDate: "",
-    endDate: "",
-    weekdays: [],
     startTime: "",
+    endDate: "",
     endTime: "",
+    weekdays: [],
     location: "",
     terms: "",
     image: "",
     weekdayAddress: "",
-    offerLink: ""
+    offerLink: "",
+    eventCategory: "",
+    subBox: "",
+    locationSource: "custom",
+    timeRangeMode: "single",
+    customTimes: {},
+    openingHours: {},
+    priceInfo: ""
   });
 
   // Update type when selectedType changes
@@ -139,16 +153,16 @@ export default function CreateOfferPage() {
 
   // Calculate discount percentage when prices change
   useEffect(() => {
-    if (formData.originalPrice && formData.discountPrice) {
-      const original = parseFloat(formData.originalPrice);
-      const discounted = parseFloat(formData.discountPrice);
+    if (formData.priceBefore && formData.priceNow) {
+      const before = parseFloat(formData.priceBefore);
+      const now = parseFloat(formData.priceNow);
       
-      if (!isNaN(original) && !isNaN(discounted) && original > 0) {
-        const percentage = ((original - discounted) / original * 100).toFixed(0);
+      if (!isNaN(before) && !isNaN(now) && before > 0) {
+        const percentage = ((before - now) / before * 100).toFixed(0);
         setFormData(prev => ({ ...prev, discountPercentage: percentage }));
       }
     }
-  }, [formData.originalPrice, formData.discountPrice]);
+  }, [formData.priceBefore, formData.priceNow]);
 
   // Clean up object URL when component unmounts or photo changes
   useEffect(() => {
@@ -187,11 +201,11 @@ export default function CreateOfferPage() {
       discount: formData.discountPercentage ? `${formData.discountPercentage}% OFF` : t("createOffer.specialOffer"),
       description: formData.description || t("createOffer.yourOfferDescription"),
       image: previewImageUrl || formData.image || "/placeholder-image.jpg",
-      category: formData.category || t("common.category"),
+      category: formData.category.length > 0 ? formData.category[0] : t("common.category"),
       timeLeft: calculateTimeLeft(formData.endDate),
       location: "",
-      price: formData.originalPrice || null,
-      discountPrice: formData.discountPrice || null,
+      price: formData.priceBefore || null,
+      discountPrice: formData.priceNow || null,
       link: formData.offerLink || "#"
     };
   }, [formData, previewImageUrl, t]);
@@ -217,7 +231,7 @@ export default function CreateOfferPage() {
       discount: formData.discountPercentage ? `${formData.discountPercentage}% Discount` : t("createOffer.discountAvailable"),
       description: formData.description || t("createOffer.yourWeeklyOfferDescription"),
       image: previewImageUrl || formData.image || "/placeholder-image.jpg",
-      badge: formData.category || t("createOffer.weeklySpecial"),
+      badge: formData.category.length > 0 ? formData.category[0] : t("createOffer.weeklySpecial"),
       location: formData.weekdayAddress || t("createOffer.locationLabel"),
       time: formData.startTime && formData.endTime ? `${formData.startTime} - ${formData.endTime}` : t("createOffer.availableAllDay"),
       availableDays: availableDays.length > 0 ? availableDays : ["Mon", "Tue", "Wed", "Thu", "Fri"],
@@ -268,7 +282,7 @@ export default function CreateOfferPage() {
       image: previewImageUrl || formData.image || "/placeholder-image.jpg",
       status: calculateStatus(),
       location: formData.location || t("createOffer.locationLabel"),
-      pricing: formData.discountPrice ? `${formData.discountPrice} kr.` : t("createOffer.specialOffer"),
+      pricing: formData.priceNow ? `${formData.priceNow} kr.` : t("createOffer.specialOffer"),
       availableDays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
       link: formData.offerLink || "#"
     };
@@ -276,16 +290,23 @@ export default function CreateOfferPage() {
 
   // Transform form data for GiftOfferCard preview
   const previewGiftOffer = useMemo(() => {
+    const discountPercentage = formData.discountPercentage 
+      ? parseFloat(formData.discountPercentage.replace('%', '')) 
+      : 0;
+    const priceNow = formData.priceNow ? parseFloat(formData.priceNow) : 0;
+    const priceBefore = formData.priceBefore ? parseFloat(formData.priceBefore) : 0;
+    
     return {
       id: 0,
       offerType: "gift_card",
       title: formData.title || t("createOffer.yourOfferTitle"),
-      price: formData.discountPrice || "0",
+      discount: discountPercentage > 0 ? `${discountPercentage}% Discount` : "Gift Card",
       description: formData.description || t("createOffer.yourOfferDescription"),
       image: previewImageUrl || formData.image || "/placeholder-image.jpg",
-      category: formData.category || t("common.category"),
+      category: formData.category.length > 0 ? formData.category[0] : t("common.category"),
       timeLeft: calculateTimeLeft(formData.endDate),
-      purchaseCount: 0,
+      price: priceBefore > priceNow ? `${priceBefore.toLocaleString()} kr.` : null,
+      discountPrice: priceNow > 0 ? `${priceNow.toLocaleString()} kr.` : null,
       link: "#"
     };
   }, [formData, previewImageUrl, t]);
@@ -308,6 +329,15 @@ export default function CreateOfferPage() {
     }));
   };
 
+  const handleCategoryChange = (category: string) => {
+    setFormData(prev => ({
+      ...prev,
+      category: prev.category.includes(category)
+        ? prev.category.filter(c => c !== category)
+        : [...prev.category, category]
+    }));
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -322,25 +352,48 @@ export default function CreateOfferPage() {
 
     if (!formData.title.trim()) newErrors.title = "Offer title is required";
     if (!formData.description.trim()) newErrors.description = "Description is required";
-    if (!formData.category) newErrors.category = "Category is required";
-    if (!formData.originalPrice) newErrors.originalPrice = "Original price is required";
-    if (!formData.discountPrice) newErrors.discountPrice = "Discounted price is required";
+    if (formData.category.length === 0) newErrors.category = "At least one category is required";
+    if (!formData.discountPercentage.trim()) newErrors.discountPercentage = "Discount is required";
     if (!formData.startDate) newErrors.startDate = "Start date is required";
     if (!formData.endDate) newErrors.endDate = "End date is required";
+
+    // For active, weekday, and happy hour offers, offer link and image are required
+    if (selectedType === "active" || selectedType === "weekdays" || selectedType === "happy_hour") {
+      if (!formData.offerLink.trim()) newErrors.offerLink = "Offer link is required";
+      if (!formData.image && !previewImageUrl) newErrors.image = "Offer image is required";
+    }
 
     // Type-specific validations
     if (selectedType === "weekdays") {
       if (formData.weekdays.length === 0) {
-        newErrors.weekdays = "At least one weekday must be selected";
+        newErrors.weekdays = t("createOffer.errors.weekdaysRequired");
       }
-      if (!formData.startTime) newErrors.startTime = "Start time is required";
-      if (!formData.endTime) newErrors.endTime = "End time is required";
-      if (!formData.weekdayAddress.trim()) newErrors.weekdayAddress = "Restaurant address is required";
+      if (formData.locationSource === "custom" && !formData.weekdayAddress.trim()) {
+        newErrors.weekdayAddress = t("createOffer.errors.locationRequired");
+      }
     }
     if (selectedType === "happy_hour") {
-      if (!formData.startTime) newErrors.startTime = "Start time is required";
-      if (!formData.endTime) newErrors.endTime = "End time is required";
-      if (!formData.location.trim()) newErrors.location = "Location is required";
+      if (formData.weekdays.length === 0) {
+        newErrors.weekdays = t("createOffer.errors.weekdaysRequired");
+      }
+      if (formData.timeRangeMode === "single") {
+        if (!formData.startTime) newErrors.startTime = t("createOffer.errors.startTimeRequired");
+        if (!formData.endTime) newErrors.endTime = t("createOffer.errors.endTimeRequired");
+      } else {
+        // Validate custom times for selected weekdays
+        const hasInvalidCustomTime = formData.weekdays.some(dayId => {
+          const customTime = formData.customTimes[dayId];
+          return !customTime || !customTime.start || !customTime.end;
+        });
+        if (hasInvalidCustomTime) {
+          newErrors.customTimes = t("createOffer.errors.customTimesRequired");
+        }
+      }
+      if (!formData.startDate) newErrors.startDate = t("createOffer.errors.startDateRequired");
+      if (!formData.endDate) newErrors.endDate = t("createOffer.errors.endDateRequired");
+      if (formData.locationSource === "custom" && !formData.location.trim()) {
+        newErrors.location = t("createOffer.errors.locationRequired");
+      }
     }
 
     setErrors(newErrors);
@@ -439,9 +492,32 @@ export default function CreateOfferPage() {
 
         <div className="flex items-center gap-3 mb-6">
           {renderSelectedIcon()}
-          <h3 className="text-xl font-bold text-white">
-            {t("createOffer.createOfferType", { type: selectedOfferType.name })}
-          </h3>
+          <div>
+            <h3 className="text-xl font-bold text-white">
+              {selectedType === "active" 
+                ? t("createOffer.activeOfferInfoTitle")
+                : selectedType === "weekdays"
+                ? t("createOffer.weekdayOfferInfoTitle")
+                : selectedType === "happy_hour"
+                ? t("createOffer.happyHourOfferInfoTitle")
+                : t("createOffer.createOfferType", { type: selectedOfferType.name })}
+            </h3>
+            {selectedType === "active" && (
+              <p className="text-gray-400 text-sm mt-1">
+                {t("createOffer.activeOfferInfoSubtitle")}
+              </p>
+            )}
+            {selectedType === "weekdays" && (
+              <p className="text-gray-400 text-sm mt-1">
+                {t("createOffer.weekdayOfferInfoSubtitle")}
+              </p>
+            )}
+            {selectedType === "happy_hour" && (
+              <p className="text-gray-400 text-sm mt-1">
+                {t("createOffer.happyHourOfferInfoSubtitle")}
+              </p>
+            )}
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -459,8 +535,12 @@ export default function CreateOfferPage() {
                 className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                   errors.title ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
                 }`}
-                placeholder={t("createOffer.titlePlaceholder")}
+                placeholder={selectedType === "weekdays" ? t("createOffer.weekdayTitlePlaceholder") : t("createOffer.titlePlaceholder")}
+                maxLength={selectedType === "weekdays" ? 100 : undefined}
               />
+              {selectedType === "weekdays" && (
+                <p className="text-gray-500 text-xs mt-1">{t("createOffer.weekdayTitleHint")}</p>
+              )}
               {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title}</p>}
             </div>
 
@@ -471,17 +551,11 @@ export default function CreateOfferPage() {
               <div className="relative">
                 <div className="relative">
                   <input
-                    list="product-categories-list"
                     type="text"
                     value={categorySearchTerm}
                     onChange={(e) => {
                       const value = e.target.value;
                       setCategorySearchTerm(value);
-                      // Auto-select if exact match
-                      const exactMatch = categories.find(cat => cat.toLowerCase() === value.toLowerCase());
-                      if (exactMatch) {
-                        setFormData(prev => ({ ...prev, category: exactMatch }));
-                      }
                       setShowCategoryDropdown(true);
                     }}
                     onBlur={() => setTimeout(() => setShowCategoryDropdown(false), 200)}
@@ -492,28 +566,18 @@ export default function CreateOfferPage() {
                     }`}
                   />
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                  <input
-                    type="hidden"
-                    name="category"
-                    value={formData.category}
-                  />
                 </div>
-                <datalist id="product-categories-list">
-                  {categories.map(category => (
-                    <option key={category} value={category}>{category}</option>
-                  ))}
-                </datalist>
                 {showCategoryDropdown && categorySearchTerm && (
-                  <div className="absolute z-10 w-full mt-1 bg-card-background border border-primary/50 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                  <div className="absolute z-10 w-full mt-1 bg-card-background border border-primary/50 rounded-lg shadow-lg max-h-60 overflow-y-auto transition-all">
                     {categories
-                      .filter(cat => cat.toLowerCase().includes(categorySearchTerm.toLowerCase()))
+                      .filter(cat => cat.toLowerCase().includes(categorySearchTerm.toLowerCase()) && !formData.category.includes(cat))
                       .map(category => (
                         <button
                           key={category}
                           type="button"
                           onClick={() => {
-                            setCategorySearchTerm(category);
-                            setFormData(prev => ({ ...prev, category }));
+                            handleCategoryChange(category);
+                            setCategorySearchTerm("");
                             setShowCategoryDropdown(false);
                           }}
                           className="w-full text-left px-4 py-2 hover:bg-primary/10 text-white transition-all"
@@ -527,28 +591,76 @@ export default function CreateOfferPage() {
                   </div>
                 )}
               </div>
+              {formData.category.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {formData.category.map(cat => (
+                    <span
+                      key={cat}
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-primary/20 text-primary border border-primary/30 rounded-full text-sm transition-all hover:bg-primary/30"
+                    >
+                      {cat}
+                      <button
+                        type="button"
+                        onClick={() => handleCategoryChange(cat)}
+                        className="hover:text-red-400 hover:scale-110 transition-all"
+                        aria-label={`Remove ${cat}`}
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
               {errors.category && <p className="text-red-500 text-xs mt-1">{errors.category}</p>}
               <p className="text-gray-500 text-xs mt-1">
-                {t("createOffer.productCategoryHint")}
+                {selectedType === "weekdays" 
+                  ? t("createOffer.weekdayCategoryHint")
+                  : t("createOffer.productCategoryHint")}
               </p>
             </div>
 
             <div className="md:col-span-2">
               <label className="text-gray-400 text-sm mb-2 block">
-                {t("common.description")} *
+                {t("common.description")} * <span className="text-gray-500 text-xs">({t("createOffer.maxCharacters")})</span>
               </label>
               <textarea
                 name="description"
                 value={formData.description}
                 onChange={handleInputChange}
                 rows={4}
+                maxLength={500}
                 className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all resize-none ${
                   errors.description ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
                 }`}
                 placeholder={t("createOffer.descriptionPlaceholder")}
               />
-              {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description}</p>}
+              <div className="flex justify-between items-center mt-1">
+                {errors.description && <p className="text-red-500 text-xs transition-all">{errors.description}</p>}
+                <p className={`text-xs ml-auto transition-colors ${
+                  formData.description.length > 450 ? "text-yellow-400" : 
+                  formData.description.length >= 500 ? "text-red-400" : 
+                  "text-gray-500"
+                }`}>{formData.description.length}/500</p>
+              </div>
             </div>
+
+            {/* Sub-box (optional, for weekday offers) */}
+            {selectedType === "weekdays" && (
+              <div className="md:col-span-2">
+                <label className="text-gray-400 text-sm mb-2 block">
+                  {t("createOffer.subBoxLabel")} ({t("createOffer.optional")})
+                </label>
+                <input
+                  type="text"
+                  name="subBox"
+                  value={formData.subBox}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all"
+                  placeholder={t("createOffer.subBoxPlaceholder")}
+                />
+                <p className="text-gray-500 text-xs mt-1">{t("createOffer.subBoxHint")}</p>
+              </div>
+            )}
           </div>
 
           {/* Pricing */}
@@ -557,90 +669,126 @@ export default function CreateOfferPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <label className="text-gray-400 text-sm mb-2 block">
-                  {t("createOffer.originalPriceLabel")} *
+                  {t("createOffer.priceNowLabel")} ({t("createOffer.optional")})
                 </label>
                 <input
                   type="number"
-                  name="originalPrice"
-                  value={formData.originalPrice}
+                  name="priceNow"
+                  value={formData.priceNow}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                    errors.originalPrice ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
-                  }`}
-                  placeholder="1000"
-                />
-                {errors.originalPrice && <p className="text-red-500 text-xs mt-1">{errors.originalPrice}</p>}
-              </div>
-
-              <div>
-                <label className="text-gray-400 text-sm mb-2 block">
-                  {t("createOffer.discountedPriceLabel")} *
-                </label>
-                <input
-                  type="number"
-                  name="discountPrice"
-                  value={formData.discountPrice}
-                  onChange={handleInputChange}
-                  className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                    errors.discountPrice ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
-                  }`}
+                  className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all"
                   placeholder="800"
                 />
-                {errors.discountPrice && <p className="text-red-500 text-xs mt-1">{errors.discountPrice}</p>}
+                <p className="text-gray-500 text-xs mt-1">{t("createOffer.priceNowHint")}</p>
               </div>
 
               <div>
                 <label className="text-gray-400 text-sm mb-2 block">
-                  {t("createOffer.discountPercentLabel")}
+                  {t("createOffer.priceBeforeLabel")} ({t("createOffer.optional")})
                 </label>
                 <input
                   type="number"
+                  name="priceBefore"
+                  value={formData.priceBefore}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all"
+                  placeholder="1000"
+                />
+                <p className="text-gray-500 text-xs mt-1">{t("createOffer.priceBeforeHint")}</p>
+              </div>
+
+              <div>
+                <label className="text-gray-400 text-sm mb-2 block">
+                  {t("createOffer.discountPercentLabel")} *
+                </label>
+                <input
+                  type="text"
                   name="discountPercentage"
                   value={formData.discountPercentage}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all"
-                  placeholder="20"
-                  readOnly
+                  className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
+                    errors.discountPercentage ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                  } ${formData.priceNow && formData.priceBefore ? "opacity-75 cursor-not-allowed transition-opacity" : ""}`}
+                  placeholder="25% or 20-40%"
+                  readOnly={!!(formData.priceNow && formData.priceBefore)}
                 />
+                {errors.discountPercentage && <p className="text-red-500 text-xs mt-1">{errors.discountPercentage}</p>}
+                <p className="text-gray-500 text-xs mt-1">
+                  {formData.priceNow && formData.priceBefore 
+                    ? t("createOffer.discountAutoCalculated")
+                    : t("createOffer.discountManualHint")}
+                </p>
               </div>
             </div>
           </div>
 
           {/* Date & Time (varies by offer type) */}
-          {selectedType !== "happy_hour" && (
+          {selectedType !== "happy_hour" && selectedType !== "weekdays" && (
             <div>
-              <h4 className="text-lg font-bold text-white mb-4">{t("createOffer.dates")}</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="text-gray-400 text-sm mb-2 block">
-                    {t("createOffer.startDate")} *
-                  </label>
-                  <input
-                    type="date"
-                    name="startDate"
-                    value={formData.startDate}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
-                      errors.startDate ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
-                    }`}
-                  />
-                  {errors.startDate && <p className="text-red-500 text-xs mt-1">{errors.startDate}</p>}
-                </div>
+              <h4 className="text-lg font-bold text-white mb-4">
+                {t("createOffer.dates")} <span className="text-gray-500 text-sm font-normal">({t("createOffer.availableOnTilbod")})</span>
+              </h4>
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="text-gray-400 text-sm mb-2 block">
+                      {t("createOffer.startDate")} *
+                    </label>
+                    <input
+                      type="date"
+                      name="startDate"
+                      value={formData.startDate}
+                      onChange={handleInputChange}
+                      className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
+                        errors.startDate ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                      }`}
+                    />
+                    {errors.startDate && <p className="text-red-500 text-xs mt-1">{errors.startDate}</p>}
+                    {selectedType === "active" && (
+                      <div className="mt-2">
+                        <label className="text-gray-400 text-sm mb-1 block">
+                          {t("createOffer.startTimeLabel")} ({t("createOffer.optional")}) <span className="text-gray-500 text-xs">({t("createOffer.timeExample")})</span>
+                        </label>
+                        <input
+                          type="time"
+                          name="startTime"
+                          value={formData.startTime}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary transition-all"
+                        />
+                      </div>
+                    )}
+                  </div>
 
-                <div>
-                  <label className="text-gray-400 text-sm mb-2 block">
-                    {t("createOffer.endDate")} *
-                  </label>
-                  <input
-                    type="date"
-                    name="endDate"
-                    value={formData.endDate}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
-                      errors.endDate ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
-                    }`}
-                  />
-                  {errors.endDate && <p className="text-red-500 text-xs mt-1">{errors.endDate}</p>}
+                  <div>
+                    <label className="text-gray-400 text-sm mb-2 block">
+                      {t("createOffer.endDate")} *
+                    </label>
+                    <input
+                      type="date"
+                      name="endDate"
+                      value={formData.endDate}
+                      onChange={handleInputChange}
+                      className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
+                        errors.endDate ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                      }`}
+                    />
+                    {errors.endDate && <p className="text-red-500 text-xs mt-1">{errors.endDate}</p>}
+                    {selectedType === "active" && (
+                      <div className="mt-2">
+                        <label className="text-gray-400 text-sm mb-1 block">
+                          {t("createOffer.endTimeLabel")} ({t("createOffer.optional")}) <span className="text-gray-500 text-xs">({t("createOffer.timeExample")})</span>
+                        </label>
+                        <input
+                          type="time"
+                          name="endTime"
+                          value={formData.endTime}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-primary transition-all"
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -650,7 +798,7 @@ export default function CreateOfferPage() {
           {selectedType === "weekdays" && (
             <div className="space-y-6">
               <div>
-                <h4 className="text-lg font-bold text-white mb-4">{t("createOffer.selectWeekdays")}</h4>
+                <h4 className="text-lg font-bold text-white mb-4">{t("createOffer.selectWeekdays")} *</h4>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {weekdays.map(day => (
                     <button
@@ -668,62 +816,164 @@ export default function CreateOfferPage() {
                   ))}
                 </div>
                 {errors.weekdays && <p className="text-red-500 text-xs mt-2">{errors.weekdays}</p>}
+                <p className="text-gray-500 text-xs mt-2">{t("createOffer.selectWeekdaysHint")}</p>
               </div>
 
               <div>
-                <h4 className="text-lg font-bold text-white mb-4">{t("createOffer.timeRange")}</h4>
+                <h4 className="text-lg font-bold text-white mb-4">
+                  {t("createOffer.timeRange")} ({t("createOffer.optional")})
+                </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="text-gray-400 text-sm mb-2 block">
-                      {t("createOffer.startTimeLabel")} *
+                      {t("createOffer.startTimeLabel")}
                     </label>
                     <input
                       type="time"
                       name="startTime"
                       value={formData.startTime}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
-                        errors.startTime ? "border-red-500 focus:border-red-500" : "border-pink/30 focus:border-pink"
-                      }`}
+                      className="w-full px-4 py-3 bg-background border border-pink/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-pink transition-all"
                     />
-                    {errors.startTime && <p className="text-red-500 text-xs mt-1">{errors.startTime}</p>}
                   </div>
 
                   <div>
                     <label className="text-gray-400 text-sm mb-2 block">
-                      {t("createOffer.endTimeLabel")} *
+                      {t("createOffer.endTimeLabel")}
                     </label>
                     <input
                       type="time"
                       name="endTime"
                       value={formData.endTime}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
-                        errors.endTime ? "border-red-500 focus:border-red-500" : "border-pink/30 focus:border-pink"
-                      }`}
+                      className="w-full px-4 py-3 bg-background border border-pink/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-pink transition-all"
                     />
-                    {errors.endTime && <p className="text-red-500 text-xs mt-1">{errors.endTime}</p>}
+                  </div>
+                </div>
+                <p className="text-gray-500 text-xs mt-1">{t("createOffer.timeRangeHint")}</p>
+              </div>
+
+              {/* Offer Dates for Weekday Offers */}
+              <div>
+                <h4 className="text-lg font-bold text-white mb-4">
+                  {t("createOffer.dates")} * <span className="text-gray-500 text-sm font-normal">({t("createOffer.availableOnTilbod")})</span>
+                </h4>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="text-gray-400 text-sm mb-2 block">
+                        {t("createOffer.startDate")} *
+                      </label>
+                      <input
+                        type="date"
+                        name="startDate"
+                        value={formData.startDate}
+                        onChange={handleInputChange}
+                        className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
+                          errors.startDate ? "border-red-500 focus:border-red-500" : "border-pink/30 focus:border-pink"
+                        }`}
+                      />
+                      {errors.startDate && <p className="text-red-500 text-xs mt-1">{errors.startDate}</p>}
+                      <div className="mt-2">
+                        <label className="text-gray-400 text-sm mb-1 block">
+                          {t("createOffer.startTimeLabel")} ({t("createOffer.optional")}) <span className="text-gray-500 text-xs">({t("createOffer.timeExample")})</span>
+                        </label>
+                        <input
+                          type="time"
+                          name="startTime"
+                          value={formData.startTime}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 bg-background border border-pink/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-pink transition-all"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-gray-400 text-sm mb-2 block">
+                        {t("createOffer.endDate")} *
+                      </label>
+                      <input
+                        type="date"
+                        name="endDate"
+                        value={formData.endDate}
+                        onChange={handleInputChange}
+                        className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
+                          errors.endDate ? "border-red-500 focus:border-red-500" : "border-pink/30 focus:border-pink"
+                        }`}
+                      />
+                      {errors.endDate && <p className="text-red-500 text-xs mt-1">{errors.endDate}</p>}
+                      <div className="mt-2">
+                        <label className="text-gray-400 text-sm mb-1 block">
+                          {t("createOffer.endTimeLabel")} ({t("createOffer.optional")}) <span className="text-gray-500 text-xs">({t("createOffer.timeExample")})</span>
+                        </label>
+                        <input
+                          type="time"
+                          name="endTime"
+                          value={formData.endTime}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 bg-background border border-pink/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-pink transition-all"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
               <div>
-                <h4 className="text-lg font-bold text-white mb-4">{t("createOffer.locationLabel")}</h4>
-                <div>
-                  <label className="text-gray-400 text-sm mb-2 block">
-                    {t("createOffer.weekdayAddressLabel")} *
-                  </label>
-                  <input
-                    type="text"
-                    name="weekdayAddress"
-                    value={formData.weekdayAddress}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                      errors.weekdayAddress ? "border-red-500 focus:border-red-500" : "border-pink/30 focus:border-pink"
-                    }`}
-                    placeholder={t("createOffer.weekdayAddressPlaceholder")}
-                  />
-                  {errors.weekdayAddress && <p className="text-red-500 text-xs mt-1">{errors.weekdayAddress}</p>}
+                <h4 className="text-lg font-bold text-white mb-4">{t("createOffer.locationLabel")} *</h4>
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-gray-400 text-sm mb-2 block">
+                      {t("createOffer.locationSourceLabel")}
+                    </label>
+                    <div className="flex gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, locationSource: "company" }))}
+                        className={`px-4 py-2 rounded-lg border transition-all ${
+                          formData.locationSource === "company"
+                            ? "bg-pink/10 border-pink text-pink"
+                            : "border-pink/30 text-gray-400 hover:bg-pink/5"
+                        }`}
+                      >
+                        {t("createOffer.locationFromCompany")}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, locationSource: "custom" }))}
+                        className={`px-4 py-2 rounded-lg border transition-all ${
+                          formData.locationSource === "custom"
+                            ? "bg-pink/10 border-pink text-pink"
+                            : "border-pink/30 text-gray-400 hover:bg-pink/5"
+                        }`}
+                      >
+                        {t("createOffer.locationCustom")}
+                      </button>
+                    </div>
+                  </div>
+                  {formData.locationSource === "custom" && (
+                    <div>
+                      <label className="text-gray-400 text-sm mb-2 block">
+                        {t("createOffer.weekdayAddressLabel")} *
+                      </label>
+                      <input
+                        type="text"
+                        name="weekdayAddress"
+                        value={formData.weekdayAddress}
+                        onChange={handleInputChange}
+                        className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
+                          errors.weekdayAddress ? "border-red-500 focus:border-red-500" : "border-pink/30 focus:border-pink"
+                        }`}
+                        placeholder={t("createOffer.weekdayAddressPlaceholder")}
+                      />
+                      {errors.weekdayAddress && <p className="text-red-500 text-xs mt-1">{errors.weekdayAddress}</p>}
+                    </div>
+                  )}
+                  {formData.locationSource === "company" && (
+                    <div>
+                      <p className="text-gray-400 text-sm">{t("createOffer.locationFromCompanyHint")}</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -731,57 +981,310 @@ export default function CreateOfferPage() {
 
           {/* Happy Hour Specific Fields */}
           {selectedType === "happy_hour" && (
-            <div>
-              <h4 className="text-lg font-bold text-white mb-4">{t("offerDetails.happyHourDetails")}</h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                  <label className="text-gray-400 text-sm mb-2 block">
-                    {t("createOffer.startTimeLabel")} *
-                  </label>
-                  <input
-                    type="time"
-                    name="startTime"
-                    value={formData.startTime}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
-                      errors.startTime ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
-                    }`}
-                  />
-                  {errors.startTime && <p className="text-red-500 text-xs mt-1">{errors.startTime}</p>}
+            <div className="space-y-6">
+              {/* Select Weekdays */}
+              <div>
+                <h4 className="text-lg font-bold text-white mb-4">{t("createOffer.selectWeekdays")} *</h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {weekdays.map(day => (
+                    <button
+                      key={day.id}
+                      type="button"
+                      onClick={() => handleWeekdayChange(day.id)}
+                      className={`p-3 rounded-lg border transition-all ${
+                        formData.weekdays.includes(day.id)
+                          ? "bg-green/10 border-green text-green"
+                          : "bg-background border-green/30 text-gray-400 hover:bg-green/5"
+                      }`}
+                    >
+                      {day.name}
+                    </button>
+                  ))}
                 </div>
+                {errors.weekdays && <p className="text-red-500 text-xs mt-2">{errors.weekdays}</p>}
+                <p className="text-gray-500 text-xs mt-2">{t("createOffer.selectWeekdaysHint")}</p>
+              </div>
 
-                <div>
-                  <label className="text-gray-400 text-sm mb-2 block">
-                    {t("createOffer.endTimeLabel")} *
-                  </label>
-                  <input
-                    type="time"
-                    name="endTime"
-                    value={formData.endTime}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
-                      errors.endTime ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
-                    }`}
-                  />
-                  {errors.endTime && <p className="text-red-500 text-xs mt-1">{errors.endTime}</p>}
-                </div>
+              {/* Time Range */}
+              <div>
+                <h4 className="text-lg font-bold text-white mb-4">{t("createOffer.timeRange")} *</h4>
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-gray-400 text-sm mb-2 block">
+                      {t("createOffer.timeRangeModeLabel")}
+                    </label>
+                    <div className="flex gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, timeRangeMode: "single" }))}
+                        className={`px-4 py-2 rounded-lg border transition-all ${
+                          formData.timeRangeMode === "single"
+                            ? "bg-green/10 border-green text-green"
+                            : "border-green/30 text-gray-400 hover:bg-green/5"
+                        }`}
+                      >
+                        {t("createOffer.singleTimeRange")}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, timeRangeMode: "custom" }))}
+                        className={`px-4 py-2 rounded-lg border transition-all ${
+                          formData.timeRangeMode === "custom"
+                            ? "bg-green/10 border-green text-green"
+                            : "border-green/30 text-gray-400 hover:bg-green/5"
+                        }`}
+                      >
+                        {t("createOffer.customForEachDay")}
+                      </button>
+                    </div>
+                  </div>
 
-                <div>
-                  <label className="text-gray-400 text-sm mb-2 block">
-                    {t("createOffer.locationLabel")} *
-                  </label>
-                  <input
-                    type="text"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                      errors.location ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
-                    }`}
-                    placeholder={t("createOffer.locationPlaceholder")}
-                  />
-                  {errors.location && <p className="text-red-500 text-xs mt-1">{errors.location}</p>}
+                  {formData.timeRangeMode === "single" ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="text-gray-400 text-sm mb-2 block">
+                          {t("createOffer.startTimeLabel")} *
+                        </label>
+                        <input
+                          type="time"
+                          name="startTime"
+                          value={formData.startTime}
+                          onChange={handleInputChange}
+                          className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
+                            errors.startTime ? "border-red-500 focus:border-red-500" : "border-green/30 focus:border-green"
+                          }`}
+                        />
+                        {errors.startTime && <p className="text-red-500 text-xs mt-1">{errors.startTime}</p>}
+                      </div>
+                      <div>
+                        <label className="text-gray-400 text-sm mb-2 block">
+                          {t("createOffer.endTimeLabel")} *
+                        </label>
+                        <input
+                          type="time"
+                          name="endTime"
+                          value={formData.endTime}
+                          onChange={handleInputChange}
+                          className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
+                            errors.endTime ? "border-red-500 focus:border-red-500" : "border-green/30 focus:border-green"
+                          }`}
+                        />
+                        {errors.endTime && <p className="text-red-500 text-xs mt-1">{errors.endTime}</p>}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <p className="text-gray-400 text-sm">{t("createOffer.customTimeRangeHint")}</p>
+                      {formData.weekdays.length === 0 ? (
+                        <p className="text-gray-500 text-sm italic">{t("createOffer.selectWeekdaysFirst")}</p>
+                      ) : (
+                        weekdays
+                          .filter(day => formData.weekdays.includes(day.id))
+                          .map(day => (
+                            <div key={day.id} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                              <div className="flex items-center">
+                                <span className="text-white font-medium">{day.name}</span>
+                              </div>
+                              <div>
+                                <label className="text-gray-400 text-xs mb-1 block">
+                                  {t("createOffer.startTimeLabel")}
+                                </label>
+                                <input
+                                  type="time"
+                                  value={formData.customTimes[day.id]?.start || ""}
+                                  onChange={(e) => setFormData(prev => ({
+                                    ...prev,
+                                    customTimes: {
+                                      ...prev.customTimes,
+                                      [day.id]: { ...prev.customTimes[day.id], start: e.target.value }
+                                    }
+                                  }))}
+                                  className="w-full px-3 py-2 bg-background border border-green/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-green transition-all"
+                                />
+                              </div>
+                              <div>
+                                <label className="text-gray-400 text-xs mb-1 block">
+                                  {t("createOffer.endTimeLabel")}
+                                </label>
+                                <input
+                                  type="time"
+                                  value={formData.customTimes[day.id]?.end || ""}
+                                  onChange={(e) => setFormData(prev => ({
+                                    ...prev,
+                                    customTimes: {
+                                      ...prev.customTimes,
+                                      [day.id]: { ...prev.customTimes[day.id], end: e.target.value }
+                                    }
+                                  }))}
+                                  className="w-full px-3 py-2 bg-background border border-green/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-green transition-all"
+                                />
+                              </div>
+                            </div>
+                          ))
+                      )}
+                    </div>
+                  )}
                 </div>
+              </div>
+
+              {/* Offer Dates */}
+              <div>
+                <h4 className="text-lg font-bold text-white mb-4">
+                  {t("createOffer.dates")} * <span className="text-gray-500 text-sm font-normal">({t("createOffer.availableOnTilbod")})</span>
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="text-gray-400 text-sm mb-2 block">
+                      {t("createOffer.startDate")} *
+                    </label>
+                    <input
+                      type="date"
+                      name="startDate"
+                      value={formData.startDate}
+                      onChange={handleInputChange}
+                      className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
+                        errors.startDate ? "border-red-500 focus:border-red-500" : "border-green/30 focus:border-green"
+                      }`}
+                    />
+                    {errors.startDate && <p className="text-red-500 text-xs mt-1">{errors.startDate}</p>}
+                  </div>
+                  <div>
+                    <label className="text-gray-400 text-sm mb-2 block">
+                      {t("createOffer.endDate")} *
+                    </label>
+                    <input
+                      type="date"
+                      name="endDate"
+                      value={formData.endDate}
+                      onChange={handleInputChange}
+                      className={`w-full px-4 py-3 bg-background border rounded-lg text-white focus:outline-none focus:ring-2 transition-all ${
+                        errors.endDate ? "border-red-500 focus:border-red-500" : "border-green/30 focus:border-green"
+                      }`}
+                    />
+                    {errors.endDate && <p className="text-red-500 text-xs mt-1">{errors.endDate}</p>}
+                  </div>
+                </div>
+              </div>
+
+              {/* Location */}
+              <div>
+                <h4 className="text-lg font-bold text-white mb-4">{t("createOffer.locationLabel")}</h4>
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-gray-400 text-sm mb-2 block">
+                      {t("createOffer.locationSourceLabel")}
+                    </label>
+                    <div className="flex gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, locationSource: "company" }))}
+                        className={`px-4 py-2 rounded-lg border transition-all ${
+                          formData.locationSource === "company"
+                            ? "bg-green/10 border-green text-green"
+                            : "border-green/30 text-gray-400 hover:bg-green/5"
+                        }`}
+                      >
+                        {t("createOffer.locationFromCompany")}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, locationSource: "custom" }))}
+                        className={`px-4 py-2 rounded-lg border transition-all ${
+                          formData.locationSource === "custom"
+                            ? "bg-green/10 border-green text-green"
+                            : "border-green/30 text-gray-400 hover:bg-green/5"
+                        }`}
+                      >
+                        {t("createOffer.locationCustom")}
+                      </button>
+                    </div>
+                  </div>
+                  {formData.locationSource === "custom" && (
+                    <div>
+                      <label className="text-gray-400 text-sm mb-2 block">
+                        {t("createOffer.locationLabel")}
+                      </label>
+                      <input
+                        type="text"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleInputChange}
+                        className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
+                          errors.location ? "border-red-500 focus:border-red-500" : "border-green/30 focus:border-green"
+                        }`}
+                        placeholder={t("createOffer.locationPlaceholder")}
+                      />
+                      {errors.location && <p className="text-red-500 text-xs mt-1">{errors.location}</p>}
+                    </div>
+                  )}
+                  {formData.locationSource === "company" && (
+                    <p className="text-gray-400 text-sm">{t("createOffer.locationFromCompanyHint")}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Opening Hours */}
+              <div>
+                <h4 className="text-lg font-bold text-white mb-4">{t("createOffer.openingHoursLabel")}</h4>
+                <div className="space-y-3">
+                  {weekdays.map(day => (
+                    <div key={day.id} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="flex items-center">
+                        <span className="text-white font-medium">{day.name}</span>
+                      </div>
+                      <div>
+                        <label className="text-gray-400 text-xs mb-1 block">
+                          {t("createOffer.startTimeLabel")}
+                        </label>
+                        <input
+                          type="time"
+                          value={formData.openingHours[day.id]?.start || ""}
+                          onChange={(e) => setFormData(prev => ({
+                            ...prev,
+                            openingHours: {
+                              ...prev.openingHours,
+                              [day.id]: { ...prev.openingHours[day.id], start: e.target.value }
+                            }
+                          }))}
+                          className="w-full px-3 py-2 bg-background border border-green/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-green transition-all"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-gray-400 text-xs mb-1 block">
+                          {t("createOffer.endTimeLabel")}
+                        </label>
+                        <input
+                          type="time"
+                          value={formData.openingHours[day.id]?.end || ""}
+                          onChange={(e) => setFormData(prev => ({
+                            ...prev,
+                            openingHours: {
+                              ...prev.openingHours,
+                              [day.id]: { ...prev.openingHours[day.id], end: e.target.value }
+                            }
+                          }))}
+                          className="w-full px-3 py-2 bg-background border border-green/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:border-green transition-all"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Price Info (Optional) */}
+              <div>
+                <h4 className="text-lg font-bold text-white mb-4">
+                  {t("createOffer.priceInfoLabel")} ({t("createOffer.optional")})
+                </h4>
+                <textarea
+                  name="priceInfo"
+                  value={formData.priceInfo}
+                  onChange={handleInputChange}
+                  rows={3}
+                  className="w-full px-4 py-3 bg-background border border-green/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-green transition-all resize-none"
+                  placeholder={t("createOffer.priceInfoPlaceholder")}
+                />
+                <p className="text-gray-500 text-xs mt-1">{t("createOffer.priceInfoHint")}</p>
               </div>
             </div>
           )}
@@ -790,17 +1293,39 @@ export default function CreateOfferPage() {
           {selectedType !== "gift_card" && (
             <div>
               <label className="text-gray-400 text-sm mb-2 block">
-                {t("createOffer.offerLinkLabel")}
+                {t("createOffer.offerLinkLabel")} {(selectedType === "active" || selectedType === "weekdays" || selectedType === "happy_hour") && "*"}
               </label>
               <input
                 type="url"
                 name="offerLink"
                 value={formData.offerLink}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all"
+                className={`w-full px-4 py-3 bg-background border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
+                  errors.offerLink ? "border-red-500 focus:border-red-500" : "border-primary/30 focus:border-primary"
+                }`}
                 placeholder={t("createOffer.offerLinkPlaceholder")}
               />
-              <p className="text-gray-500 text-xs mt-1">{t("createOffer.optional")}</p>
+              {errors.offerLink && <p className="text-red-500 text-xs mt-1">{errors.offerLink}</p>}
+              {selectedType !== "active" && selectedType !== "weekdays" && selectedType !== "happy_hour" && <p className="text-gray-500 text-xs mt-1">{t("createOffer.optional")}</p>}
+              {(selectedType === "active" || selectedType === "weekdays" || selectedType === "happy_hour") && <p className="text-gray-500 text-xs mt-1">{t("createOffer.offerLinkHint")}</p>}
+            </div>
+          )}
+
+          {/* Event Category (optional, for active offers) */}
+          {selectedType === "active" && (
+            <div>
+              <label className="text-gray-400 text-sm mb-2 block">
+                {t("createOffer.eventCategoryLabel")} ({t("createOffer.optional")})
+              </label>
+              <input
+                type="text"
+                name="eventCategory"
+                value={formData.eventCategory}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 bg-background border border-primary/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary transition-all"
+                placeholder={t("createOffer.eventCategoryPlaceholder")}
+              />
+              <p className="text-gray-500 text-xs mt-1">{t("createOffer.eventCategoryHint")}</p>
             </div>
           )}
 
@@ -822,24 +1347,29 @@ export default function CreateOfferPage() {
           {/* Image Upload */}
           <div>
             <label className="text-gray-400 text-sm mb-2 block">
-              {t("createOffer.offerImage")} ({t("createOffer.optional")})
+              {t("createOffer.offerImage")} {(selectedType === "active" || selectedType === "weekdays" || selectedType === "happy_hour") && "*"}
+              {selectedType !== "active" && selectedType !== "weekdays" && selectedType !== "happy_hour" && `(${t("createOffer.optional")})`}
             </label>
-            <label className="flex flex-col items-center justify-center gap-2 px-4 py-6 bg-background border border-primary/30 rounded-lg cursor-pointer hover:border-primary transition-all">
+            <label className={`flex flex-col items-center justify-center gap-2 px-4 py-6 bg-background border rounded-lg cursor-pointer hover:border-primary transition-all ${
+              errors.image ? "border-red-500 hover:border-red-400" : "border-primary/30"
+            }`}>
               <input
                 type="file"
-                accept="image/*"
+                accept="image/png,image/jpeg,image/jpg,image/svg+xml"
                 onChange={handleFileChange}
                 className="hidden"
               />
               {previewImageUrl ? (
-                <img src={previewImageUrl} alt="Preview" className="w-full h-48 object-cover rounded-lg" />
+                <img src={previewImageUrl} alt="Preview" className="w-full h-48 object-cover rounded-lg transition-all" />
               ) : (
                 <>
-                  <span className="text-gray-400 text-sm">{t("createOffer.uploadImage")}</span>
-                  <span className="text-gray-500 text-xs">PNG, JPG or SVG (max. 2MB)</span>
+                  <span className="text-gray-400 text-sm transition-colors">{t("createOffer.uploadImage")}</span>
+                  <span className="text-gray-500 text-xs transition-colors">{t("createOffer.imageFormatHint")}</span>
                 </>
               )}
             </label>
+            {errors.image && <p className="text-red-500 text-xs mt-1">{errors.image}</p>}
+            <p className="text-gray-500 text-xs mt-1">{t("createOffer.imageSizeHint")}</p>
           </div>
 
           {/* Submit Button */}

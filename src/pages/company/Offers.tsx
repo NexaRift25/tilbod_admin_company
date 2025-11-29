@@ -387,12 +387,13 @@ export default function OffersPage() {
       id: parseInt(offer.id),
       offerType: offer.type,
       title: offer.title,
-      price: offer.discountPrice.toLocaleString(),
+      discount: `${offer.discountPercentage}% Discount`,
       description: `${offer.title} - ${offer.category}`,
       image: "/placeholder-image.jpg",
       category: offer.category,
       timeLeft: calculateTimeLeft(offer.endDate),
-      purchaseCount: offer.purchases,
+      price: offer.originalPrice > offer.discountPrice ? `${offer.originalPrice.toLocaleString()} kr.` : null,
+      discountPrice: offer.discountPrice > 0 ? `${offer.discountPrice.toLocaleString()} kr.` : null,
       link: `/offers/${offer.id}`
     };
   };

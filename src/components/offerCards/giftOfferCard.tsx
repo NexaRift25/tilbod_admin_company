@@ -1,17 +1,18 @@
-import AnimatedButton from "../ui/animatedButton";
 import { cn } from "@/lib/utils";
-import { useLocation } from "react-router-dom";
+import AnimatedButton from "../ui/animatedButton";
 
 interface GiftOffer {
   id: number;
   offerType: string;
   title: string;
-  price: string;
+  discount: string;
   description: string;
   image: string;
   category: string;
   timeLeft: string;
-  purchaseCount: number;
+  location?: string;
+  price: string | null;
+  discountPrice: string | null;
   link: string;
 }
 
@@ -24,93 +25,87 @@ export default function GiftOfferCard({
   offer,
   className,
 }: GiftOfferCardProps) {
-  const location = useLocation();
-  const pathname = location.pathname;
   const {
     title,
-    price,
+    discount,
     description,
     image,
     category,
     timeLeft,
-    purchaseCount,
-    id,
+    link,
+    price,
+    discountPrice,
   } = offer;
-
   return (
     <div className="theme-orange">
       <div
         className={cn(
-          "w-full min-h-[34rem] h-[34rem] sm:h-[34rem] md:h-[38.75rem] relative overflow-hidden border border-orange-500 rounded-[2.5rem] bg-card-background mx-auto flex flex-col",
+          "w-full min-h-[34rem] h-[34rem] sm:h-[34rem] md:h-[38.75rem] relative overflow-hidden rounded-[2.5rem] border border-orange-500 sm:rounded-[2.5rem] bg-card-background mx-auto",
           className
         )}
       >
-        {/* Price Banner */}
-        <div className="bg-orange-500 absolute left-[1rem] right-[1rem] top-[1rem] z-30 flex select-none items-center justify-center rounded-full py-[0.375rem] h-[2.5rem] md:h-[3.5rem] w-auto">
-          <span className="text-xl md:text-[1.75rem] font-bold text-dark max-w-[80%] w-full text-center truncate">
-            {"/gift-certificates" !== pathname ? price : category}
+        {/* Discount Banner */}
+        <div className="bg-orange-500 absolute left-[1rem] right-[1rem] top-[1rem] z-30 flex select-none items-center justify-center rounded-full py-[0.375rem] h-[3rem] md:h-[3.5rem] w-auto">
+          <span className="text-xl md:text-[1.75rem] font-semibold text-dark max-w-[90%] w-full text-center truncate">
+            {discount}
           </span>
         </div>
 
         {/* Main Image */}
-        <div className="relative h-[10rem] sm:h-[12rem] md:h-[14rem] w-full bg-card-background border-b border-orange-500 flex-shrink-0">
+        <div className="relative w-full bg-card-background h-[12.5rem] sm:h-[15rem] lg:h-[17.5rem] border-b border-orange-500">
           <img
             src={image}
             alt={title}
             className="pointer-events-none relative z-10 select-none object-cover w-full h-full"
           />
           {/* Time Left Indicator */}
-          <div className="min-w-[9rem] text-center absolute bottom-0 left-1/2 z-40 -translate-x-1/2 transform">
-            <div className="max-w-[14.5rem] min-w-[9rem] rounded-t-3xl text-sm shadow-lg px-[2rem] py-[0.34375rem] font-semibold lg:text-base border border-b-0 bg-card-background text-smoky-white border-orange-500 w-full truncate">
+          <div className="absolute bottom-0 left-1/2 z-40 -translate-x-1/2 transform">
+            <div className="min-w-[9.4375rem] max-w-[14.5rem] text-center rounded-t-3xl text-sm shadow-lg px-[2rem] py-[0.34375rem] font-semibold lg:text-base border border-b-0 bg-card-background text-smoky-white border-orange-500 w-full truncate">
               {timeLeft}
             </div>
           </div>
         </div>
 
         {/* Bottom Content Overlay */}
-        <div className="z-30 p-[1rem] md:p-[1.5rem] flex flex-col justify-between sm:rounded-b-3xl bg-card-background">
+        <div className="z-30 p-[1rem] lg:p-[1.5rem] flex flex-col justify-between sm:rounded-b-3xl bg-card-background">
           {/* Content Section */}
           <div className="pointer-events-none flex-1">
-            <div className="border-b border-orange-500">
+            <div className=" border-b border-orange-500">
               {/* Category */}
-              <div className="text-xs sm:text-sm lg:text-base font-semibold text-yellow">
-                {"/gift-certificates" !== pathname
-                  ? category
-                  : purchaseCount + " have taken advantage of the offer"}{" "}
+              <div className="text-xs font-semibold sm:text-base text-orange-500">
+                {category}
               </div>
 
               {/* Title */}
-              <h3 className="max-w-[90%] text-lg font-bold lg:text-xl 2xl:text-2xl text-smoky-white mb-2 lg:mb-4 w-full truncate">
+              <h3 className="max-w-[90%] text-sm font-bold sm:text-base lg:text-2xl text-smoky-white mb-4 w-full truncate">
                 {title}
               </h3>
             </div>
 
             {/* Description */}
-            <p className="h-[9.99rem] w-full text-sm md:text-base text-smoky-white pt-4 font-medium overflow-hidden">
-              <span className="block line-clamp-6 sm:line-clamp-7 md:line-clamp-8">
-                {description}
-              </span>
+            <p className="h-[5.4375rem] w-[80%] text-base text-smoky-white pt-4 font-medium">
+              {description}
             </p>
           </div>
 
-          {/* Purchase Count - Absolute positioned */}
-          <div className="absolute bottom-[4.75rem] md:bottom-[6rem] text-smoky-white text-sm md:text-base font-medium">
-            {pathname !== "/gift-certificates" ? (
-              <p className="max-w-[100%] md:max-w-[80%] lg:max-w-[100%] w-full truncate">
-                {purchaseCount} have taken{" "}
-                <span className="hidden md:inline">advantage of the offer</span>
-              </p>
-            ) : (
-              <p className="text-yellow text-lg md:text-xl lg:text-3xl font-bold">
-                {price}
-              </p>
-            )}
-          </div>
+          {price && discountPrice && (
+            <div className="absolute bottom-[5rem] left-[1rem] right-[1rem] md:bottom-[6rem] md:left-[1.5rem] md:right-[1.5rem]">
+              <div className="flex items-center gap-4 md:gap-10">
+                <span className=" text-xl md:text-2xl font-semibold text-orange-500">
+                  {discountPrice}.
+                </span>
+                <span className="font-semibold text-yellow text-sm md:text-base">
+                  {" "}
+                  previously {price}.
+                </span>
+              </div>
+            </div>
+          )}
 
           {/* Action Buttons */}
-          <div className="absolute bottom-[1rem] left-[1rem] right-[1rem] 2xl:bottom-[1.5rem] lg:left-[1.5rem] lg:right-[1.5rem] flex flex-col gap-2">
+          <div className="absolute bottom-[1rem] left-[1rem] right-[1rem] md:bottom-[1.5rem] md:left-[1.5rem] md:right-[1.5rem]">
             {/* View Offer Button */}
-            <AnimatedButton link={`/gift-details/${id}`} />
+            <AnimatedButton link={link} />
           </div>
         </div>
       </div>
