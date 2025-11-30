@@ -300,9 +300,10 @@
       "users": "Users",
       "commission": "Commission & Price",
       "paymentHistory": "Payment History",
+      "invoiceHistory": "Invoice History",
       "analytics": "Analytics",
       "events": "Events & Seasons",
-      "categories": "Categories",
+      "categories": "Company Category",
       "productCategories": "Product Categories",
       "discountLabels": "Discount Labels",
       "targetedDiscounts": "Targeted Discounts",
@@ -649,6 +650,26 @@
         "all": "All Status",
         "active": "Active",
         "inactive": "Inactive"
+      },
+      "activeOffers": {
+        "all": "All Active Offers",
+        "enabled": "Enabled",
+        "disabled": "Disabled"
+      },
+      "weekdaysOffers": {
+        "all": "All Weekdays Offers",
+        "enabled": "Enabled",
+        "disabled": "Disabled"
+      },
+      "happyHour": {
+        "all": "All Happy Hour",
+        "enabled": "Enabled",
+        "disabled": "Disabled"
+      },
+      "giftCards": {
+        "all": "All Gift Cards",
+        "enabled": "Enabled",
+        "disabled": "Disabled"
       }
     },
     "status": {
@@ -662,12 +683,11 @@
       "delete": "Delete Category"
     },
     "table": {
-      "name": "Category Name",
-      "description": "Description",
-      "status": "Status",
-      "companies": "Companies",
-      "offers": "Offers",
-      "updated": "Last Updated",
+      "companyCategory": "COMPANY CATEGORIES/SIGNUP",
+      "activeOffers": "Active offers",
+      "weekdaysOffers": "Weekdays offers",
+      "happyHour": "Happy hour",
+      "giftCards": "Gift cards",
       "actions": "Actions"
     },
     "empty": {
@@ -678,13 +698,19 @@
     "form": {
       "nameLabel": "Category Name",
       "namePlaceholder": "Enter category name",
+      "nameReadOnly": "Category name cannot be changed",
       "descriptionLabel": "Description",
       "descriptionPlaceholder": "Enter category description",
       "statusLabel": "Status",
       "statusOptions": {
         "active": "Active",
         "inactive": "Inactive"
-      }
+      },
+      "offerTypesLabel": "Offer Type Access",
+      "activeOffers": "Active offers",
+      "weekdaysOffers": "Weekdays offers",
+      "happyHour": "Happy hour",
+      "giftCards": "Gift cards"
     },
     "modal": {
       "addTitle": "Add New Category",
@@ -736,6 +762,7 @@
       "delete": "Delete Category"
     },
     "table": {
+      "image": "Image",
       "name": "Category Name",
       "description": "Description",
       "status": "Status",
@@ -753,6 +780,13 @@
       "namePlaceholder": "e.g., Clothing, Jewelry, Electronics",
       "descriptionLabel": "Description",
       "descriptionPlaceholder": "Enter category description",
+      "imageLabel": "Product Category Image",
+      "uploadImage": "Click to upload or drag and drop",
+      "imageFormatHint": "PNG, JPG or SVG",
+      "imageSizeHint": "Maximum file size: 2MB",
+      "imageSizeError": "Image size must be less than 2MB",
+      "imageTypeError": "Please upload a valid image file",
+      "removeImage": "Remove image",
       "statusLabel": "Status",
       "statusOptions": {
         "active": "Active",
@@ -1973,6 +2007,71 @@
       "processedBy": "Processed by",
       "description": "Description",
       "notice": "This record is part of the immutable ledger. Any corrections must be performed as a new adjustment transaction."
+    }
+  },
+  "adminInvoiceHistory": {
+    "title": "Invoice History",
+    "subtitle": "View and manage invoices sent to companies for payments and commissions",
+    "actions": {
+      "refresh": "Refresh",
+      "export": "Export all"
+    },
+    "stats": {
+      "totalAmount": "Total Amount",
+      "paid": "Paid Invoices",
+      "pending": "Pending Invoices",
+      "overdue": "Overdue Invoices"
+    },
+    "filters": {
+      "searchPlaceholder": "Search by company, invoice number, or period...",
+      "status": {
+        "all": "All statuses"
+      }
+    },
+    "status": {
+      "paid": "Paid",
+      "pending": "Pending",
+      "overdue": "Overdue",
+      "cancelled": "Cancelled"
+    },
+    "table": {
+      "title": "Invoices",
+      "subtitle": "Showing {{count}} invoices",
+      "headers": {
+        "invoiceNumber": "Invoice #",
+        "company": "Company",
+        "period": "Period",
+        "amount": "Amount",
+        "issueDate": "Issue Date",
+        "dueDate": "Due Date",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "actions": {
+        "view": "View invoice",
+        "download": "Download invoice"
+      },
+      "empty": {
+        "title": "No invoices found",
+        "description": "Try adjusting your search or filter criteria."
+      }
+    },
+    "modal": {
+      "title": "Invoice {{number}}",
+      "close": "Close",
+      "download": "Download Invoice",
+      "company": "Company",
+      "status": "Status",
+      "issueDate": "Issue Date",
+      "dueDate": "Due Date",
+      "paidDate": "Paid Date",
+      "period": "Period",
+      "items": "Invoice Items",
+      "quantity": "Quantity",
+      "subtotal": "Subtotal",
+      "tax": "Tax",
+      "total": "Total",
+      "description": "Description"
     }
   },
   "adminCommissionApproval": {

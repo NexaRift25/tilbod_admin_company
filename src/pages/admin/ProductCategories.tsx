@@ -12,6 +12,8 @@ import {
   XCircle,
   AlertCircle,
   Save,
+  Upload,
+  Image as ImageIcon,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import Modal from "@/components/ui/modal";
@@ -20,6 +22,7 @@ interface ProductCategory {
   id: string;
   name: string;
   description: string;
+  image?: string;
   status: "active" | "inactive";
   createdAt: string;
   updatedAt: string;
@@ -113,8 +116,10 @@ export default function ProductCategoriesPage() {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
+    image: "",
     status: "active" as "active" | "inactive",
   });
+  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
 
   const statusFilterOptions = useMemo(
     () => [
@@ -141,15 +146,19 @@ export default function ProductCategoriesPage() {
       setFormData({
         name: category.name,
         description: category.description,
+        image: category.image || "",
         status: category.status,
       });
+      setPreviewImageUrl(category.image || null);
     } else {
       setEditingCategory(null);
       setFormData({
         name: "",
         description: "",
+        image: "",
         status: "active",
       });
+      setPreviewImageUrl(null);
     }
     setShowModal(true);
   };
@@ -160,8 +169,29 @@ export default function ProductCategoriesPage() {
     setFormData({
       name: "",
       description: "",
+      image: "",
       status: "active",
     });
+    setPreviewImageUrl(null);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      // Validate file size (max 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        window.alert(t("adminProductCategories.form.imageSizeError"));
+        return;
+      }
+      // Validate file type
+      if (!file.type.startsWith("image/")) {
+        window.alert(t("adminProductCategories.form.imageTypeError"));
+        return;
+      }
+      const url = URL.createObjectURL(file);
+      setPreviewImageUrl(url);
+      setFormData((prev) => ({ ...prev, image: url }));
+    }
   };
 
   const handleSave = async () => {
@@ -181,6 +211,7 @@ export default function ProductCategoriesPage() {
                 ...cat,
                 name: formData.name,
                 description: formData.description,
+                image: formData.image,
                 status: formData.status,
                 updatedAt: new Date().toISOString(),
               }
@@ -192,6 +223,7 @@ export default function ProductCategoriesPage() {
         id: Date.now().toString(),
         name: formData.name,
         description: formData.description,
+        image: formData.image,
         status: formData.status,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -388,6 +420,7 @@ export default function ProductCategoriesPage() {
             <table className="w-full">
               <thead>
                 <tr className="text-left text-gray-400 text-sm border-b border-primary/50">
+                  <th className="pb-3">{t("adminProductCategories.table.image")}</th>
                   <th className="pb-3">{t("adminProductCategories.table.name")}</th>
                   <th className="pb-3">{t("adminProductCategories.table.description")}</th>
                   <th className="pb-3">{t("adminProductCategories.table.status")}</th>
@@ -399,6 +432,19 @@ export default function ProductCategoriesPage() {
               <tbody className="text-white">
                 {filteredCategories.map((category) => (
                   <tr key={category.id} className="border-b border-primary/10 hover:bg-primary/5">
+                    <td className="py-4">
+                      {category.image ? (
+                        <img
+                          src={category.image}
+                          alt={category.name}
+                          className="w-12 h-12 object-cover rounded-lg"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 bg-background border border-primary/30 rounded-lg flex items-center justify-center">
+                          <ImageIcon className="text-gray-400" size={20} />
+                        </div>
+                      )}
+                    </td>
                     <td className="py-4">
                       <div className="flex items-center gap-2">
                         <Package className="text-primary" size={18} />
@@ -545,6 +591,57 @@ export default function ProductCategoriesPage() {
               rows={4}
               className="w-full px-4 py-3 bg-background border border-primary/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-primary resize-none"
             />
+          </div>
+
+          {/* Image Upload */}
+          <div>
+            <label className="text-gray-400 text-sm mb-2 block">
+              {t("adminProductCategories.form.imageLabel")}
+            </label>
+            <label className={`flex flex-col items-center justify-center gap-2 px-4 py-6 bg-background border rounded-lg cursor-pointer hover:border-primary transition-all ${
+              previewImageUrl ? "border-primary/50" : "border-primary/30 border-dashed"
+            }`}>
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/jpg,image/svg+xml"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+              {previewImageUrl ? (
+                <div className="w-full relative">
+                  <img
+                    src={previewImageUrl}
+                    alt="Preview"
+                    className="w-full h-48 object-cover rounded-lg"
+                  />
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPreviewImageUrl(null);
+                      setFormData((prev) => ({ ...prev, image: "" }));
+                    }}
+                    className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all"
+                    title={t("adminProductCategories.form.removeImage")}
+                  >
+                    <XCircle size={16} />
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <Upload className="text-gray-400" size={32} />
+                  <span className="text-gray-400 text-sm">
+                    {t("adminProductCategories.form.uploadImage")}
+                  </span>
+                  <span className="text-gray-500 text-xs">
+                    {t("adminProductCategories.form.imageFormatHint")}
+                  </span>
+                </>
+              )}
+            </label>
+            <p className="text-gray-500 text-xs mt-1">
+              {t("adminProductCategories.form.imageSizeHint")}
+            </p>
           </div>
 
           <div>

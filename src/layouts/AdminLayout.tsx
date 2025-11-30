@@ -15,6 +15,7 @@ import {
   Package,
   TrendingUp,
   CreditCard,
+  FileText,
 } from "lucide-react";
 import Container from "@/components/ui/Container";
 import { Logo, MobileLogo } from "@/components/ui/Header";
@@ -68,15 +69,20 @@ export default function AdminLayout() {
         icon: CreditCard,
       },
       {
+        name: t("adminSidebar.nav.invoiceHistory"),
+        href: "/admin/invoice-history",
+        icon: FileText,
+      },
+      {
         name: t("adminSidebar.nav.analytics"),
         href: "/admin/analytics",
         icon: BarChart3,
       },
-      {
-        name: t("adminSidebar.nav.events"),
-        href: "/admin/events-seasons",
-        icon: Calendar,
-      },
+      // {
+      //   name: t("adminSidebar.nav.events"),
+      //   href: "/admin/events-seasons",
+      //   icon: Calendar,
+      // },
       {
         name: t("adminSidebar.nav.categories"),
         href: "/admin/categories",

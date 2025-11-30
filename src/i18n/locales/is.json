@@ -300,6 +300,7 @@
       "users": "Notendur",
       "commission": "Þóknun og verð",
       "paymentHistory": "Greiðslusaga",
+      "invoiceHistory": "Reikningasaga",
       "analytics": "Greiningar",
       "events": "Viðburðir og árstíðir",
       "categories": "Flokkar",
@@ -649,6 +650,26 @@
         "all": "Allar stöður",
         "active": "Virkir",
         "inactive": "Óvirkir"
+      },
+      "activeOffers": {
+        "all": "Allar virkar tilboð",
+        "enabled": "Virkjað",
+        "disabled": "Óvirkjað"
+      },
+      "weekdaysOffers": {
+        "all": "Allar virkir dagar tilboð",
+        "enabled": "Virkjað",
+        "disabled": "Óvirkjað"
+      },
+      "happyHour": {
+        "all": "Allur Happy Hour",
+        "enabled": "Virkjað",
+        "disabled": "Óvirkjað"
+      },
+      "giftCards": {
+        "all": "Öll gjafakort",
+        "enabled": "Virkjað",
+        "disabled": "Óvirkjað"
       }
     },
     "status": {
@@ -736,6 +757,7 @@
       "delete": "Eyða flokki"
     },
     "table": {
+      "image": "Mynd",
       "name": "Heiti flokks",
       "description": "Lýsing",
       "status": "Staða",
@@ -1802,6 +1824,71 @@
       "processedBy": "Unnið af",
       "description": "Lýsing",
       "notice": "Þessi færsla er hluti af óbreytanlegu færslusafni. Leiðréttingar þarf að skrá sem nýja leiðréttingarfærslu."
+    }
+  },
+  "adminInvoiceHistory": {
+    "title": "Reikningasaga",
+    "subtitle": "Skoðaðu og stjórnaðu reikningum sem sendir eru til fyrirtækja fyrir greiðslur og þóknanir",
+    "actions": {
+      "refresh": "Endurhlaða",
+      "export": "Flytja út allt"
+    },
+    "stats": {
+      "totalAmount": "Heildarupphæð",
+      "paid": "Greiddir reikningar",
+      "pending": "Reikningar í bið",
+      "overdue": "Vanskilareikningar"
+    },
+    "filters": {
+      "searchPlaceholder": "Leita eftir fyrirtæki, reikningsnúmeri eða tímabili...",
+      "status": {
+        "all": "Allar stöður"
+      }
+    },
+    "status": {
+      "paid": "Greitt",
+      "pending": "Í bið",
+      "overdue": "Vanskil",
+      "cancelled": "Hætt við"
+    },
+    "table": {
+      "title": "Reikningar",
+      "subtitle": "Sýni {{count}} reikninga",
+      "headers": {
+        "invoiceNumber": "Reikningsnúmer",
+        "company": "Fyrirtæki",
+        "period": "Tímabil",
+        "amount": "Upphæð",
+        "issueDate": "Útgáfudagur",
+        "dueDate": "Gjalddagi",
+        "status": "Staða",
+        "actions": "Aðgerðir"
+      },
+      "actions": {
+        "view": "Skoða reikning",
+        "download": "Hlaða niður reikningi"
+      },
+      "empty": {
+        "title": "Engir reikningar fundust",
+        "description": "Reyndu að breyta leit eða síu."
+      }
+    },
+    "modal": {
+      "title": "Reikningur {{number}}",
+      "close": "Loka",
+      "download": "Hlaða niður reikningi",
+      "company": "Fyrirtæki",
+      "status": "Staða",
+      "issueDate": "Útgáfudagur",
+      "dueDate": "Gjalddagi",
+      "paidDate": "Greiðsludagur",
+      "period": "Tímabil",
+      "items": "Reikningsatriði",
+      "quantity": "Magn",
+      "subtotal": "Undirsumma",
+      "tax": "VSK",
+      "total": "Heildarupphæð",
+      "description": "Lýsing"
     }
   },
   "adminCommissionApproval": {
