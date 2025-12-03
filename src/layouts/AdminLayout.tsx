@@ -93,6 +93,11 @@ export default function AdminLayout() {
         href: "/admin/product-categories",
         icon: Package,
       },
+      {
+        name: t("adminSidebar.nav.offerCategories"),
+        href: "/admin/offer-categories",
+        icon: Tag,
+      },
       // {
       //   name: t("adminSidebar.nav.discountLabels"),
       //   href: "/admin/discount-labels",

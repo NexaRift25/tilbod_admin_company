@@ -305,6 +305,7 @@
       "events": "Viðburðir og árstíðir",
       "categories": "Flokkar",
       "productCategories": "Vöruflokkar",
+      "offerCategories": "Tilboðaflokkar",
       "discountLabels": "Afsláttarskilti",
       "targetedDiscounts": "Sértækir afslættir",
       "financial": "Fjármál",
@@ -724,6 +725,75 @@
     },
     "notifications": {
       "validation": "Vinsamlegast sláðu inn heiti flokks"
+    }
+  },
+  "adminOfferCategories": {
+    "header": {
+      "title": "Tilboðaflokkar",
+      "subtitle": "Stjórnaðu tilboðaflokkum eins og Black Friday, Skattfrjáls dagur, Vetrarútsala, o.s.frv.",
+      "createButton": "Búa til flokk"
+    },
+    "stats": {
+      "total": "Heildarfjöldi flokka",
+      "active": "Virkir",
+      "inactive": "Óvirkir"
+    },
+    "filters": {
+      "searchPlaceholder": "Leita að tilboðaflokkum...",
+      "status": {
+        "all": "Allar stöður",
+        "active": "Virkir",
+        "inactive": "Óvirkir"
+      }
+    },
+    "status": {
+      "active": "Virkur",
+      "inactive": "Óvirkur"
+    },
+    "applicableTo": {
+      "activeOffers": "Virk tilboð",
+      "giftCards": "Gjafakort"
+    },
+    "table": {
+      "startDate": "Upphafsdagur",
+      "endDate": "Lokadagur",
+      "applicableTo": "Gildir fyrir",
+      "offersCount": "Fjöldi tilboða"
+    },
+    "empty": {
+      "title": "Engir tilboðaflokkar fundust",
+      "searchAdjust": "Reyndu að breyta leit eða síu",
+      "createFirst": "Búðu til fyrsta tilboðaflokkinn til að byrja"
+    },
+    "form": {
+      "createTitle": "Búa til tilboðaflokk",
+      "editTitle": "Breyta tilboðaflokki",
+      "nameLabel": "Heiti flokks",
+      "namePlaceholder": "t.d., Black Friday, Skattfrjáls dagur, Vetrarútsala",
+      "descriptionLabel": "Lýsing",
+      "descriptionPlaceholder": "Sláðu inn lýsingu fyrir þennan tilboðaflokk",
+      "startDateLabel": "Upphafsdagur",
+      "endDateLabel": "Lokadagur",
+      "statusLabel": "Staða",
+      "applicableToLabel": "Gildir fyrir",
+      "cancelButton": "Hætta við",
+      "saveButton": "Vista",
+      "saving": "Vistar...",
+      "errors": {
+        "nameRequired": "Heiti flokks er nauðsynlegt",
+        "descriptionRequired": "Lýsing er nauðsynleg",
+        "startDateRequired": "Upphafsdagur er nauðsynlegur",
+        "endDateRequired": "Lokadagur er nauðsynlegur",
+        "endDateBeforeStart": "Lokadagur verður að vera eftir upphafsdag",
+        "applicableToRequired": "Að minnsta kosti einn valkostur verður að vera valinn"
+      }
+    },
+    "actions": {
+      "edit": "Breyta",
+      "delete": "Eyða"
+    },
+    "delete": {
+      "confirm": "Ertu viss um að þú viljir eyða þessum tilboðaflokki?"
     }
   },
   "adminProductCategories": {

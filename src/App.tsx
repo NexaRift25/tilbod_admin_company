@@ -37,6 +37,7 @@ import AdminAnalyticsPage from './pages/admin/Analytics';
 import AdminEventsSeasonsPage from './pages/admin/EventsSeasons';
 import AdminCategoriesPage from './pages/admin/Categories';
 import AdminProductCategoriesPage from './pages/admin/ProductCategories';
+import AdminOfferCategoriesPage from './pages/admin/OfferCategories';
 import AdminDiscountLabelsPage from './pages/admin/DiscountLabels';
 import AdminTargetedDiscountsPage from './pages/admin/TargetedDiscounts';
 import AdminFinancialPage from './pages/admin/Financial';
@@ -115,6 +116,7 @@ function App() {
             <Route path="events-seasons" element={<AdminEventsSeasonsPage />} />
             <Route path="categories" element={<AdminCategoriesPage />} />
             <Route path="product-categories" element={<AdminProductCategoriesPage />} />
+            <Route path="offer-categories" element={<AdminOfferCategoriesPage />} />
             <Route path="discount-labels" element={<AdminDiscountLabelsPage />} />
             <Route path="targeted-discounts" element={<AdminTargetedDiscountsPage />} />
             <Route path="financial" element={<AdminFinancialPage />} />

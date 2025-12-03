@@ -305,6 +305,7 @@
       "events": "Events & Seasons",
       "categories": "Company Category",
       "productCategories": "Product Categories",
+      "offerCategories": "Offer Categories",
       "discountLabels": "Discount Labels",
       "targetedDiscounts": "Targeted Discounts",
       "financial": "Financial",
@@ -729,6 +730,75 @@
     },
     "notifications": {
       "validation": "Please enter a category name"
+    }
+  },
+  "adminOfferCategories": {
+    "header": {
+      "title": "Offer Categories",
+      "subtitle": "Manage offer categories like Black Friday, Tax-free day, Winter Sale, etc.",
+      "createButton": "Create Category"
+    },
+    "stats": {
+      "total": "Total Categories",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "filters": {
+      "searchPlaceholder": "Search offer categories...",
+      "status": {
+        "all": "All Status",
+        "active": "Active",
+        "inactive": "Inactive"
+      }
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "applicableTo": {
+      "activeOffers": "Active Offers",
+      "giftCards": "Gift Cards"
+    },
+    "table": {
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "applicableTo": "Applicable To",
+      "offersCount": "Offers Count"
+    },
+    "empty": {
+      "title": "No offer categories found",
+      "searchAdjust": "Try adjusting your search or filter criteria",
+      "createFirst": "Create your first offer category to get started"
+    },
+    "form": {
+      "createTitle": "Create Offer Category",
+      "editTitle": "Edit Offer Category",
+      "nameLabel": "Category Name",
+      "namePlaceholder": "e.g., Black Friday, Tax-free day, Winter Sale",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Enter a description for this offer category",
+      "startDateLabel": "Start Date",
+      "endDateLabel": "End Date",
+      "statusLabel": "Status",
+      "applicableToLabel": "Applicable To",
+      "cancelButton": "Cancel",
+      "saveButton": "Save",
+      "saving": "Saving...",
+      "errors": {
+        "nameRequired": "Category name is required",
+        "descriptionRequired": "Description is required",
+        "startDateRequired": "Start date is required",
+        "endDateRequired": "End date is required",
+        "endDateBeforeStart": "End date must be after start date",
+        "applicableToRequired": "At least one option must be selected"
+      }
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "delete": {
+      "confirm": "Are you sure you want to delete this offer category?"
     }
   },
   "adminProductCategories": {
