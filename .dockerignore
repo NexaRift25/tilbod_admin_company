@@ -1,6 +1,5 @@
 # Dependencies
 node_modules
-pnpm-lock.yaml
 
 # Build outputs
 dist
@@ -59,10 +58,5 @@ ANALYTICS_CHARTS.md
 
 # Config files that might contain sensitive info
 .eslintrc.cjs
-tsconfig.json
-tsconfig.node.json
-tailwind.config.js
-postcss.config.js
-vite.config.ts
 components.json
 vercel.json
