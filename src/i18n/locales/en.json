@@ -301,6 +301,7 @@
       "commission": "Commission & Price",
       "paymentHistory": "Payment History",
       "invoiceHistory": "Invoice History",
+      "payoutHistory": "Payout History",
       "analytics": "Analytics",
       "events": "Events & Seasons",
       "categories": "Company Category",
@@ -2142,6 +2143,86 @@
       "tax": "Tax",
       "total": "Total",
       "description": "Description"
+    }
+  },
+  "adminPayoutHistory": {
+    "title": "Payout History",
+    "subtitle": "View expenses from payday expenses data",
+    "actions": {
+      "refresh": "Refresh",
+      "export": "Export all"
+    },
+    "stats": {
+      "totalAmount": "Total Amount",
+      "totalVat": "Total VAT",
+      "paid": "Paid",
+      "pending": "Pending",
+      "draft": "Draft"
+    },
+    "filters": {
+      "searchPlaceholder": "Search by creditor, reference, or comments...",
+      "status": {
+        "all": "All statuses"
+      }
+    },
+    "status": {
+      "DRAFT": "Draft",
+      "PAID": "Paid",
+      "PENDING": "Pending",
+      "CANCELLED": "Cancelled"
+    },
+    "table": {
+      "title": "Expenses",
+      "subtitle": "Showing {{count}} expenses",
+      "headers": {
+        "date": "Date",
+        "creditor": "Creditor",
+        "reference": "Reference",
+        "amountExcludingVat": "Amount (ex. VAT)",
+        "vat": "VAT",
+        "amountIncludingVat": "Amount (inc. VAT)",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "actions": {
+        "view": "View details"
+      },
+      "empty": {
+        "title": "No expenses found",
+        "description": "Try adjusting your search or filter criteria."
+      }
+    },
+    "details": {
+      "dueDate": "Due Date",
+      "paidDate": "Paid Date",
+      "paymentType": "Payment Type",
+      "deductible": "Deductible",
+      "comments": "Comments",
+      "lines": "Line Items",
+      "quantity": "Quantity",
+      "discount": "Discount"
+    },
+    "modal": {
+      "title": "Expense {{reference}}",
+      "close": "Close",
+      "export": "Export Expense",
+      "creditor": "Creditor",
+      "status": "Status",
+      "date": "Date",
+      "dueDate": "Due Date",
+      "paidDate": "Paid Date",
+      "paymentType": "Payment Type",
+      "deductible": "Deductible",
+      "voucher": "Voucher",
+      "lines": "Expense Lines",
+      "quantity": "Quantity",
+      "discount": "Discount",
+      "amountExcludingVat": "Amount (ex. VAT)",
+      "vat": "VAT",
+      "total": "Total",
+      "comments": "Comments",
+      "created": "Created",
+      "source": "Source"
     }
   },
   "adminCommissionApproval": {

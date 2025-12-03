@@ -33,6 +33,7 @@ import AdminUsersPage from './pages/admin/Users';
 import AdminCommissionPricingPage from './pages/admin/CommissionPricing';
 import AdminPaymentHistoryPage from './pages/admin/PaymentHistory';
 import AdminInvoiceHistoryPage from './pages/admin/InvoiceHistory';
+import AdminPayoutHistoryPage from './pages/admin/PayoutHistory';
 import AdminAnalyticsPage from './pages/admin/Analytics';
 import AdminEventsSeasonsPage from './pages/admin/EventsSeasons';
 import AdminCategoriesPage from './pages/admin/Categories';
@@ -112,6 +113,7 @@ function App() {
             <Route path="commission-pricing" element={<AdminCommissionPricingPage />} />
             <Route path="payment-history" element={<AdminPaymentHistoryPage />} />
             <Route path="invoice-history" element={<AdminInvoiceHistoryPage />} />
+            <Route path="payout-history" element={<AdminPayoutHistoryPage />} />
             <Route path="analytics" element={<AdminAnalyticsPage />} />
             <Route path="events-seasons" element={<AdminEventsSeasonsPage />} />
             <Route path="categories" element={<AdminCategoriesPage />} />

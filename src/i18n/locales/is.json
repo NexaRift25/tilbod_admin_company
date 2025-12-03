@@ -301,6 +301,7 @@
       "commission": "Þóknun og verð",
       "paymentHistory": "Greiðslusaga",
       "invoiceHistory": "Reikningasaga",
+      "payoutHistory": "Útgreiðslusaga",
       "analytics": "Greiningar",
       "events": "Viðburðir og árstíðir",
       "categories": "Flokkar",
@@ -1959,6 +1960,86 @@
       "tax": "VSK",
       "total": "Heildarupphæð",
       "description": "Lýsing"
+    }
+  },
+  "adminPayoutHistory": {
+    "title": "Útgreiðslusaga",
+    "subtitle": "Skoðaðu útgjöld úr útgreiðslugögnum",
+    "actions": {
+      "refresh": "Endurhlaða",
+      "export": "Flytja út allt"
+    },
+    "stats": {
+      "totalAmount": "Heildarupphæð",
+      "totalVat": "Heildar VSK",
+      "paid": "Greitt",
+      "pending": "Í bið",
+      "draft": "Drög"
+    },
+    "filters": {
+      "searchPlaceholder": "Leita eftir kröfuhafa, tilvísun eða athugasemdum...",
+      "status": {
+        "all": "Allar stöður"
+      }
+    },
+    "status": {
+      "DRAFT": "Drög",
+      "PAID": "Greitt",
+      "PENDING": "Í bið",
+      "CANCELLED": "Hætt við"
+    },
+    "table": {
+      "title": "Útgjöld",
+      "subtitle": "Sýni {{count}} útgjöld",
+      "headers": {
+        "date": "Dagsetning",
+        "creditor": "Kröfuhafi",
+        "reference": "Tilvísun",
+        "amountExcludingVat": "Upphæð (án VSK)",
+        "vat": "VSK",
+        "amountIncludingVat": "Upphæð (með VSK)",
+        "status": "Staða",
+        "actions": "Aðgerðir"
+      },
+      "actions": {
+        "view": "Skoða nánar"
+      },
+      "empty": {
+        "title": "Engin útgjöld fundust",
+        "description": "Reyndu að breyta leit eða síu."
+      }
+    },
+    "details": {
+      "dueDate": "Gjalddagi",
+      "paidDate": "Greiðsludagur",
+      "paymentType": "Greiðslutegund",
+      "deductible": "Frádráttarbær",
+      "comments": "Athugasemdir",
+      "lines": "Færslur",
+      "quantity": "Magn",
+      "discount": "Afsláttur"
+    },
+    "modal": {
+      "title": "Útgjald {{reference}}",
+      "close": "Loka",
+      "export": "Flytja út útgjald",
+      "creditor": "Kröfuhafi",
+      "status": "Staða",
+      "date": "Dagsetning",
+      "dueDate": "Gjalddagi",
+      "paidDate": "Greiðsludagur",
+      "paymentType": "Greiðslutegund",
+      "deductible": "Frádráttarbær",
+      "voucher": "Víxill",
+      "lines": "Útgjaldsfærslur",
+      "quantity": "Magn",
+      "discount": "Afsláttur",
+      "amountExcludingVat": "Upphæð (án VSK)",
+      "vat": "VSK",
+      "total": "Heildarupphæð",
+      "comments": "Athugasemdir",
+      "created": "Búið til",
+      "source": "Uppruni"
     }
   },
   "adminCommissionApproval": {

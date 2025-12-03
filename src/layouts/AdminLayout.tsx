@@ -16,6 +16,7 @@ import {
   TrendingUp,
   CreditCard,
   FileText,
+  Receipt,
 } from "lucide-react";
 import Container from "@/components/ui/Container";
 import { Logo, MobileLogo } from "@/components/ui/Header";
@@ -72,6 +73,11 @@ export default function AdminLayout() {
         name: t("adminSidebar.nav.invoiceHistory"),
         href: "/admin/invoice-history",
         icon: FileText,
+      },
+      {
+        name: t("adminSidebar.nav.payoutHistory"),
+        href: "/admin/payout-history",
+        icon: Receipt,
       },
       {
         name: t("adminSidebar.nav.analytics"),
